@@ -1,10 +1,10 @@
 <!doctype html>
-<html lang="en">
+<html lang="es">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Legion AI | The smart market panel for MetaTrader 4</title>
-<meta name="description" content="Legion AI is a smart panel for MetaTrader 4. It reads every timeframe of Gold, Bitcoin, indices and forex at once and tells you in plain English whether to wait, look for buys or look for sells.">
+<title>Legion AI | El panel inteligente de mercados para MetaTrader 4</title>
+<meta name="description" content="Legion AI es un panel inteligente para MetaTrader 4. Lee todas las temporalidades del Oro, Bitcoin, índices y forex a la vez y te dice en palabras simples si esperar, buscar compras o buscar ventas.">
 <meta name="theme-color" content="#04070F">
 <link rel="manifest" href="/manifest.webmanifest">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
@@ -17,8 +17,10 @@
 <link rel="canonical" href="https://legionai.iareal.net/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Legion AI">
-<meta property="og:title" content="Legion AI | The smart market panel for MetaTrader 4">
-<meta property="og:description" content="One panel reads every timeframe of Gold, Bitcoin, indices and forex and tells you whether to wait, look for buys or look for sells.">
+<meta property="og:locale" content="es_MX">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:title" content="Legion AI | El panel inteligente de mercados para MetaTrader 4">
+<meta property="og:description" content="Un panel lee todas las temporalidades del Oro, Bitcoin, índices y forex y te dice si esperar, buscar compras o buscar ventas.">
 <meta property="og:url" content="https://legionai.iareal.net/">
 <meta property="og:image" content="https://legionai.iareal.net/img/poster-gold-bitcoin.jpg">
 <meta name="twitter:card" content="summary_large_image">
@@ -390,52 +392,59 @@ footer p{font-size:13.5px;color:var(--dim);line-height:1.65;max-width:110ch;marg
   .vitem{grid-template-columns:70px minmax(0,1fr)}.vitem .w{display:none}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none !important;animation:none !important}}
+
+.nav-end{display:flex;align-items:center;gap:12px;flex:none}
+.lang-sw{display:flex;gap:2px;padding:3px;border:1px solid var(--line2);border-radius:12px;background:rgba(12,22,48,.6)}
+.lang-sw button{min-width:44px;min-height:38px;border:0;border-radius:9px;background:transparent;color:var(--mist);font:600 13px/1 var(--mono);letter-spacing:.06em;cursor:pointer}
+.lang-sw button:hover{color:#fff}
+.lang-sw button[aria-pressed="true"]{background:var(--mint);color:var(--abyss)}
+@media (max-width:440px){.nav-end .btn{display:none}}
 </style>
 </head>
 <body>
 
 <header class="nav">
   <div class="wrap">
-    <a class="brand" href="#top" aria-label="Legion AI home">
+    <a class="brand" href="#top" aria-label="Inicio de Legion AI">
       <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6DF0BB"/><stop offset="1" stop-color="#1D9E70"/></linearGradient></defs><path d="M17 2 31 10v14L17 32 3 24V10Z" fill="none" stroke="url(#lg)" stroke-width="2"/><path d="M10 21l5-6 4 3 5-7" fill="none" stroke="#45E2A3" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
       <b>LEGION <span>AI</span></b>
     </a>
-    <nav aria-label="Main">
-      <a href="#panel">The panel</a>
-      <a href="#how">How it reads</a>
-      <a href="#protect">Protection</a>
-      <a href="#results">Results</a>
-      <a href="#faq">FAQ</a>
+    <nav aria-label="Principal">
+      <a href="#panel">El panel</a>
+      <a href="#how">Cómo lee</a>
+      <a href="#protect">Protección</a>
+      <a href="#results">Resultados</a>
+      <a href="#faq">Preguntas</a>
     </nav>
-    <a class="btn btn-p" href="https://wa.me/51960685684" style="min-height:44px;padding:0 20px;font-size:15px">Talk to us</a>
+    <div class="nav-end"><div class="lang-sw" role="group" aria-label="Idioma / Language"><button type="button" data-lang="es" lang="es" aria-pressed="true">ES</button><button type="button" data-lang="en" lang="en" aria-pressed="false">EN</button></div><a class="btn btn-p" href="https://wa.me/51960685684" style="min-height:44px;padding:0 20px;font-size:15px">Escríbenos</a></div>
   </div>
 </header>
 
 <main id="top">
 
 <!-- HERO -->
-<section class="hero" aria-label="Introduction">
+<section class="hero" aria-label="Introducción">
   <canvas class="terrain" id="terrain" aria-hidden="true"></canvas>
   <div class="wrap">
     <div>
-      <h1>See what the market is doing before you risk a dollar.</h1>
-      <p class="lead">Legion AI is a smart panel for MetaTrader 4. It watches every timeframe of Gold, Bitcoin, indices and forex at the same time, and tells you in plain English whether to wait, look for buys or look for sells.</p>
+      <h1>Mira lo que hace el mercado antes de arriesgar un dólar.</h1>
+      <p class="lead">Legion AI es un panel inteligente para MetaTrader 4. Vigila todas las temporalidades del Oro, Bitcoin, índices y forex al mismo tiempo, y te dice en palabras simples si esperar, buscar compras o buscar ventas.</p>
       <div class="ctas">
-        <a class="btn btn-p" href="https://wa.me/51960685684">Get Legion AI</a>
-        <a class="btn btn-g" href="#panel">Tour the panel</a>
+        <a class="btn btn-p" href="https://wa.me/51960685684">Quiero Legion AI</a>
+        <a class="btn btn-g" href="#panel">Recorre el panel</a>
       </div>
       <div class="proof">
-        <div><strong>14</strong><span>tools in one panel</span></div>
-        <div><strong>9</strong><span>timeframes, M1 to MN</span></div>
-        <div><strong>0</strong><span>trades placed for you</span></div>
+        <div><strong>14</strong><span>herramientas en un panel</span></div>
+        <div><strong>9</strong><span>temporalidades, de M1 a MN</span></div>
+        <div><strong>0</strong><span>operaciones que abre por ti</span></div>
       </div>
     </div>
     <div class="stage-wrap" id="stageWrap" aria-hidden="true">
       <div class="stage" id="stage">
         <div class="chartplane"><canvas id="mt4chart" width="1280" height="940"></canvas><span class="ctag">XAUUSD, M15</span></div>
         <div class="panelhost" data-panel></div>
-        <div class="floatchip fc1">Overall reading<b>SELL BIAS -43</b></div>
-        <div class="floatchip fc2">Confidence<b style="color:#F2C94C">61%</b></div>
+        <div class="floatchip fc1">Lectura general<b>SESGO VENDEDOR -43</b></div>
+        <div class="floatchip fc2">Confianza<b style="color:#F2C94C">61%</b></div>
       </div>
     </div>
   </div>
@@ -444,14 +453,14 @@ footer p{font-size:13.5px;color:var(--dim);line-height:1.65;max-width:110ch;marg
 <!-- MARKETS -->
 <div class="markets">
   <div class="wrap">
-    <p class="small" style="font-size:15px">Works on any symbol your MT4 broker offers, including</p>
+    <p class="small" style="font-size:15px">Funciona con cualquier símbolo que ofrezca tu bróker de MT4, incluidos</p>
     <div class="mk">
-      <span><i style="background:radial-gradient(circle at 35% 30%,#FFE6A6,#C8902E)"></i>Gold</span>
+      <span><i style="background:radial-gradient(circle at 35% 30%,#FFE6A6,#C8902E)"></i>Oro</span>
       <span><i style="background:radial-gradient(circle at 35% 30%,#FFD08A,#E8871E)"></i>Bitcoin</span>
       <span><i style="background:radial-gradient(circle at 35% 30%,#B9D2FF,#3E63D6)"></i>S&amp;P 500</span>
       <span><i style="background:radial-gradient(circle at 35% 30%,#A9F3D6,#1D9E70)"></i>Nasdaq 100</span>
       <span><i style="background:radial-gradient(circle at 35% 30%,#E7ECF5,#7F8AA0)"></i>US30</span>
-      <span><i style="background:radial-gradient(circle at 35% 30%,#D7C2FF,#7A55D6)"></i>Forex pairs</span>
+      <span><i style="background:radial-gradient(circle at 35% 30%,#D7C2FF,#7A55D6)"></i>Pares de forex</span>
     </div>
   </div>
 </div>
@@ -460,25 +469,25 @@ footer p{font-size:13.5px;color:var(--dim);line-height:1.65;max-width:110ch;marg
 <section class="s" id="panel">
   <div class="wrap">
     <div class="head">
-      <h2>The real panel, now fully in English.</h2>
-      <p class="lead">This is Legion AI exactly as it sits on the right side of your MT4 chart: one column, six tabs, every reading explained by a tooltip when you hover it.</p>
+      <h2>El panel real, tal como lo ves en MT4.</h2>
+      <p class="lead">Así se ve Legion AI a la derecha de tu gráfico de MT4: una columna, seis pestañas y cada lectura explicada con un tooltip al pasar el cursor.</p>
     </div>
     <div class="native">
       <div class="callouts">
-        <div class="co hl"><h3>Overall reading</h3><p>One verdict for the whole market, with a confidence score that measures how much the tools agree.</p></div>
-        <div class="co"><h3>Your account, live</h3><p>Balance, equity, margin level, leverage and the price where your broker would close you out.</p></div>
-        <div class="co"><h3>Momentum on 6 timeframes</h3><p>Each square is one candle. Green rows lean up, red rows lean down, gray means undecided.</p></div>
-        <div class="co"><h3>Trend grid</h3><p>Trend strength from 1-minute to monthly. When it says Do not enter, it means it.</p></div>
+        <div class="co hl"><h3>Lectura general</h3><p>Un solo veredicto para todo el mercado, con un puntaje de confianza que mide cuánto coinciden las herramientas.</p></div>
+        <div class="co"><h3>Tu cuenta, en vivo</h3><p>Balance, equidad, nivel de margen, apalancamiento y el precio donde tu bróker te cerraría todo.</p></div>
+        <div class="co"><h3>Impulso en 6 temporalidades</h3><p>Cada cuadro es una vela. Las filas verdes se inclinan al alza, las rojas a la baja y el gris indica indecisión.</p></div>
+        <div class="co"><h3>Tablero de tendencia</h3><p>Fuerza de la tendencia de 1 minuto a mensual. Cuando dice No entres, va en serio.</p></div>
       </div>
       <figure class="panelframe" style="margin:0">
         <div data-panel data-full></div>
-        <figcaption class="cap small">English recreation of a real panel capture (XAUUSD, 15-minute chart).</figcaption>
+        <figcaption class="cap small">Recreación de una captura real del panel (XAUUSD, gráfico de 15 minutos).</figcaption>
       </figure>
       <div class="callouts right">
-        <div class="co"><h3>Six module scores</h3><p>RSI, ADX, Flow, Pair, Structure and Candle each vote from -100 to +100.</p></div>
-        <div class="co"><h3>Reading in plain words</h3><p>A short line per tool, so you know why the panel thinks what it thinks.</p></div>
-        <div class="co"><h3>Market structure</h3><p>Is each timeframe pushing or pulling back, and where it breaks. Monthly down to 1-minute.</p></div>
-        <div class="co"><h3>Buyers vs. sellers</h3><p>FlowPulse scores 20 windows, from the last minute to the last 8 days.</p></div>
+        <div class="co"><h3>Seis módulos con puntaje</h3><p>RSI, ADX, Flow, Par, Estructura y Vela votan cada uno de -100 a +100.</p></div>
+        <div class="co"><h3>Lectura en palabras simples</h3><p>Una línea corta por herramienta, para que sepas por qué el panel piensa lo que piensa.</p></div>
+        <div class="co"><h3>Estructura de mercado</h3><p>Si cada temporalidad está impulsando o corrigiendo, y dónde se rompe. De mensual a 1 minuto.</p></div>
+        <div class="co"><h3>Compradores vs. vendedores</h3><p>FlowPulse puntúa 20 ventanas, del último minuto a los últimos 8 días.</p></div>
       </div>
     </div>
   </div>
@@ -488,16 +497,16 @@ footer p{font-size:13.5px;color:var(--dim);line-height:1.65;max-width:110ch;marg
 <section class="s s-alt" aria-labelledby="gal-h">
   <div class="wrap gallery">
     <div>
-      <h2 id="gal-h" style="font-size:clamp(36px,4.2vw,60px)">On your desk, with alerts in your pocket.</h2>
-      <p class="lead" style="margin-top:22px">Legion AI runs inside MetaTrader 4 on your computer or VPS. When a signal fires, it can reach you as a pop-up, a sound, an email or a push notification on the MT4 app on your phone.</p>
-      <p class="muted" style="margin-top:18px;font-size:16px">Click either poster to bring it to the front.</p>
+      <h2 id="gal-h" style="font-size:clamp(36px,4.2vw,60px)">En tu escritorio, con alertas en tu bolsillo.</h2>
+      <p class="lead" style="margin-top:22px">Legion AI corre dentro de MetaTrader 4 en tu computadora o VPS. Cuando salta una señal, te puede llegar como ventana emergente, sonido, correo o notificación push en la app de MT4 de tu teléfono.</p>
+      <p class="muted" style="margin-top:18px;font-size:16px">Haz clic en cualquier póster para traerlo al frente.</p>
     </div>
     <div>
       <div class="fan" id="fan">
-        <figure class="f1"><img src="/img/poster-gold-bitcoin.jpg?v=e7236ad275" alt="Legion AI campaign poster: an MT4 system for Gold, Bitcoin, S&amp;P 500, Nasdaq, US30 and DXY, with AI-powered analysis and real-time multi-timeframe reading" loading="lazy" width="825" height="1024"><button aria-label="Bring the desktop poster to the front"></button></figure>
-        <figure class="f2"><img src="/img/poster-trade-smarter.jpg?v=95e6c1ad37" alt="Legion AI campaign poster: Trade smarter, not harder. Real-time AI market scanner, multi-timeframe analysis and trend and pattern detection" loading="lazy" width="960" height="1192"><button aria-label="Bring the mobile poster to the front"></button></figure>
+        <figure class="f1"><img src="/img/poster-gold-bitcoin.jpg?v=e7236ad275" alt="Póster de campaña de Legion AI: un sistema de MT4 para Oro, Bitcoin, S&amp;P 500, Nasdaq, US30 y DXY, con análisis con IA y lectura multitemporal en tiempo real" loading="lazy" width="825" height="1024"><button aria-label="Traer al frente el póster de escritorio"></button></figure>
+        <figure class="f2"><img src="/img/poster-trade-smarter.jpg?v=95e6c1ad37" alt="Póster de campaña de Legion AI: opera con inteligencia, no con más esfuerzo. Escáner de mercado con IA en tiempo real, análisis multitemporal y detección de tendencias y patrones" loading="lazy" width="960" height="1192"><button aria-label="Traer al frente el póster móvil"></button></figure>
       </div>
-      <p class="small figcap">Legion AI campaign artwork. Screens in the posters are illustrations.</p>
+      <p class="small figcap">Arte de campaña de Legion AI. Las pantallas de los pósters son ilustraciones.</p>
     </div>
   </div>
 </section>
@@ -506,29 +515,29 @@ footer p{font-size:13.5px;color:var(--dim);line-height:1.65;max-width:110ch;marg
 <section class="s" id="how">
   <div class="wrap">
     <div class="head">
-      <h2>Six analysts vote. You get one clear answer.</h2>
-      <p class="lead">Each tool looks at the market from a different angle and scores it from -100 (sellers in control) to +100 (buyers in control). Legion AI weighs the votes, checks how much they agree, and stacks it all into one reading.</p>
+      <h2>Seis analistas votan. Tú recibes una respuesta clara.</h2>
+      <p class="lead">Cada herramienta mira el mercado desde un ángulo distinto y lo puntúa de -100 (dominan los vendedores) a +100 (dominan los compradores). Legion AI pondera los votos, revisa cuánto coinciden y lo resume todo en una sola lectura.</p>
     </div>
     <div class="voices">
       <div class="iso" aria-hidden="true">
         <div class="stack" id="stack">
-          <div class="plate" style="transform:translateZ(0px)" data-k="CANDLE"><span>CANDLE</span><em>-- </em></div>
-          <div class="plate" style="transform:translateZ(46px)" data-k="STRUCT"><span>STRUCTURE</span><em>+33</em></div>
-          <div class="plate" style="transform:translateZ(92px)" data-k="PAIR"><span>PAIR</span><em>-63</em></div>
+          <div class="plate" style="transform:translateZ(0px)" data-k="CANDLE"><span>VELA</span><em>-- </em></div>
+          <div class="plate" style="transform:translateZ(46px)" data-k="STRUCT"><span>ESTRUCTURA</span><em>+33</em></div>
+          <div class="plate" style="transform:translateZ(92px)" data-k="PAIR"><span>PAR</span><em>-63</em></div>
           <div class="plate" style="transform:translateZ(138px)" data-k="FLOW"><span>FLOW</span><em>-39</em></div>
           <div class="plate" style="transform:translateZ(184px)" data-k="ADX"><span>ADX</span><em>-59</em></div>
           <div class="plate" style="transform:translateZ(230px)" data-k="RSI"><span>RSI</span><em>-83</em></div>
-          <div class="plate top" style="transform:translateZ(300px)"><span>SELL BIAS  -43</span><em style="color:#F2C94C">61%</em></div>
+          <div class="plate top" style="transform:translateZ(300px)"><span>SESGO VENDEDOR  -43</span><em style="color:#F2C94C">61%</em></div>
         </div>
       </div>
       <div class="vlist">
-        <div class="vitem" data-k="RSI" tabindex="0"><b>RSI</b><div><h3>Is price speeding up?</h3><p>Momentum on six timeframes at once, with overbought and oversold warnings.</p></div><span class="w">30%</span></div>
-        <div class="vitem" data-k="ADX" tabindex="0"><b>ADX</b><div><h3>Is there a real trend?</h3><p>Strong trends light the grid up; choppy markets stay gray.</p></div><span class="w">30%</span></div>
-        <div class="vitem" data-k="FLOW" tabindex="0"><b>FLOW</b><div><h3>Who is pushing?</h3><p>Where price sits inside its recent range, from minutes to weeks.</p></div><span class="w">25%</span></div>
-        <div class="vitem" data-k="STRUCT" tabindex="0"><b>STRUCT</b><div><h3>Higher highs or lower lows?</h3><p>Structure on the weekly, daily and 4-hour charts.</p></div><span class="w">25%</span></div>
-        <div class="vitem" data-k="PAIR" tabindex="0"><b>PAIR</b><div><h3>Which side is stronger?</h3><p>Gold vs. the dollar, the euro vs. the dollar, scored 0 to 10.</p></div><span class="w">15%</span></div>
-        <div class="vitem" data-k="CANDLE" tabindex="0"><b>CANDLE</b><div><h3>Who won the big candle?</h3><p>Did the key candle close near its high or near its low?</p></div><span class="w">10%</span></div>
-        <p class="small" style="padding:10px 16px 0">Right column: default weight of each vote. You can change every weight in the settings.</p>
+        <div class="vitem" data-k="RSI" tabindex="0"><b>RSI</b><div><h3>¿El precio está acelerando?</h3><p>Impulso en seis temporalidades a la vez, con avisos de sobrecompra y sobreventa.</p></div><span class="w">30%</span></div>
+        <div class="vitem" data-k="ADX" tabindex="0"><b>ADX</b><div><h3>¿Hay una tendencia real?</h3><p>Las tendencias fuertes encienden el tablero; los mercados laterales se quedan en gris.</p></div><span class="w">30%</span></div>
+        <div class="vitem" data-k="FLOW" tabindex="0"><b>FLOW</b><div><h3>¿Quién está empujando?</h3><p>Dónde está el precio dentro de su rango reciente, de minutos a semanas.</p></div><span class="w">25%</span></div>
+        <div class="vitem" data-k="STRUCT" tabindex="0"><b>ESTR</b><div><h3>¿Máximos más altos o mínimos más bajos?</h3><p>Estructura en los gráficos semanal, diario y de 4 horas.</p></div><span class="w">25%</span></div>
+        <div class="vitem" data-k="PAIR" tabindex="0"><b>PAR</b><div><h3>¿Qué lado es más fuerte?</h3><p>Oro contra el dólar y euro contra el dólar, con puntaje de 0 a 10.</p></div><span class="w">15%</span></div>
+        <div class="vitem" data-k="CANDLE" tabindex="0"><b>VELA</b><div><h3>¿Quién ganó la vela grande?</h3><p>¿La vela clave cerró cerca de su máximo o de su mínimo?</p></div><span class="w">10%</span></div>
+        <p class="small" style="padding:10px 16px 0">Columna derecha: peso por defecto de cada voto. Puedes cambiar cada peso en la configuración.</p>
       </div>
     </div>
   </div>
@@ -538,19 +547,19 @@ footer p{font-size:13.5px;color:var(--dim);line-height:1.65;max-width:110ch;marg
 <section class="s s-alt" aria-labelledby="lad-h">
   <div class="wrap">
     <div class="head">
-      <h2 id="lad-h">Every reading tells you what to do next.</h2>
-      <p class="lead">No lines to interpret. The panel moves through clear stages, from waiting to getting out, and says it in one sentence.</p>
+      <h2 id="lad-h">Cada lectura te dice qué hacer después.</h2>
+      <p class="lead">Sin líneas que interpretar. El panel avanza por etapas claras, de esperar a salir, y te lo dice en una frase.</p>
     </div>
-    <div class="ladder" role="table" aria-label="Panel readings and their meaning">
-      <div class="lrow" role="row"><span class="st" role="cell"><i class="dot" style="background:#A9B7CB"></i>WAIT</span><p role="cell">No clear edge. Patience: not trading is also a position.</p><span class="when" role="cell">Tools disagree</span></div>
-      <div class="lrow" role="row"><span class="st" role="cell" style="color:#45E2A3"><i class="dot" style="background:#45E2A3"></i>BUY BIAS</span><p role="cell">Moderate buyer edge. Wait for the ADX gun to enter.</p><span class="when" role="cell">Most tools lean up</span></div>
-      <div class="lrow" role="row"><span class="st" role="cell" style="color:#F0645A"><i class="dot" style="background:#F0645A"></i>SELL BIAS</span><p role="cell">Moderate seller edge. Wait for the ADX gun to enter.</p><span class="when" role="cell">Most tools lean down</span></div>
-      <div class="lrow" role="row"><span class="st" role="cell" style="color:#45E2A3"><i class="dot" style="background:#45E2A3;box-shadow:0 0 0 4px rgba(69,226,163,.2)"></i>BUY CONFIRMED</span><p role="cell">Buy gun with support. Valid entry: define your stop loss and lot size.</p><span class="when" role="cell">Arrow plus agreement</span></div>
-      <div class="lrow" role="row"><span class="st" role="cell" style="color:#F5A54A"><i class="dot" style="background:#F5A54A"></i>SELL WITHOUT SUPPORT</span><p role="cell">The gun marked sell but the rest does not agree. Low quality.</p><span class="when" role="cell">Arrow, no agreement</span></div>
-      <div class="lrow" role="row"><span class="st" role="cell" style="color:#F2C94C"><i class="dot" style="background:#F2C94C"></i>WATCH EXIT</span><p role="cell">Trade open against the confluence. Watch the exit closely.</p><span class="when" role="cell">Market turned on you</span></div>
-      <div class="lrow" role="row"><span class="st" role="cell" style="color:#F0645A"><i class="dot" style="background:#F0645A;box-shadow:0 0 0 4px rgba(240,100,90,.2)"></i>EXIT NOW</span><p role="cell">The trigger changed sides. Protect profits or close the position.</p><span class="when" role="cell">Trend flipped</span></div>
+    <div class="ladder" role="table" aria-label="Lecturas del panel y su significado">
+      <div class="lrow" role="row"><span class="st" role="cell"><i class="dot" style="background:#A9B7CB"></i>ESPERAR</span><p role="cell">Sin ventaja clara. Paciencia: no operar también es una posición.</p><span class="when" role="cell">Las herramientas no coinciden</span></div>
+      <div class="lrow" role="row"><span class="st" role="cell" style="color:#45E2A3"><i class="dot" style="background:#45E2A3"></i>SESGO COMPRADOR</span><p role="cell">Ventaja compradora moderada. Espera la pistola ADX para entrar.</p><span class="when" role="cell">La mayoría se inclina al alza</span></div>
+      <div class="lrow" role="row"><span class="st" role="cell" style="color:#F0645A"><i class="dot" style="background:#F0645A"></i>SESGO VENDEDOR</span><p role="cell">Ventaja vendedora moderada. Espera la pistola ADX para entrar.</p><span class="when" role="cell">La mayoría se inclina a la baja</span></div>
+      <div class="lrow" role="row"><span class="st" role="cell" style="color:#45E2A3"><i class="dot" style="background:#45E2A3;box-shadow:0 0 0 4px rgba(69,226,163,.2)"></i>COMPRA CONFIRMADA</span><p role="cell">Pistola de compra con respaldo. Entrada válida: define tu stop loss y tu lote.</p><span class="when" role="cell">Flecha con acuerdo</span></div>
+      <div class="lrow" role="row"><span class="st" role="cell" style="color:#F5A54A"><i class="dot" style="background:#F5A54A"></i>VENTA SIN RESPALDO</span><p role="cell">La pistola marcó venta pero el resto no acompaña. Baja calidad.</p><span class="when" role="cell">Flecha sin acuerdo</span></div>
+      <div class="lrow" role="row"><span class="st" role="cell" style="color:#F2C94C"><i class="dot" style="background:#F2C94C"></i>VIGILAR SALIDA</span><p role="cell">Operación abierta contra la confluencia. Vigila la salida de cerca.</p><span class="when" role="cell">El mercado se volteó en tu contra</span></div>
+      <div class="lrow" role="row"><span class="st" role="cell" style="color:#F0645A"><i class="dot" style="background:#F0645A;box-shadow:0 0 0 4px rgba(240,100,90,.2)"></i>SALIR AHORA</span><p role="cell">El gatillo cambió de lado. Protege ganancias o cierra la posición.</p><span class="when" role="cell">La tendencia giró</span></div>
     </div>
-    <p class="small" style="margin-top:16px">Sentences shown are the panel's own wording. The confidence score measures agreement between tools; it is not a probability of winning.</p>
+    <p class="small" style="margin-top:16px">Las frases son textuales del panel. La confianza mide el acuerdo entre herramientas; no es una probabilidad de ganar.</p>
   </div>
 </section>
 
@@ -558,15 +567,15 @@ footer p{font-size:13.5px;color:var(--dim);line-height:1.65;max-width:110ch;marg
 <section class="s" aria-labelledby="land-h">
   <div class="wrap land">
     <div class="landcard">
-      <canvas id="iso" width="1400" height="780" role="img" aria-label="3D landscape of the RSI grid: six timeframes by ten candles, taller red blocks show stronger selling, taller green blocks show stronger buying"></canvas>
-      <p class="small" style="padding:4px 10px 6px">The RSI grid from the panel above, turned into a landscape. Taller blocks mean a stronger lean.</p>
+      <canvas id="iso" width="1400" height="780" role="img" aria-label="Paisaje 3D del tablero RSI: seis temporalidades por diez velas; los bloques rojos más altos indican más presión vendedora y los verdes más altos, más presión compradora"></canvas>
+      <p class="small" style="padding:4px 10px 6px">El tablero RSI del panel de arriba convertido en paisaje. Los bloques más altos indican una inclinación más fuerte.</p>
     </div>
     <div>
-      <h2 id="land-h" style="font-size:clamp(34px,3.8vw,54px)">From the 1&#8209;minute to the monthly, in one glance.</h2>
+      <h2 id="land-h" style="font-size:clamp(34px,3.8vw,54px)">De 1&#8209;minuto a mensual, de un solo vistazo.</h2>
       <div class="pts">
-        <div><h3>When everything lines up, you see it</h3><p>Fast traders and big money rarely agree. When every timeframe turns the same color, the move usually has fuel behind it.</p></div>
-        <div><h3>Arrows only on closed candles</h3><p>The ADX gun waits for the candle to close before it marks an entry, so the arrow does not appear and disappear while you watch.</p></div>
-        <div><h3>It checks itself</h3><p>The panel tests its own pattern on your chart's history. If it has been losing lately, it shows Do not enter instead of an arrow.</p></div>
+        <div><h3>Cuando todo se alinea, lo ves</h3><p>Los traders rápidos y el dinero grande rara vez coinciden. Cuando todas las temporalidades se pintan del mismo color, el movimiento suele tener combustible detrás.</p></div>
+        <div><h3>Flechas solo en velas cerradas</h3><p>La pistola ADX espera a que cierre la vela antes de marcar una entrada, así la flecha no aparece y desaparece mientras miras.</p></div>
+        <div><h3>Se revisa a sí mismo</h3><p>El panel prueba su propio patrón en el historial de tu gráfico. Si últimamente ha estado perdiendo, muestra No entres en lugar de una flecha.</p></div>
       </div>
     </div>
   </div>
@@ -576,46 +585,46 @@ footer p{font-size:13.5px;color:var(--dim);line-height:1.65;max-width:110ch;marg
 <section class="s s-alt" id="tools" aria-labelledby="tools-h">
   <div class="wrap">
     <div class="head">
-      <h2 id="tools-h">Fourteen tools. One clean chart.</h2>
-      <p class="lead">Every tool lives in its own tab and folds away with one key. Turn on what you use, hide the rest.</p>
+      <h2 id="tools-h">Catorce herramientas. Un gráfico limpio.</h2>
+      <p class="lead">Cada herramienta vive en su propia pestaña y se pliega con una tecla. Enciende lo que usas y oculta el resto.</p>
     </div>
     <div class="tgroups">
       <div class="tg">
-        <h3>Read the market</h3>
-        <p>Know the direction before you look for a trade.</p>
+        <h3>Lee el mercado</h3>
+        <p>Conoce la dirección antes de buscar una operación.</p>
         <ul>
-          <li><b>AI Status</b><span>Wait, buy bias or sell bias, a confidence score and a one-line explanation.</span></li>
-          <li><b>RSI Scanner</b><span>Momentum on up to six timeframes, with streaks and overbought / oversold warnings.</span></li>
-          <li><b>Pair Strength</b><span>Which side of the pair is really stronger, from 0 to 10.</span></li>
-          <li><b>FlowPulse</b><span>Buyers vs. sellers over 20 windows, from one minute to eight days.</span></li>
+          <li><b>Estado IA</b><span>Esperar, sesgo comprador o sesgo vendedor, un puntaje de confianza y una explicación en una línea.</span></li>
+          <li><b>Escáner RSI</b><span>Impulso en hasta seis temporalidades, con rachas y avisos de sobrecompra / sobreventa.</span></li>
+          <li><b>Fuerza del Par</b><span>Qué lado del par es realmente más fuerte, de 0 a 10.</span></li>
+          <li><b>FlowPulse</b><span>Compradores vs. vendedores en 20 ventanas, de un minuto a ocho días.</span></li>
         </ul>
       </div>
       <div class="tg">
-        <h3>Time your entry</h3>
-        <p>Find the moment, not just the direction.</p>
+        <h3>Elige el momento de entrar</h3>
+        <p>Encuentra el momento, no solo la dirección.</p>
         <ul>
-          <li><b>ADX Gun</b><span>Trend-strength grid with entry arrows on closed candles and a history test.</span></li>
-          <li><b>Market Structure</b><span>Trend from monthly to 1-minute, breakouts, trend changes and Fibonacci entry zones.</span></li>
-          <li><b>Order Blocks + FVG Radar</b><span>Zones where big players left footprints, with an alert when price gets close.</span></li>
-          <li><b>Relative Volume</b><span>Flags candles with unusual activity compared to a normal day.</span></li>
+          <li><b>Pistola ADX</b><span>Tablero de fuerza de tendencia con flechas de entrada en velas cerradas y prueba en el historial.</span></li>
+          <li><b>Estructura de Mercado</b><span>Tendencia de mensual a 1 minuto, rupturas, cambios de tendencia y zonas de entrada Fibonacci.</span></li>
+          <li><b>Order Blocks + Radar FVG</b><span>Zonas donde los grandes jugadores dejaron huella, con alerta cuando el precio se acerca.</span></li>
+          <li><b>Volumen Relativo</b><span>Marca las velas con actividad inusual frente a un día normal.</span></li>
         </ul>
       </div>
       <div class="tg">
-        <h3>Protect your account</h3>
-        <p>Size your trades with the math already done.</p>
+        <h3>Protege tu cuenta</h3>
+        <p>Calcula el tamaño de tus operaciones con la matemática ya hecha.</p>
         <ul>
-          <li><b>Account Card</b><span>Balance, equity, floating P/L, margin level and leverage, always on screen.</span></li>
-          <li><b>Wipeout Meter</b><span>Simulate any trade and see the exact price where your broker would close it.</span></li>
-          <li><b>Historical Drops</b><span>The biggest crashes of your market and the safe lot size for your balance.</span></li>
+          <li><b>Tarjeta de Cuenta</b><span>Balance, equidad, P/L flotante, nivel de margen y apalancamiento, siempre en pantalla.</span></li>
+          <li><b>Medidor de Quiebre</b><span>Simula cualquier operación y ve el precio exacto donde tu bróker la cerraría.</span></li>
+          <li><b>Caídas Históricas</b><span>Los mayores desplomes de tu mercado y el lote seguro para tu balance.</span></li>
         </ul>
       </div>
       <div class="tg">
-        <h3>Work faster</h3>
-        <p>Small things that save time every day.</p>
+        <h3>Trabaja más rápido</h3>
+        <p>Detalles que te ahorran tiempo todos los días.</p>
         <ul>
-          <li><b>Candle Zoom</b><span>Click any candle to see what happened inside it, smaller candle by smaller candle.</span></li>
-          <li><b>Sessions + Key Levels</b><span>Tokyo, London and New York boxes, plus the round numbers traders watch.</span></li>
-          <li><b>Chart Tools</b><span>Price rectangles, a measuring crosshair, 9 chart themes, hotkeys and phone alerts.</span></li>
+          <li><b>Vela Zoom</b><span>Haz clic en cualquier vela para ver qué pasó dentro de ella, vela por vela en temporalidades menores.</span></li>
+          <li><b>Sesiones + Niveles Clave</b><span>Cajas de Tokio, Londres y Nueva York, más los números redondos que vigilan los traders.</span></li>
+          <li><b>Herramientas de Gráfico</b><span>Rectángulos de precio, cruz de medición, 9 temas de gráfico, atajos de teclado y alertas al teléfono.</span></li>
         </ul>
       </div>
     </div>
@@ -626,33 +635,33 @@ footer p{font-size:13.5px;color:var(--dim);line-height:1.65;max-width:110ch;marg
 <section class="s" id="protect" aria-labelledby="prot-h">
   <div class="wrap">
     <div class="head">
-      <h2 id="prot-h">Know where your broker would close you out, before you click buy.</h2>
-      <p class="lead">Most blown accounts are not one bad idea. They are one position that was too big. The Wipeout Meter is a flight simulator for your trade: nothing is sent to your broker.</p>
+      <h2 id="prot-h">Conoce dónde te cerraría el bróker antes de hacer clic en comprar.</h2>
+      <p class="lead">La mayoría de las cuentas quemadas no vienen de una mala idea, sino de una posición demasiado grande. El Medidor de Quiebre es un simulador de vuelo para tu operación: no se envía nada a tu bróker.</p>
     </div>
     <div class="prot">
       <div class="tilt"><div>
-        <svg viewBox="0 0 900 560" role="img" aria-label="Simulated buy on Gold: blue entry line at 4,082.73, green take profit above at 4,180, amber broker warning at 3,968 and red wipeout line at 3,912 below">
+        <svg viewBox="0 0 900 560" role="img" aria-label="Compra simulada en Oro: línea azul de entrada en 4,082.73, take profit verde arriba en 4,180, aviso del bróker en ámbar en 3,968 y línea roja de quiebre abajo en 3,912">
           <rect width="900" height="560" fill="#060A12"/>
           <g stroke="#111A2C" stroke-width="1"><line x1="0" y1="70" x2="900" y2="70"/><line x1="0" y1="160" x2="900" y2="160"/><line x1="0" y1="250" x2="900" y2="250"/><line x1="0" y1="340" x2="900" y2="340"/><line x1="0" y1="430" x2="900" y2="430"/><line x1="0" y1="520" x2="900" y2="520"/></g>
           <g id="wcandles"></g>
           <line x1="0" y1="96" x2="900" y2="96" stroke="#45E2A3" stroke-width="2"/>
-          <text x="16" y="88" fill="#45E2A3" font-family="Geist Mono, monospace" font-size="15">TAKE PROFIT   4,180.00   (you would have $25,844)</text>
+          <text x="16" y="88" fill="#45E2A3" font-family="Geist Mono, monospace" font-size="15">TAKE PROFIT   4,180.00   (tendrías $25,844)</text>
           <line x1="0" y1="226" x2="900" y2="226" stroke="#6FA8FF" stroke-width="2" stroke-dasharray="8 6"/>
-          <text x="16" y="218" fill="#9CC3FF" font-family="Geist Mono, monospace" font-size="15">SIMULATED ENTRY   4,082.73   (drag the line)</text>
+          <text x="16" y="218" fill="#9CC3FF" font-family="Geist Mono, monospace" font-size="15">ENTRADA SIMULADA   4,082.73   (arrastra la línea)</text>
           <line x1="0" y1="392" x2="900" y2="392" stroke="#F5A54A" stroke-width="2"/>
-          <text x="16" y="384" fill="#F5A54A" font-family="Geist Mono, monospace" font-size="15">BROKER WARNING   3,968.10   (you have $9,560 left)</text>
+          <text x="16" y="384" fill="#F5A54A" font-family="Geist Mono, monospace" font-size="15">AVISO DEL BRÓKER   3,968.10   (te quedan $9,560)</text>
           <line x1="0" y1="468" x2="900" y2="468" stroke="#F0645A" stroke-width="3"/>
-          <text x="16" y="460" fill="#FF8E84" font-family="Geist Mono, monospace" font-size="15" font-weight="600">WIPEOUT: EVERYTHING GETS CLOSED   3,912.40   (-4.2%)</text>
+          <text x="16" y="460" fill="#FF8E84" font-family="Geist Mono, monospace" font-size="15" font-weight="600">QUIEBRE: TE CIERRAN TODO   3,912.40   (-4.2%)</text>
           <rect x="652" y="16" width="232" height="58" rx="10" fill="#0E1A33" stroke="#27395E"/>
-          <text x="668" y="40" fill="#A9B7CB" font-family="Geist, sans-serif" font-size="13">Distance to wipeout</text>
-          <text x="668" y="63" fill="#F5A54A" font-family="Geist Mono, monospace" font-size="18" font-weight="600">CAUTION  2.1 ATR D1</text>
+          <text x="668" y="40" fill="#A9B7CB" font-family="Geist, sans-serif" font-size="13">Distancia al quiebre</text>
+          <text x="668" y="63" fill="#F5A54A" font-family="Geist Mono, monospace" font-size="18" font-weight="600">ATENCIÓN  2.1 ATR D1</text>
         </svg>
       </div></div>
       <div class="plist">
-        <div><h3>Pick a direction and a lot size</h3><p>A red line appears where your broker would close everything. The percentage tells you how far price has to fall.</p></div>
-        <div><h3>Drag the green line to your target</h3><p>See your profit at the take profit before you place a single order.</p></div>
-        <div><h3>Wide, Caution or Danger</h3><p>The meter measures the distance to the wipeout line in typical days of movement, so you know if your cushion is real.</p></div>
-        <p class="small">Illustrative values for a $23,900 account buying Gold. No commissions or swap included.</p>
+        <div><h3>Elige dirección y lote</h3><p>Aparece una línea roja donde tu bróker cerraría todo. El porcentaje te dice cuánto tiene que caer el precio.</p></div>
+        <div><h3>Arrastra la línea verde a tu objetivo</h3><p>Ve tu ganancia en el take profit antes de colocar una sola orden.</p></div>
+        <div><h3>Amplio, Atención o Peligro</h3><p>El medidor calcula la distancia a la línea de quiebre en días típicos de movimiento, para que sepas si tu colchón es real.</p></div>
+        <p class="small">Valores ilustrativos para una cuenta de $23,900 comprando Oro. No incluye comisiones ni swap.</p>
       </div>
     </div>
   </div>
@@ -662,18 +671,18 @@ footer p{font-size:13.5px;color:var(--dim);line-height:1.65;max-width:110ch;marg
 <section class="s s-alt" aria-labelledby="drops-h">
   <div class="wrap">
     <div class="head">
-      <h2 id="drops-h">Markets fall. The question is whether your account survives.</h2>
-      <p class="lead">Legion AI carries the biggest drops of five markets inside the panel. It uses them to tell you the largest lot your balance could hold through a similar fall.</p>
+      <h2 id="drops-h">Los mercados caen. La pregunta es si tu cuenta sobrevive.</h2>
+      <p class="lead">Legion AI guarda dentro del panel las mayores caídas de cinco mercados. Las usa para decirte el lote más grande que tu balance aguantaría en una caída similar.</p>
     </div>
-    <div class="tabs" role="tablist" aria-label="Choose a market" id="dtabs"></div>
+    <div class="tabs" role="tablist" aria-label="Elige un mercado" id="dtabs"></div>
     <div class="dchart" role="tabpanel" id="dpanel" aria-live="polite">
       <div style="display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:18px">
         <h3 id="dtitle" style="font-size:22px">S&amp;P 500</h3>
-        <span class="small">Bar = fall from peak to low. Right column = time from the low back to the old high.</span>
+        <span class="small">Barra = caída de máximo a mínimo. Columna derecha = tiempo desde el mínimo hasta recuperar el máximo anterior.</span>
       </div>
       <div id="drows"></div>
     </div>
-    <p class="small" style="margin-top:14px">Source: the event table built into Legion AI. Depths are approximate, based on closing prices.</p>
+    <p class="small" style="margin-top:14px">Fuente: la tabla de eventos integrada en Legion AI. Las profundidades son aproximadas, basadas en precios de cierre.</p>
   </div>
 </section>
 
@@ -681,67 +690,67 @@ footer p{font-size:13.5px;color:var(--dim);line-height:1.65;max-width:110ch;marg
 <section class="s" id="results" aria-labelledby="res-h">
   <div class="wrap">
     <div class="head">
-      <h2 id="res-h">One live account, seven weeks, every number shown.</h2>
-      <p class="lead">Synced results of a live account traded by our team from July 30 to September 18. The report is in Mexican pesos; we converted it to US dollars at 18.20 MXN per USD. A person placed every trade, not the panel.</p>
+      <h2 id="res-h">Una cuenta real, siete semanas, todos los números a la vista.</h2>
+      <p class="lead">Resultados sincronizados de una cuenta real operada por nuestro equipo del 30 de julio al 18 de septiembre. El reporte está en pesos mexicanos; lo convertimos a dólares a 18.20 MXN por USD. Cada operación la abrió una persona, no el panel.</p>
     </div>
     <div class="kpis">
-      <div class="kpi"><div class="k">Net profit</div><div class="v" style="color:var(--mint)">+$5,585.89</div><div class="d">after commissions and swap</div></div>
-      <div class="kpi"><div class="k">Win rate</div><div class="v">91.3%</div><div class="d">95 of 104 closed trades</div></div>
-      <div class="kpi"><div class="k">Profit factor</div><div class="v">3.51</div><div class="d">$3.51 won per $1 lost</div></div>
-      <div class="kpi"><div class="k">Max drawdown</div><div class="v" style="color:var(--amber)">$774.48</div><div class="d">worst peak-to-valley dip</div></div>
+      <div class="kpi"><div class="k">Ganancia neta</div><div class="v" style="color:var(--mint)">+$5,585.89</div><div class="d">después de comisiones y swap</div></div>
+      <div class="kpi"><div class="k">Tasa de acierto</div><div class="v">91.3%</div><div class="d">95 de 104 operaciones cerradas</div></div>
+      <div class="kpi"><div class="k">Factor de beneficio</div><div class="v">3.51</div><div class="d">$3.51 ganados por cada $1 perdido</div></div>
+      <div class="kpi"><div class="k">Drawdown máximo</div><div class="v" style="color:var(--amber)">$774.48</div><div class="d">peor caída de pico a valle</div></div>
     </div>
     <figure class="curve" id="curve" style="margin:22px 0 0">
       <div class="top">
-        <div><h3 style="font-size:22px">Cumulative net profit</h3><p class="small">Closed trades, USD</p></div>
+        <div><h3 style="font-size:22px">Ganancia neta acumulada</h3><p class="small">Operaciones cerradas, USD</p></div>
         <div style="text-align:right"><p class="small">Total</p><p class="num" style="font-size:28px;font-weight:600;color:var(--mint)">+$5,585.89</p></div>
       </div>
-      <svg viewBox="0 0 1000 300" role="img" aria-label="Line chart of cumulative net profit rising from 0 on July 30 to 5,585.89 dollars on September 18, with a pullback around August 20">
+      <svg viewBox="0 0 1000 300" role="img" aria-label="Gráfico de línea de la ganancia neta acumulada, que sube de 0 el 30 de julio a 5,585.89 dólares el 18 de septiembre, con un retroceso cerca del 20 de agosto">
         <defs><linearGradient id="eqfill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#45E2A3" stop-opacity=".28"/><stop offset="1" stop-color="#45E2A3" stop-opacity="0"/></linearGradient></defs>
         <g stroke="#152241"><line x1="56" y1="16" x2="984" y2="16"/><line x1="56" y1="91.4" x2="984" y2="91.4"/><line x1="56" y1="166.9" x2="984" y2="166.9"/></g>
         <line x1="56" y1="242.3" x2="984" y2="242.3" stroke="#33466B"/>
         <g fill="#7787A0" font-size="12" font-family="Geist Mono, monospace" text-anchor="end"><text x="46" y="20">$6k</text><text x="46" y="95">$4k</text><text x="46" y="171">$2k</text><text x="46" y="246">$0</text></g>
         <path id="eqarea" d="M56.0 242.3 L93.1 234.0 L130.2 227.8 L148.8 223.6 L167.4 244.4 L185.9 240.2 L223.0 231.9 L260.2 223.6 L297.3 215.3 L353.0 209.1 L390.1 205.0 L427.2 198.8 L436.5 190.5 L445.8 219.5 L455.0 213.3 L464.3 186.3 L482.9 173.9 L501.4 120.0 L510.7 147.0 L520.0 134.5 L538.6 122.1 L557.1 109.7 L575.7 101.4 L594.2 95.2 L631.4 86.9 L668.5 78.6 L687.0 72.4 L705.6 66.1 L742.7 59.9 L761.3 49.6 L779.8 43.4 L835.5 39.2 L909.8 35.1 L984.0 31.6 L984.0 242.3 L56.0 242.3 Z" fill="url(#eqfill)"/>
         <path id="eqline" d="M56.0 242.3 L93.1 234.0 L130.2 227.8 L148.8 223.6 L167.4 244.4 L185.9 240.2 L223.0 231.9 L260.2 223.6 L297.3 215.3 L353.0 209.1 L390.1 205.0 L427.2 198.8 L436.5 190.5 L445.8 219.5 L455.0 213.3 L464.3 186.3 L482.9 173.9 L501.4 120.0 L510.7 147.0 L520.0 134.5 L538.6 122.1 L557.1 109.7 L575.7 101.4 L594.2 95.2 L631.4 86.9 L668.5 78.6 L687.0 72.4 L705.6 66.1 L742.7 59.9 L761.3 49.6 L779.8 43.4 L835.5 39.2 L909.8 35.1 L984.0 31.6" fill="none" stroke="#45E2A3" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"/>
-        <circle cx="984" cy="31.6" r="6" fill="#45E2A3" stroke="#081022" stroke-width="3"><title>Sep 18: +$5,585.89</title></circle>
-        <circle cx="445.8" cy="219.5" r="6" fill="#F5A54A" stroke="#081022" stroke-width="3"><title>Aug 20: biggest pullback of the period</title></circle>
-        <g fill="#7787A0" font-size="12" font-family="Geist Mono, monospace" text-anchor="middle"><text x="70" y="270">Jul 30</text><text x="185.9" y="270">Aug 6</text><text x="315.8" y="270">Aug 13</text><text x="445.8" y="270">Aug 20</text><text x="575.7" y="270">Aug 27</text><text x="705.6" y="270">Sep 3</text><text x="835.5" y="270">Sep 10</text><text x="964" y="270">Sep 18</text></g>
+        <circle cx="984" cy="31.6" r="6" fill="#45E2A3" stroke="#081022" stroke-width="3"><title>18 sep: +$5,585.89</title></circle>
+        <circle cx="445.8" cy="219.5" r="6" fill="#F5A54A" stroke="#081022" stroke-width="3"><title>20 ago: mayor retroceso del periodo</title></circle>
+        <g fill="#7787A0" font-size="12" font-family="Geist Mono, monospace" text-anchor="middle"><text x="70" y="270">30 jul</text><text x="185.9" y="270">6 ago</text><text x="315.8" y="270">13 ago</text><text x="445.8" y="270">20 ago</text><text x="575.7" y="270">27 ago</text><text x="705.6" y="270">3 sep</text><text x="835.5" y="270">10 sep</text><text x="964" y="270">18 sep</text></g>
       </svg>
-      <figcaption class="small" style="margin-top:6px">Traced from the account report. Start and end values are exact; points in between are approximate.</figcaption>
+      <figcaption class="small" style="margin-top:6px">Trazado a partir del reporte de la cuenta. Los valores inicial y final son exactos; los puntos intermedios son aproximados.</figcaption>
     </figure>
     <div class="rgrid">
-      <figure class="rc2" style="margin:0" aria-label="95 winning trades and 9 losing trades">
-        <h3 style="font-size:20px">Winning vs. losing trades</h3>
-        <div style="display:flex;gap:3px;height:46px;margin-top:24px"><div title="95 winners" style="width:91.3%;background:linear-gradient(90deg,#1D9E70,#45E2A3);border-radius:8px 0 0 8px"></div><div title="9 losers" style="width:8.7%;background:var(--amber);border-radius:0 8px 8px 0"></div></div>
-        <div style="display:flex;justify-content:space-between;margin-top:16px"><div><p class="num" style="font-size:30px;font-weight:600">95</p><p class="small">winners, 91%</p></div><div style="text-align:right"><p class="num" style="font-size:30px;font-weight:600">9</p><p class="small">losers, 9%</p></div></div>
+      <figure class="rc2" style="margin:0" aria-label="95 operaciones ganadoras y 9 perdedoras">
+        <h3 style="font-size:20px">Operaciones ganadoras vs. perdedoras</h3>
+        <div style="display:flex;gap:3px;height:46px;margin-top:24px"><div title="95 ganadoras" style="width:91.3%;background:linear-gradient(90deg,#1D9E70,#45E2A3);border-radius:8px 0 0 8px"></div><div title="9 perdedoras" style="width:8.7%;background:var(--amber);border-radius:0 8px 8px 0"></div></div>
+        <div style="display:flex;justify-content:space-between;margin-top:16px"><div><p class="num" style="font-size:30px;font-weight:600">95</p><p class="small">ganadoras, 91%</p></div><div style="text-align:right"><p class="num" style="font-size:30px;font-weight:600">9</p><p class="small">perdedoras, 9%</p></div></div>
       </figure>
-      <figure class="rc2" style="margin:0" aria-label="Money won 7,814 dollars, money lost 2,228 dollars, costs 299 dollars">
-        <h3 style="font-size:20px">Money won vs. money lost</h3>
-        <div class="hb"><span class="muted" style="font-size:15px">Won</span><div class="bar"><i style="width:78%;background:#45E2A3"></i><span class="num">$7,814</span></div></div>
-        <div class="hb"><span class="muted" style="font-size:15px">Lost</span><div class="bar"><i style="width:22%;background:var(--amber)"></i><span class="num">$2,228</span></div></div>
-        <div class="hb"><span class="muted" style="font-size:15px">Costs</span><div class="bar"><i style="width:3%;background:#7787A0"></i><span class="num">$299</span></div></div>
+      <figure class="rc2" style="margin:0" aria-label="Dinero ganado 7,814 dólares, dinero perdido 2,228 dólares, costos 299 dólares">
+        <h3 style="font-size:20px">Dinero ganado vs. dinero perdido</h3>
+        <div class="hb"><span class="muted" style="font-size:15px">Ganado</span><div class="bar"><i style="width:78%;background:#45E2A3"></i><span class="num">$7,814</span></div></div>
+        <div class="hb"><span class="muted" style="font-size:15px">Perdido</span><div class="bar"><i style="width:22%;background:var(--amber)"></i><span class="num">$2,228</span></div></div>
+        <div class="hb"><span class="muted" style="font-size:15px">Costos</span><div class="bar"><i style="width:3%;background:#7787A0"></i><span class="num">$299</span></div></div>
       </figure>
     </div>
     <div class="kpis" style="margin-top:22px">
-      <div class="kpi"><div class="k">Average per trade</div><div class="v" style="font-size:26px">+$53.71</div><div class="d">net, all 104 trades</div></div>
-      <div class="kpi"><div class="k">Best trade</div><div class="v" style="font-size:26px;color:var(--mint)">+$1,551.93</div><div class="d">single trade</div></div>
-      <div class="kpi"><div class="k">Longest streaks</div><div class="v" style="font-size:26px">34 W / 2 L</div><div class="d">in a row</div></div>
-      <div class="kpi"><div class="k">System quality (SQN)</div><div class="v" style="font-size:26px">2.59</div><div class="d">Van Tharp score</div></div>
+      <div class="kpi"><div class="k">Promedio por operación</div><div class="v" style="font-size:26px">+$53.71</div><div class="d">neto, las 104 operaciones</div></div>
+      <div class="kpi"><div class="k">Mejor operación</div><div class="v" style="font-size:26px;color:var(--mint)">+$1,551.93</div><div class="d">una sola operación</div></div>
+      <div class="kpi"><div class="k">Rachas más largas</div><div class="v" style="font-size:26px">34 G / 2 P</div><div class="d">seguidas</div></div>
+      <div class="kpi"><div class="k">Calidad del sistema (SQN)</div><div class="v" style="font-size:26px">2.59</div><div class="d">puntaje de Van Tharp</div></div>
     </div>
     <div class="honest">
       <div>
-        <h3 style="font-size:24px">The honest part: small wins, bigger losses</h3>
-        <p style="color:#D2C2AA;margin-top:12px">The average win was <b class="num" style="color:#fff">$82.25</b>. The average loss was <b class="num" style="color:#fff">$247.59</b>. That is normal for a high win-rate style, but it means a few bad trades can erase many good ones. It is exactly why the Wipeout Meter and the safe lot size live inside the panel.</p>
+        <h3 style="font-size:24px">La parte honesta: ganancias chicas, pérdidas más grandes</h3>
+        <p style="color:#D2C2AA;margin-top:12px">La ganancia promedio fue <b class="num" style="color:#fff">$82.25</b>. La pérdida promedio fue <b class="num" style="color:#fff">$247.59</b>. Es normal en un estilo con alta tasa de acierto, pero significa que pocas operaciones malas pueden borrar muchas buenas. Justo por eso el Medidor de Quiebre y el lote seguro viven dentro del panel.</p>
       </div>
       <div>
-        <div class="hb"><span class="muted" style="font-size:15px">Average win</span><div class="bar"><i style="width:30%;background:#45E2A3"></i><span class="num">$82</span></div></div>
-        <div class="hb"><span class="muted" style="font-size:15px">Average loss</span><div class="bar"><i style="width:84%;background:var(--amber)"></i><span class="num">$248</span></div></div>
+        <div class="hb"><span class="muted" style="font-size:15px">Ganancia promedio</span><div class="bar"><i style="width:30%;background:#45E2A3"></i><span class="num">$82</span></div></div>
+        <div class="hb"><span class="muted" style="font-size:15px">Pérdida promedio</span><div class="bar"><i style="width:84%;background:var(--amber)"></i><span class="num">$248</span></div></div>
       </div>
     </div>
     <div class="proofimgs">
-      <figure class="shot" style="margin:0"><div><img src="/img/report-performance.jpg?v=6aaafb565e" alt="Original performance report in Spanish: 104 closed trades, 91.3% win rate, profit factor 3.51, net 101,663.21 MXN" loading="lazy" width="1300" height="1072"></div><figcaption class="small" style="margin-top:14px">The original report, in Spanish. Account number hidden.</figcaption></figure>
-      <figure class="shot r" style="margin:0"><div><img src="/img/report-curve.jpg?v=7cf80d99bc" alt="Original results curve in Spanish, from July 30 to September 18, ending at 101,663.21 MXN" loading="lazy" width="1300" height="430"></div><figcaption class="small" style="margin-top:14px">The original results curve, in Mexican pesos.</figcaption></figure>
+      <figure class="shot" style="margin:0"><div><img src="/img/report-performance.jpg?v=6aaafb565e" alt="Reporte de rendimiento original: 104 operaciones cerradas, 91.3% de acierto, factor de beneficio 3.51, neto 101,663.21 MXN" loading="lazy" width="1300" height="1072"></div><figcaption class="small" style="margin-top:14px">El reporte original. Número de cuenta oculto.</figcaption></figure>
+      <figure class="shot r" style="margin:0"><div><img src="/img/report-curve.jpg?v=7cf80d99bc" alt="Curva de resultados original, del 30 de julio al 18 de septiembre, cerrando en 101,663.21 MXN" loading="lazy" width="1300" height="430"></div><figcaption class="small" style="margin-top:14px">La curva de resultados original, en pesos mexicanos.</figcaption></figure>
     </div>
-    <p class="small" style="margin-top:30px;max-width:900px">One account over seven weeks is a small sample. Past results do not guarantee future results. Your results depend on your own decisions, your broker, your position size and the market.</p>
+    <p class="small" style="margin-top:30px;max-width:900px">Una cuenta durante siete semanas es una muestra pequeña. Los resultados pasados no garantizan resultados futuros. Tus resultados dependen de tus propias decisiones, tu bróker, el tamaño de tu posición y el mercado.</p>
   </div>
 </section>
 
@@ -749,13 +758,13 @@ footer p{font-size:13.5px;color:var(--dim);line-height:1.65;max-width:110ch;marg
 <section class="s s-alt" aria-labelledby="lang-h">
   <div class="wrap lang">
     <div>
-      <h2 id="lang-h" style="font-size:clamp(34px,3.8vw,54px)">English by default. Spanish with one setting.</h2>
-      <p class="lead" style="margin-top:22px">Every button, tooltip, alert and push notification switches language from the Language setting. The math, the signals and the alerts stay exactly the same.</p>
-      <p class="muted" style="margin-top:18px;font-size:16px">On the left, a real MetaTrader 4 capture in Spanish. On the right, the same panel in English.</p>
+      <h2 id="lang-h" style="font-size:clamp(34px,3.8vw,54px)">En español o en inglés, con un solo ajuste.</h2>
+      <p class="lead" style="margin-top:22px">Cada botón, tooltip, alerta y notificación push cambia de idioma desde el ajuste Idioma. Los cálculos, las señales y las alertas siguen exactamente iguales.</p>
+      <p class="muted" style="margin-top:18px;font-size:16px">A la izquierda, una captura real de MetaTrader 4 en español. A la derecha, el mismo panel en inglés.</p>
     </div>
     <div class="pair3d" aria-hidden="true">
       <div class="pa"><img src="/img/panel-spanish.jpg?v=fc440b0808" alt="" width="500" height="1203" loading="lazy"></div>
-      <div class="pb"><div class="inner" data-panel></div></div>
+      <div class="pb"><div class="inner" data-panel data-tpl="panelTplEn"></div></div>
     </div>
   </div>
 </section>
@@ -763,11 +772,11 @@ footer p{font-size:13.5px;color:var(--dim);line-height:1.65;max-width:110ch;marg
 <!-- STEPS -->
 <section class="s" aria-labelledby="st-h">
   <div class="wrap">
-    <div class="head single"><h2 id="st-h">Running on your chart in about five minutes.</h2></div>
+    <div class="head single"><h2 id="st-h">Funcionando en tu gráfico en unos cinco minutos.</h2></div>
     <div class="steps">
-      <div class="step"><span class="n">Step 1</span><h3>Message us</h3><p>Send us a WhatsApp. We answer your questions and send your copy of Legion AI with simple install steps.</p></div>
-      <div class="step"><span class="n">Step 2</span><h3>Drop it on your chart</h3><p>Copy one file into MetaTrader 4 and drag it onto any chart. No extra software, no add-ons.</p></div>
-      <div class="step"><span class="n">Step 3</span><h3>Read, then decide</h3><p>Check the overall reading, look at your wipeout line, and make your call with the full picture in front of you.</p></div>
+      <div class="step"><span class="n">Paso 1</span><h3>Escríbenos</h3><p>Mándanos un WhatsApp. Respondemos tus preguntas y te enviamos tu copia de Legion AI con pasos de instalación sencillos.</p></div>
+      <div class="step"><span class="n">Paso 2</span><h3>Ponlo en tu gráfico</h3><p>Copia un archivo en MetaTrader 4 y arrástralo a cualquier gráfico. Sin programas extra ni complementos.</p></div>
+      <div class="step"><span class="n">Paso 3</span><h3>Lee y luego decide</h3><p>Revisa la lectura general, mira tu línea de quiebre y toma tu decisión con el panorama completo enfrente.</p></div>
     </div>
   </div>
 </section>
@@ -775,16 +784,16 @@ footer p{font-size:13.5px;color:var(--dim);line-height:1.65;max-width:110ch;marg
 <!-- FAQ -->
 <section class="s s-alt" id="faq" aria-labelledby="faq-h">
   <div class="wrap">
-    <div class="head single"><h2 id="faq-h">Questions traders ask us</h2></div>
+    <div class="head single"><h2 id="faq-h">Preguntas que nos hacen los traders</h2></div>
     <div class="faq">
-      <details><summary>Does Legion AI trade for me?</summary><p>No. It is an analysis panel. It reads the market and your account, but every trade is your decision. It never opens, changes or closes an order.</p></details>
-      <details><summary>Do I need experience?</summary><p>Basic MetaTrader 4 knowledge is enough. Every number has a tooltip that explains it in simple words, and the overall reading sums everything up in one sentence.</p></details>
-      <details><summary>Which markets does it work on?</summary><p>Any symbol your MT4 broker offers: Gold, Bitcoin, S&amp;P 500, Nasdaq, US30, forex pairs and more. The Historical Drops tool includes crash history for Gold, Bitcoin, S&amp;P 500, Nasdaq and US30.</p></details>
-      <details><summary>Will it work with my broker?</summary><p>If your broker gives you MetaTrader 4, yes. Legion AI runs inside MT4 and only uses the price data your platform already has.</p></details>
-      <details><summary>Does it run on my phone?</summary><p>The panel runs on MT4 for desktop (Windows, or a Mac or VPS that runs MT4). Your phone gets the alerts through MT4 push notifications.</p></details>
-      <details><summary>Can it guarantee profits?</summary><p>No tool can. Legion AI helps you see the market and your risk more clearly. Results always depend on your decisions, your position size and the market.</p></details>
-      <details><summary>Will it slow down MetaTrader?</summary><p>It only redraws what changed instead of repainting everything on every tick, so it stays light even with all fourteen tools on.</p></details>
-      <details><summary>Is it in English?</summary><p>Yes. The whole panel, including tooltips, buttons and alerts, is in English by default, with Spanish as an option.</p></details>
+      <details><summary>¿Legion AI opera por mí?</summary><p>No. Es un panel de análisis. Lee el mercado y tu cuenta, pero cada operación es decisión tuya. Nunca abre, modifica ni cierra una orden.</p></details>
+      <details><summary>¿Necesito experiencia?</summary><p>Basta con saber lo básico de MetaTrader 4. Cada número tiene un tooltip que lo explica en palabras simples, y la lectura general lo resume todo en una frase.</p></details>
+      <details><summary>¿En qué mercados funciona?</summary><p>En cualquier símbolo que ofrezca tu bróker de MT4: Oro, Bitcoin, S&amp;P 500, Nasdaq, US30, pares de forex y más. La herramienta Caídas Históricas incluye el historial de desplomes de Oro, Bitcoin, S&amp;P 500, Nasdaq y US30.</p></details>
+      <details><summary>¿Funciona con mi bróker?</summary><p>Si tu bróker te da MetaTrader 4, sí. Legion AI corre dentro de MT4 y solo usa los datos de precio que tu plataforma ya tiene.</p></details>
+      <details><summary>¿Funciona en mi teléfono?</summary><p>El panel corre en MT4 de escritorio (Windows, o una Mac o VPS que corra MT4). Tu teléfono recibe las alertas con las notificaciones push de MT4.</p></details>
+      <details><summary>¿Puede garantizar ganancias?</summary><p>Ninguna herramienta puede. Legion AI te ayuda a ver con más claridad el mercado y tu riesgo. Los resultados siempre dependen de tus decisiones, del tamaño de tu posición y del mercado.</p></details>
+      <details><summary>¿Hace más lento MetaTrader?</summary><p>Solo redibuja lo que cambió en lugar de repintar todo en cada tick, así se mantiene ligero incluso con las catorce herramientas encendidas.</p></details>
+      <details><summary>¿Está en español?</summary><p>Sí. Todo el panel, incluidos tooltips, botones y alertas, está en español y en inglés; se cambia con un solo ajuste.</p></details>
     </div>
   </div>
 </section>
@@ -793,11 +802,11 @@ footer p{font-size:13.5px;color:var(--dim);line-height:1.65;max-width:110ch;marg
 <section class="final" aria-labelledby="fin-h">
   <canvas id="terrain2" aria-hidden="true"></canvas>
   <div class="wrap">
-    <h2 id="fin-h">Trade with the full picture, not a hunch.</h2>
-    <p class="lead">Message us today. We will show you the panel live, answer your questions and help you install it.</p>
+    <h2 id="fin-h">Opera con el panorama completo, no con una corazonada.</h2>
+    <p class="lead">Escríbenos hoy. Te mostramos el panel en vivo, respondemos tus preguntas y te ayudamos a instalarlo.</p>
     <div class="ctas">
-      <a class="btn btn-p" href="https://wa.me/51960685684">Message us on WhatsApp</a>
-      <a class="btn btn-g" href="#panel">Tour the panel again</a>
+      <a class="btn btn-p" href="https://wa.me/51960685684">Escríbenos por WhatsApp</a>
+      <a class="btn btn-g" href="#panel">Ver el panel otra vez</a>
     </div>
   </div>
 </section>
@@ -805,16 +814,119 @@ footer p{font-size:13.5px;color:var(--dim);line-height:1.65;max-width:110ch;marg
 
 <footer>
   <div class="wrap">
-    <a class="brand" href="#top" aria-label="Back to top"><b>LEGION <span>AI</span></b></a>
-    <h3>Risk disclosure</h3>
-    <p>Trading foreign exchange, CFDs, metals, stock indices and cryptocurrencies on margin carries a high level of risk and may not be suitable for all investors. You could lose some or all of your money. Legion AI is an analysis tool for MetaTrader 4. It does not place, modify or close trades, does not manage money and does not provide personalized investment advice. Readings such as Buy bias, Sell bias and the confidence score measure agreement between technical tools; they are not predictions or guarantees.</p>
-    <p>The results on this page come from one live account traded manually by our team from July 30 to September 18, converted from Mexican pesos to US dollars at 18.20 MXN/USD. The equity curve between its start and end points is approximate. These results are not typical and are not a promise of what you will earn. Past performance is not indicative of future results. Panel images on this page are recreations of the software with sample values; campaign posters are artwork.</p>
-    <p>MetaTrader 4 is a trademark of its owner. Legion AI is not affiliated with MetaQuotes or with any broker.</p>
+    <a class="brand" href="#top" aria-label="Volver arriba"><b>LEGION <span>AI</span></b></a>
+    <h3>Aviso de riesgo</h3>
+    <p>Operar divisas, CFD, metales, índices bursátiles y criptomonedas con margen conlleva un alto nivel de riesgo y puede no ser adecuado para todos los inversionistas. Podrías perder parte o la totalidad de tu dinero. Legion AI es una herramienta de análisis para MetaTrader 4. No abre, modifica ni cierra operaciones, no administra dinero y no brinda asesoría de inversión personalizada. Lecturas como Sesgo comprador, Sesgo vendedor y el puntaje de confianza miden el acuerdo entre herramientas técnicas; no son predicciones ni garantías.</p>
+    <p>Los resultados de esta página provienen de una cuenta real operada manualmente por nuestro equipo del 30 de julio al 18 de septiembre, convertidos de pesos mexicanos a dólares a 18.20 MXN/USD. La curva de capital entre su punto inicial y final es aproximada. Estos resultados no son típicos ni una promesa de lo que ganarás. El rendimiento pasado no es indicativo de resultados futuros. Las imágenes del panel en esta página son recreaciones del software con valores de muestra; los pósters de campaña son arte.</p>
+    <p>MetaTrader 4 es una marca registrada de su propietario. Legion AI no está afiliado a MetaQuotes ni a ningún bróker.</p>
   </div>
 </footer>
 
 <!-- ===== Native panel template (English) ===== -->
 <template id="panelTpl">
+<div class="lp">
+  <div class="hd">
+    <div><div class="ttl">LEGION AI</div><div class="sub">TABLERO DE MERCADO  /  XAUUSD  |  M15</div></div>
+    <div class="iaTop">IA: SESGO VENDEDOR  -43  |  61%</div>
+    <div class="tb"><span>R</span><span>-</span><span>&gt;&gt;</span></div>
+  </div>
+  <div class="tabs"><span class="on">RESUMEN</span><span>HERRAMIENTAS</span><span>VELA ZOOM</span><span>QUIEBRE</span><span>CAIDAS</span><span>OB + FVG</span></div>
+
+  <div class="card">
+    <div class="ch"><span>CUENTA Y POSICION</span><span class="g">BID 4082.564   ASK 4082.732   SPR 16.8   <span style="color:#E5483F">D1 -1.74%</span></span></div>
+    <div class="g4">
+      <div class="box"><div class="l"><span>BALANCE</span><span>USD</span></div><div class="v">23,893.31</div></div>
+      <div class="box"><div class="l"><span>EQUIDAD</span></div><div class="v">23,893.31</div></div>
+      <div class="box"><div class="l"><span>FLOTANTE</span><span>0.00%</span></div><div class="v dim">0.00</div></div>
+      <div class="box"><div class="l"><span>NIVEL MARGEN</span><span>SO 0%</span></div><div class="v dim">SIN USO</div></div>
+      <div class="box"><div class="l"><span>POSICION</span></div><div class="v dim">SIN POSICION</div></div>
+      <div class="box"><div class="l"><span>TAMANO USD</span></div><div class="v dim">0</div></div>
+      <div class="box"><div class="l"><span>TAMANO MXN</span><span>FX 18.48</span></div><div class="v dim">0</div></div>
+      <div class="box"><div class="l"><span>APALANCAMIENTO</span></div><div class="v dim">0x</div></div>
+    </div>
+    <div class="wide">
+      <div><div class="l">SE QUEMA EN (STOP OUT)</div><div class="v">SIN POSICION</div><div class="l">Sin operaciones en XAUUSD</div></div>
+      <div><div class="l">MARGIN CALL</div><div class="v">--</div></div>
+      <div><div class="l">COLCHON</div><div class="v">--</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="ch"><span>ESTADO IA</span><span class="g">LECTURA GENERAL DEL MERCADO</span></div>
+    <div class="verd">
+      <div class="vbox"><div class="big">SESGO VENDEDOR</div><div class="s">Ventaja vendedora moderada. Espera la pistola ADX para entrar.</div></div>
+      <div class="cbox"><div class="s">CONFIANZA</div><div class="big">61%</div></div>
+    </div>
+    <div class="meter"><span style="color:#E5483F">VENTA</span><div class="segs"><i></i><i></i><i></i><i></i><i></i><i></i><i class="r1"></i><i class="r2"></i><i class="r2"></i><i class="r2"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><span style="color:#4FD27A;text-align:right">COMPRA</span></div>
+    <div class="scale"><span>-100</span><b>PUNTAJE -43</b><span style="text-align:right">+100</span></div>
+    <div class="chips">
+      <div class="chip"><div class="t"><span>RSI</span><span>P30</span></div><div class="v"><b>-83</b><i>BAJ+</i></div></div>
+      <div class="chip"><div class="t"><span>ADX</span><span>P30</span></div><div class="v"><b>-59</b><i>BAJ+</i></div></div>
+      <div class="chip"><div class="t"><span>FLOW</span><span>P25</span></div><div class="v"><b>-39</b><i>BAJ</i></div></div>
+      <div class="chip"><div class="t"><span>PAR</span><span>P15</span></div><div class="v"><b>-63</b><i>BAJ+</i></div></div>
+      <div class="chip gr"><div class="t"><span>ESTR</span><span>P25</span></div><div class="v"><b>+33</b><i>ALC</i></div></div>
+      <div class="chip na"><div class="t"><span>VELA</span><span>P10</span></div><div class="v"><b>--</b><i></i></div></div>
+    </div>
+    <div class="read">
+      <div class="h">LECTURA IA</div>
+      <div class="rd">&gt; RSI   BAJISTA FUERTE -83% | 6/6 BAJ | acelera a favor</div>
+      <div class="rd">&gt; ADX   alto -46 venta | bajo -70 venta fuerte | sin pistola</div>
+      <div class="rd">&gt; FLOW  corto +1 | medio -35 | largo -84 | sin consenso</div>
+      <div class="rd">&gt; PAR  XAU 0.9 vs USD 9.0 (D1) | XAU 2.7 (M15x20) | domina USD</div>
+      <div class="gn">&gt; ESTR  2 alc / 1 baj | NO SINCRONIZADO</div>
+      <div class="gy">&gt; VELA  sin vela madre (tecla S + clic o ULTIMA VELA)</div>
+      <div class="bl">&gt; VOL   RVOL 1.77x ALTO proy | NUEVA YORK</div>
+      <div class="rd">&gt; VOTOS a favor 4 | en contra 1 | neutros 0 de 5 | sin pistola</div>
+    </div>
+  </div>
+
+  <div class="row2">
+    <div class="card">
+      <div class="ch"><span>RSI Dash</span></div>
+      <table class="rsi" data-rsi></table>
+      <div class="sum">
+        <span>SESGO</span><span class="rd">BAJISTA FUERTE</span>
+        <span>FUERZA</span><span class="rd">-83%  6/6 BAJ</span>
+        <span>IMPULSO</span><span class="rd">ACELERA  3 BAJAN</span>
+        <span>CIERRE</span><span>M1   00:55</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ch"><span>ADX PISTOLA MTF</span></div>
+      <table class="adx" data-adx></table>
+      <div class="noent">NO ENTRES</div>
+    </div>
+  </div>
+
+  <div class="row3">
+    <div>
+      <div class="card">
+        <div class="ch"><span>ESTRUCTURA MTF  |  IMPULSOS ATR</span></div>
+        <div class="struct">
+          <div style="display:flex;justify-content:space-between;font-size:9.5px;margin-bottom:3px"><span>XAUUSD   <span class="yl">MIXTO 2/1</span></span><span>18:04:05</span></div>
+          <div data-struct></div>
+          <div class="nos"><b>NO SINCRONIZADO</b><br>No operar: 2 alc / 1 baj en W1 D1 H4</div>
+          <div class="btnr"><span>ACTUAL</span><span>H1</span><span>H4</span><span>D1</span><span>W1</span></div>
+          <div class="btnr"><span class="k1">PANTALLA</span><span class="k2">ESTR</span><span>FIBO</span><span class="k3">MOSTRAR</span><span class="k4">DIBUJOS</span></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="ch"><span>FUERZA DEL PAR</span></div>
+        <div class="pair"><span class="yl">XAU</span><span class="yl">0.9<br>2.7</span><div><div class="bars" data-bars="2"></div><div class="bars" data-bars="5" style="margin-top:2px"></div></div></div>
+        <div class="pair" style="margin-top:4px"><span class="yl">USD</span><span class="yl">9.0<br>7.2</span><div><div class="bars" data-bars="18"></div><div class="bars" data-bars="14" style="margin-top:2px"></div></div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ch"><span>FLOWPULSE</span></div>
+      <table class="flow" data-flow></table>
+      <div style="display:flex;justify-content:space-between;font-size:8.5px;color:#9AA3B2;margin-top:3px"><span>TF</span><span>DIR</span><span>FLOW</span></div>
+    </div>
+  </div>
+  <div class="ft"><span>TECLAS  P plegar  Z/X zoom  C cruz  R rectangulo<br>ON/OFF  E sesiones  Y psy  O OB  F FVG  T estructura  H caidas  V vela zoom</span><span>NO GARANTIZA RESULTADOS</span></div>
+</div>
+</template>
+
+<template id="panelTplEn">
 <div class="lp">
   <div class="hd">
     <div><div class="ttl">LEGION AI</div><div class="sub">MARKET DASHBOARD  /  XAUUSD  |  M15</div></div>
@@ -945,12 +1057,14 @@ footer p{font-size:13.5px;color:var(--dim);line-height:1.65;max-width:110ch;marg
     ['M5','s','Impulsing','above 4,107.349','00:00:55'],
     ['M1','s','CHoCH','above 4,090.685','00:00:55']
   ];
+  var STRUCT_ES = {Correcting:'Corrigiendo', Impulsing:'Impulsando'};
   var flow = [['8 D',-78],['7 D',-78],['6 D',-87],['5 D',-87],['4 D',-87],['3 D',-87],['2 D',-85],['1 D',-81],['18 H',-81],['12 H',-78],['6 H',-45],['4 H',8],['2 H',-24],['1 H',7],['45 M',-53],['30 M',7],['15 M',7],['10 M',7],['5 M',7],['1 M',34]];
 
   function buildPanel(host, full){
-    var node = document.getElementById('panelTpl').content.cloneNode(true);
+    var tplId = host.getAttribute('data-tpl') || 'panelTpl', en = tplId === 'panelTplEn';
+    var node = document.getElementById(tplId).content.cloneNode(true);
     var h = '<tr><td></td>'; for (var i=10;i>=1;i--) h += '<th>'+i+'</th>';
-    h += '<th style="color:#C9CFD8">RSI</th><th style="color:#C9CFD8">CHG</th><th style="color:#C9CFD8">STREAK</th></tr>';
+    h += '<th style="color:#C9CFD8">RSI</th><th style="color:#C9CFD8">'+(en?'CHG':'VAR')+'</th><th style="color:#C9CFD8">'+(en?'STREAK':'RACHA')+'</th></tr>';
     rsiRows.forEach(function(r){
       h += '<tr><td class="tf">'+r[0]+'</td>';
       for (var j=0;j<10;j++) h += '<td><i class="c" style="background:'+C[r[1][j]]+'"></i></td>';
@@ -967,7 +1081,7 @@ footer p{font-size:13.5px;color:var(--dim);line-height:1.65;max-width:110ch;marg
     var s = '';
     structRows.forEach(function(r){
       if (!r) { s += '<div style="height:1px;background:#2A3341;margin:3px 0"></div>'; return; }
-      s += '<div class="st '+r[1]+'"><span>'+r[0]+'</span><span class="tag '+r[1]+'">'+(r[1]==='b'?'BULLISH':'BEARISH')+'</span><span>'+r[2]+'</span><span>'+r[3]+'</span><span class="t">'+r[4]+'</span></div>';
+      s += '<div class="st '+r[1]+'"><span>'+r[0]+'</span><span class="tag '+r[1]+'">'+(r[1]==='b'?(en?'BULLISH':'ALCISTA'):(en?'BEARISH':'BAJISTA'))+'</span><span>'+(en?r[2]:(STRUCT_ES[r[2]]||r[2]))+'</span><span>'+(en?r[3]:r[3].replace('below','bajo').replace('above','sobre'))+'</span><span class="t">'+r[4]+'</span></div>';
     });
     node.querySelector('[data-struct]').innerHTML = s;
     var f = '';
@@ -1106,31 +1220,31 @@ footer p{font-size:13.5px;color:var(--dim);line-height:1.65;max-width:110ch;marg
     for (var r = 0; r < 6; r++) { var q = P(-0.45, r + 0.5, 0); ctx.fillText(rsiRows[r][0], q[0] - 4, q[1] + 8); }
     ctx.textAlign = 'center'; ctx.fillStyle = '#7787A0'; ctx.font = '500 22px Geist, sans-serif';
     var l1 = P(0.5, 6.55, 0), l2 = P(9.5, 6.55, 0);
-    ctx.fillText('10 candles ago', l1[0], l1[1] + 34); ctx.fillText('newest candle', l2[0], l2[1] + 34);
+    ctx.fillText('hace 10 velas', l1[0], l1[1] + 34); ctx.fillText('vela más reciente', l2[0], l2[1] + 34);
   })();
 
   /* ---------- historical drops ---------- */
   var drops = {
-    'S&P 500': [['Stagflation','1973.01','1974.10','1980.07',48,'-48%'],['Black Monday','1987.08','1987.12','1989.07',34,'-34%'],['Dot-com bust','2000.03','2002.10','2007.05',49,'-49%'],['Financial crisis','2007.10','2009.03','2013.03',57,'-57%'],['COVID crash','2020.02','2020.03','2020.08',34,'-34%'],['Inflation and rates','2022.01','2022.10','2024.01',25,'-25%'],['Tariff shock','2025.02','2025.04','2025.06',19,'-19%']],
-    'Nasdaq 100': [['Black Monday','1987.08','1987.10','1989.08',36,'-36%'],['Dot-com bubble','2000.03','2002.10','2016.08',83,'-83%'],['Financial crisis','2007.10','2009.03','2011.01',54,'-54%'],['COVID crash','2020.02','2020.03','2020.06',30,'-28% to -30%'],['Bear market 2022','2021.11','2022.12','2023.12',36,'-35% to -36%'],['Tariff shock','2025.02','2025.04','2025.06',23,'-23%']],
-    'US30': [['Stagflation','1973.01','1974.12','1982.11',45,'-45%'],['Black Monday','1987.08','1987.10','1989.08',36,'-36%'],['Dot-com + 9/11','2000.01','2002.10','2006.10',38,'-38%'],['Financial crisis','2007.10','2009.03','2013.03',54,'-54%'],['COVID crash','2020.02','2020.03','2020.11',37,'-37%'],['Inflation and rates','2022.01','2022.09','2023.12',21,'-21%'],['Tariff shock','2024.12','2025.04','2025.08',19,'-16% to -19%']],
-    'Gold': [['Correction 1975-76','1974.12','1976.08','1978.07',47,'-47%'],['End of the 70s rally','1980.01','1999.07','2008.01',70,'-70%'],['Financial crisis','2008.03','2008.10','2009.09',33,'-30% to -33%'],['End of the 2011-15 rally','2011.09','2015.12','2020.07',45,'-45%'],['Correction 2020-22','2020.08','2022.09','2023.05',22,'-22%']],
-    'Bitcoin': [['Mt.Gox bubble','2011.06','2011.11','2013.02',93,'-93%'],['Flash crash','2013.04','2013.04','2013.11',80,'-75% to -80%'],['Bear market 2014','2013.11','2015.01','2017.02',87,'-87%'],['Bear market 2018','2017.12','2018.12','2020.12',84,'-84%'],['COVID crash','2020.02','2020.03','2020.07',63,'-63%'],['China mining ban','2021.04','2021.06','2021.10',56,'-56%'],['Bear market 2022','2021.11','2022.11','2024.03',77,'-77%'],['Correction 2024','2024.03','2024.08','2024.11',33,'-33%'],['Tariff shock','2025.01','2025.04','2025.05',32,'-32%'],['Cycle 2025-26','2025.10','2026.06','',54,'-52% to -54%']]
+    'S&P 500': [['Estanflación','1973.01','1974.10','1980.07',48,'-48%'],['Lunes Negro','1987.08','1987.12','1989.07',34,'-34%'],['Estallido punto com','2000.03','2002.10','2007.05',49,'-49%'],['Crisis financiera','2007.10','2009.03','2013.03',57,'-57%'],['Desplome COVID','2020.02','2020.03','2020.08',34,'-34%'],['Inflación y tasas','2022.01','2022.10','2024.01',25,'-25%'],['Choque arancelario','2025.02','2025.04','2025.06',19,'-19%']],
+    'Nasdaq 100': [['Lunes Negro','1987.08','1987.10','1989.08',36,'-36%'],['Burbuja punto com','2000.03','2002.10','2016.08',83,'-83%'],['Crisis financiera','2007.10','2009.03','2011.01',54,'-54%'],['Desplome COVID','2020.02','2020.03','2020.06',30,'-28% a -30%'],['Mercado bajista 2022','2021.11','2022.12','2023.12',36,'-35% a -36%'],['Choque arancelario','2025.02','2025.04','2025.06',23,'-23%']],
+    'US30': [['Estanflación','1973.01','1974.12','1982.11',45,'-45%'],['Lunes Negro','1987.08','1987.10','1989.08',36,'-36%'],['Punto com + 11-S','2000.01','2002.10','2006.10',38,'-38%'],['Crisis financiera','2007.10','2009.03','2013.03',54,'-54%'],['Desplome COVID','2020.02','2020.03','2020.11',37,'-37%'],['Inflación y tasas','2022.01','2022.09','2023.12',21,'-21%'],['Choque arancelario','2024.12','2025.04','2025.08',19,'-16% a -19%']],
+    'Oro': [['Corrección 1975-76','1974.12','1976.08','1978.07',47,'-47%'],['Fin del rally de los 70','1980.01','1999.07','2008.01',70,'-70%'],['Crisis financiera','2008.03','2008.10','2009.09',33,'-30% a -33%'],['Fin del rally 2011-15','2011.09','2015.12','2020.07',45,'-45%'],['Corrección 2020-22','2020.08','2022.09','2023.05',22,'-22%']],
+    'Bitcoin': [['Burbuja Mt.Gox','2011.06','2011.11','2013.02',93,'-93%'],['Flash crash','2013.04','2013.04','2013.11',80,'-75% a -80%'],['Mercado bajista 2014','2013.11','2015.01','2017.02',87,'-87%'],['Mercado bajista 2018','2017.12','2018.12','2020.12',84,'-84%'],['Desplome COVID','2020.02','2020.03','2020.07',63,'-63%'],['Prohibición minera en China','2021.04','2021.06','2021.10',56,'-56%'],['Mercado bajista 2022','2021.11','2022.11','2024.03',77,'-77%'],['Corrección 2024','2024.03','2024.08','2024.11',33,'-33%'],['Choque arancelario','2025.01','2025.04','2025.05',32,'-32%'],['Ciclo 2025-26','2025.10','2026.06','',54,'-52% a -54%']]
   };
-  var MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var MON = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
   function md(s){ var p = s.split('.'); return MON[+p[1]-1] + ' ' + p[0]; }
   function months(a,b){ var p = a.split('.'), q = b.split('.'); return (q[0]-p[0])*12 + (q[1]-p[1]); }
-  function dur(m){ if (m < 1) return 'under a month'; if (m < 24) return m + (m === 1 ? ' month' : ' months'); var y = m/12; return (Math.round(y*10)/10) + ' years'; }
+  function dur(m){ if (m < 1) return 'menos de un mes'; if (m < 24) return m + (m === 1 ? ' mes' : ' meses'); var y = m/12; return (Math.round(y*10)/10) + ' años'; }
   var tabs = document.getElementById('dtabs'), rows = document.getElementById('drows'), title = document.getElementById('dtitle');
   function show(name){
     title.textContent = name;
     tabs.querySelectorAll('button').forEach(function(b){ b.setAttribute('aria-selected', b.textContent === name ? 'true' : 'false'); b.tabIndex = b.textContent === name ? 0 : -1; });
     var max = name === 'Bitcoin' || name === 'Nasdaq 100' ? 100 : 70, h = '';
     drops[name].forEach(function(d){
-      var w = d[4] / max * 100, dates = d[1] === d[2] ? md(d[1]) : md(d[1]) + ' to ' + md(d[2]);
-      var rec = d[3] ? 'back in ' + dur(months(d[2], d[3])) : 'not recovered yet';
+      var w = d[4] / max * 100, dates = d[1] === d[2] ? md(d[1]) : md(d[1]) + ' a ' + md(d[2]);
+      var rec = d[3] ? 'recuperó en ' + dur(months(d[2], d[3])) : 'aún sin recuperar';
       h += '<div class="drow"><div><div class="nm">' + d[0] + '</div><div class="dt">' + dates + '</div></div>' +
-           '<div class="dbar" title="' + d[0] + ': ' + d[5] + ' peak to low"><i style="width:' + w.toFixed(1) + '%"></i><span style="left:calc(' + w.toFixed(1) + '% + 10px)">' + d[5] + '</span></div>' +
+           '<div class="dbar" title="' + d[0] + ': ' + d[5] + ' de máximo a mínimo"><i style="width:' + w.toFixed(1) + '%"></i><span style="left:calc(' + w.toFixed(1) + '% + 10px)">' + d[5] + '</span></div>' +
            '<div class="rc' + (d[3] ? '' : ' no') + '">' + rec + '</div></div>';
     });
     rows.innerHTML = h;
@@ -1161,6 +1275,7 @@ footer p{font-size:13.5px;color:var(--dim);line-height:1.65;max-width:110ch;marg
   }
 })();
 </script>
-<script src="/pwa-banner.js" defer></script>
+<script src="/i18n.js?v=f1c68ee2fb" defer></script>
+<script src="/pwa-banner.js?v=9d36e4260f" defer></script>
 </body>
 </html>

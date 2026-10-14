@@ -1,6 +1,22 @@
 (function () {
   "use strict";
   var KEY = "legion-ai-pwa-dismiss";
+  var MESSAGES = {
+    es: {
+      label: "Instalar Legion AI",
+      prompt: "Acceso con un toque desde tu pantalla de inicio o escritorio.",
+      install: "Instalar Legion AI",
+      ios: "Instala Legion AI: toca Compartir y luego \u201cA\u00f1adir a pantalla de inicio\u201d.",
+      dismiss: "Cerrar"
+    },
+    en: {
+      label: "Install Legion AI",
+      prompt: "One-tap access from your home screen or desktop.",
+      install: "Install Legion AI",
+      ios: "Install Legion AI: tap Share, then \u201cAdd to Home Screen\u201d.",
+      dismiss: "Dismiss"
+    }
+  };
   var standalone =
     window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
   if (standalone) return;
@@ -10,21 +26,30 @@
 
   var ua = window.navigator.userAgent;
   var isIos = /iphone|ipad|ipod/i.test(ua) || (/macintosh/i.test(ua) && navigator.maxTouchPoints > 1);
+  var locale = document.documentElement.lang === "en" ? "en" : "es";
   var deferred = null;
   var bar = null;
+  var mode = null;
+
+  function t() {
+    return MESSAGES[locale];
+  }
 
   function dismiss() {
     try {
       localStorage.setItem(KEY, String(Date.now()));
     } catch (e) {}
     if (bar) bar.remove();
+    bar = null;
   }
 
-  function render(text, withInstall) {
-    if (bar) return;
+  function render(nextMode) {
+    mode = nextMode;
+    if (bar) bar.remove();
+    var m = t();
     bar = document.createElement("div");
     bar.setAttribute("role", "dialog");
-    bar.setAttribute("aria-label", "Install Legion AI");
+    bar.setAttribute("aria-label", m.label);
     bar.style.cssText =
       "position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:9999;" +
       "width:min(560px,calc(100% - 24px));display:flex;align-items:center;gap:12px;" +
@@ -40,15 +65,15 @@
 
     var msg = document.createElement("p");
     msg.style.cssText = "margin:0;flex:1";
-    msg.textContent = text;
+    msg.textContent = mode === "ios" ? m.ios : m.prompt;
 
     bar.appendChild(icon);
     bar.appendChild(msg);
 
-    if (withInstall) {
+    if (mode === "prompt") {
       var btn = document.createElement("button");
       btn.type = "button";
-      btn.textContent = "Install Legion AI";
+      btn.textContent = m.install;
       btn.style.cssText =
         "flex:none;min-height:44px;padding:0 16px;border:0;border-radius:10px;cursor:pointer;" +
         "background:#45E2A3;color:#04070F;font:700 15px Geist,system-ui,sans-serif";
@@ -65,7 +90,7 @@
 
     var close = document.createElement("button");
     close.type = "button";
-    close.setAttribute("aria-label", "Dismiss");
+    close.setAttribute("aria-label", m.dismiss);
     close.textContent = "\u00d7";
     close.style.cssText =
       "flex:none;width:44px;height:44px;border:0;border-radius:10px;cursor:pointer;" +
@@ -76,11 +101,16 @@
     document.body.appendChild(bar);
   }
 
+  window.addEventListener("legion-ai:locale", function (e) {
+    locale = e.detail && e.detail.locale === "en" ? "en" : "es";
+    if (bar && mode) render(mode);
+  });
+
   window.addEventListener("beforeinstallprompt", function (e) {
     e.preventDefault();
     deferred = e;
     setTimeout(function () {
-      render("One-tap access from your home screen or desktop.", true);
+      if (!bar) render("prompt");
     }, 4000);
   });
 
@@ -88,7 +118,7 @@
 
   if (isIos) {
     setTimeout(function () {
-      render("Install Legion AI: tap Share, then \u201cAdd to Home Screen\u201d.", false);
+      if (!bar) render("ios");
     }, 4000);
   }
 })();
