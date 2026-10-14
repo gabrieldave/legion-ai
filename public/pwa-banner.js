@@ -26,7 +26,7 @@
     bar.setAttribute("role", "dialog");
     bar.setAttribute("aria-label", "Install Legion AI");
     bar.style.cssText =
-      "position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:9999;" +
+      "position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:9999;" +
       "width:min(560px,calc(100% - 24px));display:flex;align-items:center;gap:12px;" +
       "padding:12px 14px;border-radius:14px;background:#0C1630;border:1px solid #27395E;" +
       "box-shadow:0 18px 50px rgba(0,0,0,.55);color:#EEF3FA;font:500 15px/1.4 Geist,system-ui,sans-serif";
@@ -48,9 +48,9 @@
     if (withInstall) {
       var btn = document.createElement("button");
       btn.type = "button";
-      btn.textContent = "Install";
+      btn.textContent = "Install Legion AI";
       btn.style.cssText =
-        "flex:none;min-height:40px;padding:0 16px;border:0;border-radius:10px;cursor:pointer;" +
+        "flex:none;min-height:44px;padding:0 16px;border:0;border-radius:10px;cursor:pointer;" +
         "background:#45E2A3;color:#04070F;font:700 15px Geist,system-ui,sans-serif";
       btn.addEventListener("click", function () {
         if (!deferred) return;
@@ -68,7 +68,7 @@
     close.setAttribute("aria-label", "Dismiss");
     close.textContent = "\u00d7";
     close.style.cssText =
-      "flex:none;width:40px;height:40px;border:0;border-radius:10px;cursor:pointer;" +
+      "flex:none;width:44px;height:44px;border:0;border-radius:10px;cursor:pointer;" +
       "background:transparent;color:#A9B7CB;font-size:24px;line-height:1";
     close.addEventListener("click", dismiss);
     bar.appendChild(close);
@@ -80,7 +80,7 @@
     e.preventDefault();
     deferred = e;
     setTimeout(function () {
-      render("Install Legion AI on your device for one-tap access.", true);
+      render("One-tap access from your home screen or desktop.", true);
     }, 4000);
   });
 

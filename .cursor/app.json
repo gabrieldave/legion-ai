@@ -1,0 +1,12 @@
+{
+  "app_id": "legion-ai",
+  "name": "Legion AI",
+  "description": "Landing comercial de Legion AI, panel inteligente de análisis de mercados para MetaTrader 4 (Oro, Bitcoin, índices y forex).",
+  "domain": "legionai.iareal.net",
+  "port": 3043,
+  "coolify_app_uuid": "xlpom9jg332j5jbnzutants7",
+  "web_style_catalog": "tools/web-style-catalog",
+  "registry": "tools/web-style-catalog/apps.registry.json",
+  "catalog": "tools/web-style-catalog/catalog.json",
+  "recommend_script": "python3 tools/web-style-catalog/recommend.py legion-ai"
+}

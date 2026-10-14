@@ -1,7 +1,7 @@
 # Legion AI — landing estática endurecida
 # Multi-stage · nginx alpine pinneado · no-root · imagen <300MB
 
-FROM alpine:3.20 AS assets
+FROM alpine:3.24 AS assets
 ARG SOURCE_COMMIT=unknown
 WORKDIR /src
 COPY public/ ./public/
@@ -17,7 +17,7 @@ RUN test -f public/index.html \
  && find public -type f \( -name '*.html' -o -name '*.js' -o -name '*.svg' -o -name '*.webmanifest' -o -name '*.xml' -o -name '*.txt' \) \
       -exec gzip -9 -k {} \;
 
-FROM nginx:1.27-alpine AS runner
+FROM nginx:1.30.6-alpine AS runner
 RUN rm -f /etc/nginx/conf.d/default.conf \
  && chown -R nginx:nginx /var/cache/nginx
 

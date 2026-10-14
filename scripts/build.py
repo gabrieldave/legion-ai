@@ -125,6 +125,11 @@ def main() -> None:
 
     html = pattern.sub(extract, html)
 
+    html = html.replace(
+        '<meta name="viewport" content="width=device-width, initial-scale=1">',
+        '<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">',
+        1,
+    )
     if 'rel="manifest"' not in html:
         html = html.replace("<link rel=\"preconnect\"", HEAD_EXTRA + "<link rel=\"preconnect\"", 1)
     if "pwa-banner.js" not in html:
