@@ -83,6 +83,25 @@ SCANNER_CSS = """
 }
 """
 
+RESULTS_CSS = """
+.proofreal{margin-top:60px;display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:56px;align-items:center}
+.pr-kicker{margin:0;font:600 12px/1 var(--mono);letter-spacing:.14em;color:var(--mint)}
+.pr-label{margin:26px 0 0;font:600 13px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--mist)}
+.pr-big{margin:10px 0 0;font-family:var(--display);font-weight:800;font-size:clamp(36px,3.6vw,46px);line-height:1.05;letter-spacing:-0.02em;color:var(--mint);font-variant-numeric:tabular-nums}
+.pr-big span{font-size:.45em;color:var(--mist);letter-spacing:0;white-space:nowrap}
+.pr-usd{margin:14px 0 0;color:var(--mist);font-size:17px}
+.pr-stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:30px 0 0}
+.pr-stats div{border:1px solid var(--line);border-radius:14px;padding:14px 16px;background:rgba(12,22,48,.5)}
+.pr-stats dt{font:600 11px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--dim)}
+.pr-stats dd{margin:9px 0 0;font:600 18px/1.15 var(--mono);color:var(--text)}
+.pr-stats .mint{color:var(--mint)}.pr-stats .ember{color:var(--ember)}.pr-stats .amber{color:var(--amber)}
+.pr-note{margin-top:22px}
+.pr-shot{display:block;justify-self:end;width:100%;max-width:670px;border-radius:16px;overflow:hidden;border:1px solid var(--line2);background:#0B0F17;box-shadow:0 50px 110px -30px rgba(0,0,0,.9),0 0 80px -28px rgba(69,226,163,.35)}
+.pr-shot img{display:block;width:100%;height:auto}
+@media (max-width:960px){.proofreal{grid-template-columns:minmax(0,1fr);gap:36px}.pr-shot{justify-self:center}}
+@media (max-width:600px){.pr-big{font-size:clamp(32px,10vw,42px)}.pr-stats dd{font-size:15px}}
+"""
+
 FAVICON_SVG = """<svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 34 34"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6DF0BB"/><stop offset="1" stop-color="#1D9E70"/></linearGradient></defs><rect width="34" height="34" rx="7" fill="#04070F"/><path d="M17 2 31 10v14L17 32 3 24V10Z" fill="none" stroke="url(#lg)" stroke-width="2"/><path d="M10 21l5-6 4 3 5-7" fill="none" stroke="#45E2A3" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
 """
 
@@ -95,6 +114,31 @@ def load_module(name: str):
 
 SCANNER = load_module("scanner")
 SCANNER_SRC = ROOT / "source" / "scanner"
+RESULTS = load_module("results")
+RESULTS_SRC = ROOT / "source" / "results"
+PROOF_IMGS = re.compile(r'<div class="proofimgs">.*?</div>\s*(?=<p class="small" style="margin-top:30px)', re.S)
+
+
+def results_proof(locale: str) -> str:
+    c = RESULTS.ES if locale == "es" else RESULTS.EN
+    version = hashlib.sha256((RESULTS_SRC / RESULTS.IMAGE).read_bytes()).hexdigest()[:10]
+    src = f"/img/results/{RESULTS.IMAGE}?v={version}"
+    w, h = RESULTS.SIZE
+    stats = "".join(
+        f'<div><dt>{escape(k)}</dt><dd class="{tone}">{escape(v)}</dd></div>' for k, v, tone in c["stats"]
+    )
+    return f"""<div class="proofreal">
+      <div>
+        <p class="pr-kicker">{escape(c["kicker"])}</p>
+        <p class="pr-label">{escape(c["label"])}</p>
+        <p class="pr-big">{escape(c["big"])} <span>{escape(c["currency"])}</span></p>
+        <p class="pr-usd">{escape(c["usd"])}</p>
+        <dl class="pr-stats">{stats}</dl>
+        <p class="small pr-note">{escape(c["note"])} {escape(c["hint"])}</p>
+      </div>
+      <a class="pr-shot" href="{src}" target="_blank" rel="noopener"><img src="{src}" alt="{escape(c["alt"])}" width="{w}" height="{h}" loading="lazy" decoding="async"></a>
+    </div>
+    """
 
 
 def scanner_img(name: str, alt: str, eager: bool = False) -> str:
@@ -173,7 +217,10 @@ def lang_switch(locale: str) -> str:
 
 
 def localize(html: str, locale: str, meta: dict) -> str:
-    html = html.replace("</style>", LANG_CSS + SCANNER_CSS + "</style>", 1)
+    html = html.replace("</style>", LANG_CSS + SCANNER_CSS + RESULTS_CSS + "</style>", 1)
+    html, n = PROOF_IMGS.subn(results_proof(locale), html, count=1)
+    if n != 1:
+        sys.exit('ERROR: no encuentro <div class="proofimgs"> en resultados para poner el reporte original')
     if html.count("<!-- PROTECTION -->") != 1:
         sys.exit("ERROR: no encuentro <!-- PROTECTION --> para insertar la sección del escáner")
     html = html.replace("<!-- PROTECTION -->", scanner_section(locale) + "<!-- PROTECTION -->", 1)
@@ -276,6 +323,10 @@ def main() -> None:
     for name in ("i18n.js", "scanner.js"):
         shutil.copyfile(ROOT / "assets" / name, PUBLIC / name)
     shutil.copytree(SCANNER_SRC, PUBLIC / "img" / "scanner")
+    shutil.copytree(RESULTS_SRC, PUBLIC / "img" / "results")
+    for img in (PUBLIC / "img").glob("*.*"):
+        if f"/img/{img.name}" not in html_en + html_es:
+            img.unlink()
     (PUBLIC / "robots.txt").write_text(f"User-agent: *\nAllow: /\nSitemap: {SITE_URL}/sitemap.xml\n")
     (PUBLIC / "sitemap.xml").write_text(
         '<?xml version="1.0" encoding="UTF-8"?>\n'

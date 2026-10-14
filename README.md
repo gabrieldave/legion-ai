@@ -21,7 +21,11 @@ metadatos sociales y el selector de idioma, y genera `public/index.en.html` y
 
 La sección «Cada pestaña, tal como se ve en tu MT4» usa las capturas de `source/scanner/` y los
 textos bilingües de `i18n/scanner.py`. Para cambiar una captura, reemplaza el archivo (mismo
-nombre), ajusta su tamaño en `SIZES` y vuelve a correr el build. Después del push, Coolify redespliega.
+nombre), ajusta su tamaño en `SIZES` y vuelve a correr el build.
+
+En resultados, las capturas inclinadas del original se sustituyen por la captura plana de
+Analytics MT4 (`source/results/analytics-resumen.jpg`, sin menú lateral y con el número de cuenta
+oculto) y las cifras en pesos de `i18n/results.py`. Después del push, Coolify redespliega.
 
 ## Idiomas (§12.10)
 

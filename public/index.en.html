@@ -422,6 +422,23 @@ footer p{font-size:13.5px;color:var(--dim);line-height:1.65;max-width:110ch;marg
   .scn-pane,.scn-pane.wide{grid-template-columns:minmax(0,1fr);gap:32px}
   .scn-pane:not(.wide)>.scn-shot{max-width:480px}
 }
+
+.proofreal{margin-top:60px;display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:56px;align-items:center}
+.pr-kicker{margin:0;font:600 12px/1 var(--mono);letter-spacing:.14em;color:var(--mint)}
+.pr-label{margin:26px 0 0;font:600 13px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--mist)}
+.pr-big{margin:10px 0 0;font-family:var(--display);font-weight:800;font-size:clamp(36px,3.6vw,46px);line-height:1.05;letter-spacing:-0.02em;color:var(--mint);font-variant-numeric:tabular-nums}
+.pr-big span{font-size:.45em;color:var(--mist);letter-spacing:0;white-space:nowrap}
+.pr-usd{margin:14px 0 0;color:var(--mist);font-size:17px}
+.pr-stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:30px 0 0}
+.pr-stats div{border:1px solid var(--line);border-radius:14px;padding:14px 16px;background:rgba(12,22,48,.5)}
+.pr-stats dt{font:600 11px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--dim)}
+.pr-stats dd{margin:9px 0 0;font:600 18px/1.15 var(--mono);color:var(--text)}
+.pr-stats .mint{color:var(--mint)}.pr-stats .ember{color:var(--ember)}.pr-stats .amber{color:var(--amber)}
+.pr-note{margin-top:22px}
+.pr-shot{display:block;justify-self:end;width:100%;max-width:670px;border-radius:16px;overflow:hidden;border:1px solid var(--line2);background:#0B0F17;box-shadow:0 50px 110px -30px rgba(0,0,0,.9),0 0 80px -28px rgba(69,226,163,.35)}
+.pr-shot img{display:block;width:100%;height:auto}
+@media (max-width:960px){.proofreal{grid-template-columns:minmax(0,1fr);gap:36px}.pr-shot{justify-self:center}}
+@media (max-width:600px){.pr-big{font-size:clamp(34px,10vw,44px)}.pr-stats dd{font-size:15px}}
 </style>
 </head>
 <body>
@@ -782,9 +799,16 @@ footer p{font-size:13.5px;color:var(--dim);line-height:1.65;max-width:110ch;marg
         <div class="hb"><span class="muted" style="font-size:15px">Average loss</span><div class="bar"><i style="width:84%;background:var(--amber)"></i><span class="num">$248</span></div></div>
       </div>
     </div>
-    <div class="proofimgs">
-      <figure class="shot" style="margin:0"><div><img src="/img/report-performance.jpg?v=6aaafb565e" alt="Original performance report in Spanish: 104 closed trades, 91.3% win rate, profit factor 3.51, net 101,663.21 MXN" loading="lazy" width="1300" height="1072"></div><figcaption class="small" style="margin-top:14px">The original report, in Spanish. Account number hidden.</figcaption></figure>
-      <figure class="shot r" style="margin:0"><div><img src="/img/report-curve.jpg?v=7cf80d99bc" alt="Original results curve in Spanish, from July 30 to September 18, ending at 101,663.21 MXN" loading="lazy" width="1300" height="430"></div><figcaption class="small" style="margin-top:14px">The original results curve, in Mexican pesos.</figcaption></figure>
+    <div class="proofreal">
+      <div>
+        <p class="pr-kicker">ORIGINAL REPORT · ANALYTICS MT4</p>
+        <p class="pr-label">Net trading profit</p>
+        <p class="pr-big">+$101,663.21 <span>MXN</span></p>
+        <p class="pr-usd">≈ $5,585.89 USD at 18.20 MXN per dollar</p>
+        <dl class="pr-stats"><div><dt>Gross profit</dt><dd class="mint">$142,217.95 MXN</dd></div><div><dt>Gross loss</dt><dd class="ember">-$40,554.74 MXN</dd></div><div><dt>Trades</dt><dd class="">104 · 95 won</dd></div><div><dt>Win rate</dt><dd class="">91.3%</dd></div><div><dt>Profit factor</dt><dd class="">3.51</dd></div><div><dt>Max drawdown</dt><dd class="amber">$14,095.61 MXN</dd></div></dl>
+        <p class="small pr-note">A real capture of the performance dashboard synced to the account, in Spanish and Mexican pesos. We only cropped the side menu and hid the account number. Click the capture to see it full size.</p>
+      </div>
+      <a class="pr-shot" href="/img/results/analytics-resumen.jpg?v=00d6606328" target="_blank" rel="noopener"><img src="/img/results/analytics-resumen.jpg?v=00d6606328" alt="Analytics MT4 capture: trading summary showing 101,663.21 MXN net profit, 104 trades, 91.3% win rate and a 3.51 profit factor" width="670" height="1024" loading="lazy" decoding="async"></a>
     </div>
     <p class="small" style="margin-top:30px;max-width:900px">One account over seven weeks is a small sample. Past results do not guarantee future results. Your results depend on your own decisions, your broker, your position size and the market.</p>
   </div>
