@@ -6,7 +6,7 @@ ARG SOURCE_COMMIT=unknown
 WORKDIR /src
 COPY public/ ./public/
 COPY nginx/ ./nginx/
-RUN for f in index.es.html index.en.html manifest.webmanifest pwa-banner.js i18n.js icons/icon-192.png icons/icon-512.png; do \
+RUN for f in index.es.html index.en.html i18n.js favicon.svg icons/icon-192.png; do \
       test -f "public/$f" || { echo "falta public/$f"; exit 1; }; \
     done \
  && test "$(wc -c < public/index.es.html)" -gt 10000 \
@@ -15,7 +15,7 @@ RUN for f in index.es.html index.en.html manifest.webmanifest pwa-banner.js i18n
  && grep -q '<html lang="en">' public/index.en.html \
  && ! grep -q 'data:image/jpeg;base64' public/index.es.html public/index.en.html \
  && sed -i "s/__GIT_COMMIT__/${SOURCE_COMMIT}/" nginx/default.conf \
- && find public -type f \( -name '*.html' -o -name '*.js' -o -name '*.svg' -o -name '*.webmanifest' -o -name '*.xml' -o -name '*.txt' \) \
+ && find public -type f \( -name '*.html' -o -name '*.js' -o -name '*.svg' -o -name '*.xml' -o -name '*.txt' \) \
       -exec gzip -9 -k {} \;
 
 FROM nginx:1.30.6-alpine AS runner

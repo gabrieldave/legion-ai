@@ -15,9 +15,9 @@ python3 scripts/build.py "/Users/daveax/Library/Application Support/net.metaquot
 git add -A && git commit -m "Actualiza landing" && git push
 ```
 
-El script copia el HTML a `source/`, extrae las imágenes base64 a `public/img/`, añade manifest,
-iconos, metadatos sociales y el banner de instalación PWA, y genera `public/index.en.html` y
-`public/index.es.html`. Después del push, Coolify redespliega.
+El script copia el HTML a `source/`, extrae las imágenes base64 a `public/img/`, añade iconos,
+metadatos sociales y el selector de idioma, y genera `public/index.en.html` y
+`public/index.es.html`. La landing no es instalable como app (sin manifest ni banner PWA). Después del push, Coolify redespliega.
 
 ## Idiomas (§12.10)
 

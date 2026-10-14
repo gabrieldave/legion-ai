@@ -55,26 +55,6 @@ LANG_CSS = """
 FAVICON_SVG = """<svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 34 34"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6DF0BB"/><stop offset="1" stop-color="#1D9E70"/></linearGradient></defs><rect width="34" height="34" rx="7" fill="#04070F"/><path d="M17 2 31 10v14L17 32 3 24V10Z" fill="none" stroke="url(#lg)" stroke-width="2"/><path d="M10 21l5-6 4 3 5-7" fill="none" stroke="#45E2A3" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
 """
 
-MANIFEST = f"""{{
-  "id": "/",
-  "name": "Legion AI",
-  "short_name": "Legion AI",
-  "description": "MetaTrader 4 market panel / Panel de mercados para MetaTrader 4",
-  "start_url": "/",
-  "scope": "/",
-  "display": "standalone",
-  "background_color": "{THEME}",
-  "theme_color": "{THEME}",
-  "icons": [
-    {{ "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" }},
-    {{ "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }},
-    {{ "src": "/icons/maskable-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" }},
-    {{ "src": "/icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }}
-  ]
-}}
-"""
-
-
 def load_es():
     spec = importlib.util.spec_from_file_location("i18n_es", ROOT / "i18n" / "es.py")
     module = importlib.util.module_from_spec(spec)
@@ -83,14 +63,9 @@ def load_es():
 
 
 def head_extra(meta: dict) -> str:
-    return f"""<link rel="manifest" href="/manifest.webmanifest">
-<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    return f"""<link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/icons/icon-192.png" sizes="192x192" type="image/png">
 <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Legion AI">
 <link rel="canonical" href="{SITE_URL}/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Legion AI">
@@ -117,10 +92,8 @@ def localize(html: str, locale: str, meta: dict) -> str:
     html = html.replace('<link rel="preconnect"', head_extra(meta) + '<link rel="preconnect"', 1)
     html = html.replace(WHATSAPP_BTN, f'<div class="nav-end">{lang_switch(locale)}{WHATSAPP_BTN}', 1)
     html = re.sub(r'(<div class="nav-end">.*?</a>)', r"\1</div>", html, count=1, flags=re.S)
-    scripts = "".join(
-        f'<script src="/{name}?v={asset_version(name)}" defer></script>\n' for name in ("i18n.js", "pwa-banner.js")
-    )
-    return html.replace("</body>", scripts + "</body>", 1)
+    script = f'<script src="/i18n.js?v={asset_version("i18n.js")}" defer></script>\n'
+    return html.replace("</body>", script + "</body>", 1)
 
 
 def asset_version(name: str) -> str:
@@ -209,10 +182,8 @@ def main() -> None:
 
     (PUBLIC / "index.en.html").write_text(html_en, encoding="utf-8")
     (PUBLIC / "index.es.html").write_text(html_es, encoding="utf-8")
-    (PUBLIC / "manifest.webmanifest").write_text(MANIFEST, encoding="utf-8")
     (PUBLIC / "favicon.svg").write_text(FAVICON_SVG, encoding="utf-8")
-    for name in ("pwa-banner.js", "i18n.js"):
-        shutil.copyfile(ROOT / "assets" / name, PUBLIC / name)
+    shutil.copyfile(ROOT / "assets" / "i18n.js", PUBLIC / "i18n.js")
     (PUBLIC / "robots.txt").write_text(f"User-agent: *\nAllow: /\nSitemap: {SITE_URL}/sitemap.xml\n")
     (PUBLIC / "sitemap.xml").write_text(
         '<?xml version="1.0" encoding="UTF-8"?>\n'
@@ -220,9 +191,7 @@ def main() -> None:
         f"<url><loc>{SITE_URL}/</loc></url></urlset>\n"
     )
 
-    for size in (192, 512):
-        draw_icon(size, 0.78).save(PUBLIC / "icons" / f"icon-{size}.png", optimize=True)
-        draw_icon(size, 0.6).save(PUBLIC / "icons" / f"maskable-{size}.png", optimize=True)
+    draw_icon(192, 0.78).save(PUBLIC / "icons" / "icon-192.png", optimize=True)
     draw_icon(180, 0.72).save(PUBLIC / "icons" / "apple-touch-icon.png", optimize=True)
     draw_icon(48, 0.86).save(PUBLIC / "favicon.ico", sizes=[(16, 16), (32, 32), (48, 48)])
 
