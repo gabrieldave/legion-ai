@@ -24,7 +24,7 @@ SOURCE = ROOT / "source" / "Legion_AI_Premium_Page.html"
 PUBLIC = ROOT / "public"
 SITE_URL = "https://legionai.iareal.net"
 THEME = "#04070F"
-WHATSAPP_BTN = '<a class="btn btn-p" href="https://wa.me/51960685684" style="min-height:44px;padding:0 20px;font-size:15px">'
+WHATSAPP_BTN = '<a class="btn btn-p" href="https://wa.me/525645674407" style="min-height:44px;padding:0 20px;font-size:15px">'
 
 IMAGE_NAMES = [
     "poster-gold-bitcoin",
