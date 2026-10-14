@@ -394,6 +394,34 @@ footer p{font-size:13.5px;color:var(--dim);line-height:1.65;max-width:110ch;marg
 .lang-sw button:hover{color:#fff}
 .lang-sw button[aria-pressed="true"]{background:var(--mint);color:var(--abyss)}
 @media (max-width:440px){.nav-end .btn{display:none}}
+
+.scn{border-bottom:1px solid var(--line)}
+.scn-tabs{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin:-24px 0 40px;padding:2px}
+.scn-tabs::-webkit-scrollbar{display:none}
+.scn-tabs button{flex:none;min-height:44px;padding:0 18px;border:1px solid var(--line2);border-radius:12px;background:rgba(12,22,48,.6);color:var(--mist);font:600 13px/1 var(--mono);letter-spacing:.06em;cursor:pointer}
+.scn-tabs button:hover{color:#fff}
+.scn-tabs button[aria-selected="true"]{border-color:var(--mint);color:var(--mint);background:rgba(69,226,163,.08)}
+[data-scanner]:not(.js) .scn-tabs{display:none}
+.scn-pane{display:grid;grid-template-columns:minmax(0,480px) minmax(0,1fr);gap:56px;align-items:start}
+.scn-pane.wide{grid-template-columns:minmax(0,7fr) minmax(0,4fr)}
+.scn-pane[hidden]{display:none}
+[data-scanner]:not(.js) .scn-pane+.scn-pane{margin-top:96px}
+.scn-shot{display:block;border-radius:14px;overflow:hidden;border:1px solid var(--line2);background:#0B0F17;box-shadow:0 40px 90px -30px rgba(0,0,0,.85),0 0 60px -24px rgba(69,226,163,.3)}
+.scn-shot img{display:block;width:100%;height:auto}
+.scn-copy h3{font-size:clamp(26px,2.6vw,34px)}
+.scn-copy .what{margin:16px 0 0;font-size:19px;color:var(--mist)}
+.scn-copy h4{margin:30px 0 6px;font:600 12px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--mint)}
+.scn-how{list-style:none;margin:0;padding:0}
+.scn-how li{padding:13px 0;border-top:1px solid rgba(39,57,94,.6);color:var(--mist);font-size:16px;line-height:1.55}
+.scn-how b{display:block;color:var(--text);font-weight:600;margin-bottom:2px}
+.scn-keys{margin-top:16px;font:500 13px/1.5 var(--mono);color:var(--dim)}
+.scn-fig{grid-column:1/-1;margin:8px 0 0}
+.scn-fig figcaption{margin-top:14px}
+.scn-hint{margin-top:40px}
+@media (max-width:960px){
+  .scn-pane,.scn-pane.wide{grid-template-columns:minmax(0,1fr);gap:32px}
+  .scn-pane:not(.wide)>.scn-shot{max-width:480px}
+}
 </style>
 </head>
 <body>
@@ -623,6 +651,19 @@ footer p{font-size:13.5px;color:var(--dim);line-height:1.65;max-width:110ch;marg
         </ul>
       </div>
     </div>
+  </div>
+</section>
+
+<!-- SCANNER -->
+<section class="s scn" id="scanner" aria-labelledby="scn-h">
+  <div class="wrap" data-scanner>
+    <div class="head">
+      <h2 id="scn-h">Every tab, exactly as it looks in your MT4.</h2>
+      <p class="lead">Real captures of the scanner on Gold. Pick a tab to see what it does and how to use it.</p>
+    </div>
+    <div class="scn-tabs" role="tablist" aria-label="Scanner tabs"><button type="button" role="tab" id="scn-t0" aria-controls="scn-p0" aria-selected="true">ON THE CHART</button><button type="button" role="tab" id="scn-t1" aria-controls="scn-p1" aria-selected="false">CANDLE ZOOM</button><button type="button" role="tab" id="scn-t2" aria-controls="scn-p2" aria-selected="false">WIPEOUT</button><button type="button" role="tab" id="scn-t3" aria-controls="scn-p3" aria-selected="false">DROPS</button><button type="button" role="tab" id="scn-t4" aria-controls="scn-p4" aria-selected="false">OB + FVG</button><button type="button" role="tab" id="scn-t5" aria-controls="scn-p5" aria-selected="false">TOOLS</button></div>
+    <div class="scn-pane wide" role="tabpanel" id="scn-p0" aria-labelledby="scn-t0" tabindex="0"><a class="scn-shot" href="/img/scanner/grafico-completo.jpg?v=fe1e6a03e8" target="_blank" rel="noopener"><img src="/img/scanner/grafico-completo.jpg?v=fe1e6a03e8" alt="Gold chart in MetaTrader 4 with the Legion AI panel on the right, Fibonacci levels, order blocks and FVG" width="1024" height="692" loading="lazy" decoding="async"></a><div class="scn-copy"><h3>The whole scanner working on your chart</h3><p class="what">The panel sits on the right and the tools draw straight onto the candles. What you read in the panel, you also see on price.</p><h4>How it works</h4><ul class="scn-how"><li><b>Panel on the right</b>Account, overall reading, RSI grid, ADX gun, structure, pair strength and FlowPulse in one column that folds away with the P key.</li><li><b>Structure and Fibonacci</b>Marked highs and lows, breakouts and the Fibonacci levels of the last impulse, each with its price.</li><li><b>Order blocks and FVG</b>The purple and gold bands are order blocks and fair value gaps from several timeframes, extended to the right so you see where price could react.</li><li><b>Relative volume</b>The bars at the bottom light up when a candle brings unusual activity.</li><li><b>Chart reset</b>A separate box to clear objects, restore the template or run a full reset in one click.</li></ul></div></div><div class="scn-pane" role="tabpanel" id="scn-p1" aria-labelledby="scn-t1" tabindex="0"><a class="scn-shot" href="/img/scanner/vela-zoom.jpg?v=753bb31aed" target="_blank" rel="noopener"><img src="/img/scanner/vela-zoom.jpg?v=753bb31aed" alt="Candle Zoom tab showing the weekly candle card, its M15 composition, the H4 breakdown and the time profile" width="467" height="792" loading="lazy" decoding="async"></a><div class="scn-copy"><h3>Candle Zoom: open a candle and see what happened inside</h3><p class="what">A weekly candle squeezes five days into four prices. Candle Zoom breaks it into smaller candles so you see how it was built.</p><h4>How it works</h4><ul class="scn-how"><li><b>Pick the candle</b>Press SELECT (or S + click on the chart) or LAST CANDLE, and step with &lt; and &gt;. Works from MN1 down to M5.</li><li><b>Candle card</b>Open, high, low, close, range, body and wick percentages, and whether it closed bullish or bearish.</li><li><b>Composition</b>How many inner candles were bullish or bearish, the streaks, when the high and the low formed, the biggest candle and which came first.</li><li><b>Time profile</b>POC, VAH and VAL: the prices where the market spent the most time, and whether the close landed above or below that value area.</li><li><b>Live candle</b>How long it has been open and where price sits in its range right now.</li></ul><p class="scn-keys">Keys: V candle zoom · Z / X zoom</p></div><figure class="scn-fig"><a class="scn-shot" href="/img/scanner/grafico-vela-zoom.jpg?v=9611a1fc8b" target="_blank" rel="noopener"><img src="/img/scanner/grafico-vela-zoom.jpg?v=9611a1fc8b" alt="Weekly Gold candle broken into smaller candles on the chart, with a price profile and Fibonacci levels" width="1024" height="773" loading="lazy" decoding="async"></a><figcaption class="small">On the chart: the weekly candle broken into smaller candles, with the price profile on the left (the blue bar is the POC) and the Fibonacci levels of the move.</figcaption></figure></div><div class="scn-pane" role="tabpanel" id="scn-p2" aria-labelledby="scn-t2" tabindex="0"><a class="scn-shot" href="/img/scanner/quiebre.jpg?v=de9548974c" target="_blank" rel="noopener"><img src="/img/scanner/quiebre.jpg?v=de9548974c" alt="Wipeout tab simulating a 0.10 lot Gold buy with the wipeout price and the cushion" width="471" height="724" loading="lazy" decoding="async"></a><div class="scn-copy"><h3>Wipeout Meter: know your limit before you enter</h3><p class="what">Simulate a trade and see the exact price where your broker would close you out. It only simulates: it never opens or changes orders.</p><h4>How it works</h4><ul class="scn-how"><li><b>Set up the trade</b>Buy or sell, lot size, market or line entry, and your real balance (MY ACCOUNT) or a test one (OTHER).</li><li><b>Wipeout price</b>The red line marks where you get closed out and how far price has to move: in percent and in typical daily moves (ATR D1).</li><li><b>Cushion</b>A traffic light sums up the distance to wipeout: WIDE, CAUTION or DANGER.</li><li><b>Take profit and drops</b>Turn on the TP to see your profit at target, or paint a reference drop (for example 30%) to see if you would survive it.</li><li><b>Every number</b>Required margin, margin level, point value, loss to wipeout, max lot by margin and the lot that would wipe you out on a 5% move against you.</li></ul></div></div><div class="scn-pane" role="tabpanel" id="scn-p3" aria-labelledby="scn-t3" tabindex="0"><a class="scn-shot" href="/img/scanner/caidas.jpg?v=a6d0d0b61c" target="_blank" rel="noopener"><img src="/img/scanner/caidas.jpg?v=a6d0d0b61c" alt="Drops tab showing Gold&#x27;s 2011 to 2015 drop, from 1,920.71 to 1,046.26" width="458" height="771" loading="lazy" decoding="async"></a><div class="scn-copy"><h3>Historical drops: the worst that already happened</h3><p class="what">The biggest drops of the market you are watching, with dates, depth and how long it took to recover. It helps you size your lot with the worst case in mind.</p><h4>How it works</h4><ul class="scn-how"><li><b>Historical</b>Each event with its peak, its low and the total drop. On Gold, the end of the 2011-15 rally was -45.53% over 4 years and 3 months.</li><li><b>Cycle timing</b>Time to fall, time to recover and the full cycle, plus the date price got back to its peak.</li><li><b>Current drop</b>Measures the market&#x27;s ongoing drop so you can compare it with the table.</li><li><b>Safe lot size</b>The largest lot your balance could hold if a drop like that happened again.</li><li><b>Manual measure</b>Drag the green and red lines to measure any drop on your chart.</li></ul><p class="scn-keys">Key: H drops</p></div></div><div class="scn-pane" role="tabpanel" id="scn-p4" aria-labelledby="scn-t4" tabindex="0"><a class="scn-shot" href="/img/scanner/ob-fvg.jpg?v=0af55765a9" target="_blank" rel="noopener"><img src="/img/scanner/ob-fvg.jpg?v=0af55765a9" alt="OB + FVG tab with the order block and FVG radar on H1, H4, D1, W1 and MN1" width="477" height="640" loading="lazy" decoding="async"></a><div class="scn-copy"><h3>Order blocks and FVG with a radar on five timeframes</h3><p class="what">Marks the zones where big players left footprints and watches for you whether price is getting close or already inside one.</p><h4>How it works</h4><ul class="scn-how"><li><b>Smart OB MTF</b>Draws the order blocks of H1, H4, D1, W1 and MN1. You can lock the timeframe and hide the labels.</li><li><b>OB Radar</b>For each timeframe: whether price is FREE or INSIDE a zone, whether the zone is bullish or bearish, its range, how many OBs there are and how far price is.</li><li><b>FVG Radar</b>The same for fair value gaps: direction and distance in pips on each timeframe.</li><li><b>Proximity warning</b>When price enters the NEAR threshold, the radar highlights it so you don&#x27;t miss it.</li></ul><p class="scn-keys">Keys: O order blocks · F FVG</p></div></div><div class="scn-pane" role="tabpanel" id="scn-p5" aria-labelledby="scn-t5" tabindex="0"><a class="scn-shot" href="/img/scanner/herramientas.jpg?v=05cb647bed" target="_blank" rel="noopener"><img src="/img/scanner/herramientas.jpg?v=05cb647bed" alt="Tools tab with sessions, psychological levels, candle templates and price rectangles" width="458" height="520" loading="lazy" decoding="async"></a><div class="scn-copy"><h3>Tools: sessions, levels and a chart your way</h3><p class="what">The everyday utilities, together in one tab.</p><h4>How it works</h4><ul class="scn-how"><li><b>Sessions</b>Asia, London and New York boxes, with the active session marked.</li><li><b>PSY levels</b>The nearest round numbers above and below price, with the distance to each one.</li><li><b>Candle templates</b>Nine color themes plus the original colors, without removing your indicators or objects.</li><li><b>Price rectangles</b>Draw a rectangle and see the price of its edges. Extend it, filter the ones from other symbols and show height, 50% and label side.</li></ul><p class="scn-keys">Keys: E sessions · Y levels · R rectangle</p></div></div>
+    <p class="small scn-hint">Click any capture to see it full size. Captures are in Spanish; every label switches to English with the Language setting.</p>
   </div>
 </section>
 
@@ -1166,5 +1207,6 @@ footer p{font-size:13.5px;color:var(--dim);line-height:1.65;max-width:110ch;marg
 })();
 </script>
 <script src="/i18n.js?v=f1c68ee2fb" defer></script>
+<script src="/scanner.js?v=239afd819a" defer></script>
 </body>
 </html>

@@ -14,6 +14,7 @@ import importlib.util
 import re
 import shutil
 import sys
+from html import escape
 from pathlib import Path
 
 from PIL import Image, ImageDraw
@@ -52,14 +53,98 @@ LANG_CSS = """
 @media (max-width:440px){.nav-end .btn{display:none}}
 """
 
+SCANNER_CSS = """
+.scn{border-bottom:1px solid var(--line)}
+.scn-tabs{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin:-24px 0 40px;padding:2px}
+.scn-tabs::-webkit-scrollbar{display:none}
+.scn-tabs button{flex:none;min-height:44px;padding:0 18px;border:1px solid var(--line2);border-radius:12px;background:rgba(12,22,48,.6);color:var(--mist);font:600 13px/1 var(--mono);letter-spacing:.06em;cursor:pointer}
+.scn-tabs button:hover{color:#fff}
+.scn-tabs button[aria-selected="true"]{border-color:var(--mint);color:var(--mint);background:rgba(69,226,163,.08)}
+[data-scanner]:not(.js) .scn-tabs{display:none}
+.scn-pane{display:grid;grid-template-columns:minmax(0,480px) minmax(0,1fr);gap:56px;align-items:start}
+.scn-pane.wide{grid-template-columns:minmax(0,7fr) minmax(0,4fr)}
+.scn-pane[hidden]{display:none}
+[data-scanner]:not(.js) .scn-pane+.scn-pane{margin-top:96px}
+.scn-shot{display:block;border-radius:14px;overflow:hidden;border:1px solid var(--line2);background:#0B0F17;box-shadow:0 40px 90px -30px rgba(0,0,0,.85),0 0 60px -24px rgba(69,226,163,.3)}
+.scn-shot img{display:block;width:100%;height:auto}
+.scn-copy h3{font-size:clamp(26px,2.6vw,34px)}
+.scn-copy .what{margin:16px 0 0;font-size:19px;color:var(--mist)}
+.scn-copy h4{margin:30px 0 6px;font:600 12px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--mint)}
+.scn-how{list-style:none;margin:0;padding:0}
+.scn-how li{padding:13px 0;border-top:1px solid rgba(39,57,94,.6);color:var(--mist);font-size:16px;line-height:1.55}
+.scn-how b{display:block;color:var(--text);font-weight:600;margin-bottom:2px}
+.scn-keys{margin-top:16px;font:500 13px/1.5 var(--mono);color:var(--dim)}
+.scn-fig{grid-column:1/-1;margin:8px 0 0}
+.scn-fig figcaption{margin-top:14px}
+.scn-hint{margin-top:40px}
+@media (max-width:960px){
+  .scn-pane,.scn-pane.wide{grid-template-columns:minmax(0,1fr);gap:32px}
+  .scn-pane:not(.wide)>.scn-shot{max-width:480px}
+}
+"""
+
 FAVICON_SVG = """<svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 34 34"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6DF0BB"/><stop offset="1" stop-color="#1D9E70"/></linearGradient></defs><rect width="34" height="34" rx="7" fill="#04070F"/><path d="M17 2 31 10v14L17 32 3 24V10Z" fill="none" stroke="url(#lg)" stroke-width="2"/><path d="M10 21l5-6 4 3 5-7" fill="none" stroke="#45E2A3" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
 """
 
-def load_es():
-    spec = importlib.util.spec_from_file_location("i18n_es", ROOT / "i18n" / "es.py")
+def load_module(name: str):
+    spec = importlib.util.spec_from_file_location(f"i18n_{name}", ROOT / "i18n" / f"{name}.py")
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module
+
+
+SCANNER = load_module("scanner")
+SCANNER_SRC = ROOT / "source" / "scanner"
+
+
+def scanner_img(name: str, alt: str, eager: bool = False) -> str:
+    version = hashlib.sha256((SCANNER_SRC / name).read_bytes()).hexdigest()[:10]
+    w, h = SCANNER.SIZES[name]
+    src = f"/img/scanner/{name}?v={version}"
+    loading = "" if eager else ' loading="lazy"'
+    return (
+        f'<a class="scn-shot" href="{src}" target="_blank" rel="noopener">'
+        f'<img src="{src}" alt="{escape(alt)}" width="{w}" height="{h}"{loading} decoding="async"></a>'
+    )
+
+
+def scanner_section(locale: str) -> str:
+    c = SCANNER.ES if locale == "es" else SCANNER.EN
+    tabs, panes = [], []
+    for i, t in enumerate(c["tabs"]):
+        tabs.append(
+            f'<button type="button" role="tab" id="scn-t{i}" aria-controls="scn-p{i}" '
+            f'aria-selected="{"true" if i == 0 else "false"}">{escape(t["label"])}</button>'
+        )
+        shots = "".join(scanner_img(f, alt) for f, alt in t["shots"])
+        how = "".join(f"<li><b>{escape(b)}</b>{escape(txt)}</li>" for b, txt in t["how"])
+        keys = f'<p class="scn-keys">{escape(t["keys"])}</p>' if t.get("keys") else ""
+        fig = ""
+        if t.get("figure"):
+            f, alt, cap = t["figure"]
+            fig = f'<figure class="scn-fig">{scanner_img(f, alt)}<figcaption class="small">{escape(cap)}</figcaption></figure>'
+        cls = "scn-pane wide" if t.get("wide") else "scn-pane"
+        panes.append(
+            f'<div class="{cls}" role="tabpanel" id="scn-p{i}" aria-labelledby="scn-t{i}" tabindex="0">'
+            f"{shots}"
+            f'<div class="scn-copy"><h3>{escape(t["title"])}</h3><p class="what">{escape(t["what"])}</p>'
+            f'<h4>{escape(c["how"])}</h4><ul class="scn-how">{how}</ul>{keys}</div>'
+            f"{fig}</div>"
+        )
+    return f"""<!-- SCANNER -->
+<section class="s scn" id="scanner" aria-labelledby="scn-h">
+  <div class="wrap" data-scanner>
+    <div class="head">
+      <h2 id="scn-h">{escape(c["title"])}</h2>
+      <p class="lead">{escape(c["lead"])}</p>
+    </div>
+    <div class="scn-tabs" role="tablist" aria-label="{escape(c["tablist"])}">{"".join(tabs)}</div>
+    {"".join(panes)}
+    <p class="small scn-hint">{escape(c["hint"])}</p>
+  </div>
+</section>
+
+"""
 
 
 def head_extra(meta: dict) -> str:
@@ -88,12 +173,17 @@ def lang_switch(locale: str) -> str:
 
 
 def localize(html: str, locale: str, meta: dict) -> str:
-    html = html.replace("</style>", LANG_CSS + "</style>", 1)
+    html = html.replace("</style>", LANG_CSS + SCANNER_CSS + "</style>", 1)
+    if html.count("<!-- PROTECTION -->") != 1:
+        sys.exit("ERROR: no encuentro <!-- PROTECTION --> para insertar la sección del escáner")
+    html = html.replace("<!-- PROTECTION -->", scanner_section(locale) + "<!-- PROTECTION -->", 1)
     html = html.replace('<link rel="preconnect"', head_extra(meta) + '<link rel="preconnect"', 1)
     html = html.replace(WHATSAPP_BTN, f'<div class="nav-end">{lang_switch(locale)}{WHATSAPP_BTN}', 1)
     html = re.sub(r'(<div class="nav-end">.*?</a>)', r"\1</div>", html, count=1, flags=re.S)
-    script = f'<script src="/i18n.js?v={asset_version("i18n.js")}" defer></script>\n'
-    return html.replace("</body>", script + "</body>", 1)
+    scripts = "".join(
+        f'<script src="/{name}?v={asset_version(name)}" defer></script>\n' for name in ("i18n.js", "scanner.js")
+    )
+    return html.replace("</body>", scripts + "</body>", 1)
 
 
 def asset_version(name: str) -> str:
@@ -144,7 +234,7 @@ def draw_icon(size: int, content_ratio: float) -> Image.Image:
 def main() -> None:
     src = Path(sys.argv[1]) if len(sys.argv) > 1 else SOURCE
     html = src.read_text(encoding="utf-8")
-    es = load_es()
+    es = load_module("es")
 
     if src.resolve() != SOURCE.resolve():
         SOURCE.parent.mkdir(parents=True, exist_ok=True)
@@ -183,7 +273,9 @@ def main() -> None:
     (PUBLIC / "index.en.html").write_text(html_en, encoding="utf-8")
     (PUBLIC / "index.es.html").write_text(html_es, encoding="utf-8")
     (PUBLIC / "favicon.svg").write_text(FAVICON_SVG, encoding="utf-8")
-    shutil.copyfile(ROOT / "assets" / "i18n.js", PUBLIC / "i18n.js")
+    for name in ("i18n.js", "scanner.js"):
+        shutil.copyfile(ROOT / "assets" / name, PUBLIC / name)
+    shutil.copytree(SCANNER_SRC, PUBLIC / "img" / "scanner")
     (PUBLIC / "robots.txt").write_text(f"User-agent: *\nAllow: /\nSitemap: {SITE_URL}/sitemap.xml\n")
     (PUBLIC / "sitemap.xml").write_text(
         '<?xml version="1.0" encoding="UTF-8"?>\n'

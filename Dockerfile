@@ -6,7 +6,7 @@ ARG SOURCE_COMMIT=unknown
 WORKDIR /src
 COPY public/ ./public/
 COPY nginx/ ./nginx/
-RUN for f in index.es.html index.en.html i18n.js favicon.svg icons/icon-192.png; do \
+RUN for f in index.es.html index.en.html i18n.js scanner.js favicon.svg icons/icon-192.png img/scanner/vela-zoom.jpg; do \
       test -f "public/$f" || { echo "falta public/$f"; exit 1; }; \
     done \
  && test "$(wc -c < public/index.es.html)" -gt 10000 \

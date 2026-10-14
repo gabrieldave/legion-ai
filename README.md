@@ -17,7 +17,11 @@ git add -A && git commit -m "Actualiza landing" && git push
 
 El script copia el HTML a `source/`, extrae las imágenes base64 a `public/img/`, añade iconos,
 metadatos sociales y el selector de idioma, y genera `public/index.en.html` y
-`public/index.es.html`. La landing no es instalable como app (sin manifest ni banner PWA). Después del push, Coolify redespliega.
+`public/index.es.html`. La landing no es instalable como app (sin manifest ni banner PWA).
+
+La sección «Cada pestaña, tal como se ve en tu MT4» usa las capturas de `source/scanner/` y los
+textos bilingües de `i18n/scanner.py`. Para cambiar una captura, reemplaza el archivo (mismo
+nombre), ajusta su tamaño en `SIZES` y vuelve a correr el build. Después del push, Coolify redespliega.
 
 ## Idiomas (§12.10)
 
