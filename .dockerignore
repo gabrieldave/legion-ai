@@ -1,0 +1,12 @@
+.git
+.gitignore
+.cursor
+*.md
+.DS_Store
+.env
+.env.*
+**/secrets.env
+source/
+scripts/
+assets/
+__pycache__/

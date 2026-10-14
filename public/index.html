@@ -1,0 +1,1166 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Legion AI | The smart market panel for MetaTrader 4</title>
+<meta name="description" content="Legion AI is a smart panel for MetaTrader 4. It reads every timeframe of Gold, Bitcoin, indices and forex at once and tells you in plain English whether to wait, look for buys or look for sells.">
+<meta name="theme-color" content="#04070F">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/icons/icon-192.png" sizes="192x192" type="image/png">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Legion AI">
+<link rel="canonical" href="https://legionai.iareal.net/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Legion AI">
+<meta property="og:title" content="Legion AI | The smart market panel for MetaTrader 4">
+<meta property="og:description" content="One panel reads every timeframe of Gold, Bitcoin, indices and forex and tells you whether to wait, look for buys or look for sells.">
+<meta property="og:url" content="https://legionai.iareal.net/">
+<meta property="og:image" content="https://legionai.iareal.net/img/poster-gold-bitcoin.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..900&family=Geist:wght@300..700&family=Geist+Mono:wght@400..600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --abyss:#04070F; --navy:#081022; --surface:#0C1630; --raise:#111D3A; --line:#1C2B4A; --line2:#27395E;
+  --mint:#45E2A3; --mint-2:#2BB880; --mint-deep:#0F4F3A; --gold:#E6B65A; --gold-deep:#3B2C10;
+  --ember:#F0645A; --amber:#F5A54A; --sky:#6FA8FF;
+  --text:#EEF3FA; --mist:#A9B7CB; --dim:#7787A0;
+  --display:'Archivo',system-ui,sans-serif; --body:'Geist',system-ui,sans-serif; --mono:'Geist Mono',ui-monospace,monospace;
+  --wrap:1240px;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--abyss);color:var(--text);font-family:var(--body);font-size:18px;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+img{max-width:100%;display:block}
+a{color:var(--mint)}
+a:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var(--mint);outline-offset:3px;border-radius:6px}
+h1,h2,h3{font-family:var(--display);font-stretch:112%;margin:0;line-height:1.02;letter-spacing:-0.02em;font-weight:800}
+h3{font-stretch:105%;font-weight:700;letter-spacing:-0.01em;line-height:1.15}
+p{margin:0}
+.wrap{max-width:var(--wrap);margin:0 auto;padding:0 28px}
+.lead{font-size:20px;color:var(--mist);max-width:62ch}
+.muted{color:var(--mist)}
+.small{font-size:14px;color:var(--dim)}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:54px;padding:0 28px;border-radius:14px;font-weight:600;font-size:17px;text-decoration:none;transition:background .2s,border-color .2s,transform .2s}
+.btn-p{background:var(--mint);color:#03251A;box-shadow:0 10px 40px -10px rgba(69,226,163,.55),inset 0 1px 0 rgba(255,255,255,.35)}
+.btn-p:hover{background:#6DF0BB}
+.btn-g{border:1px solid var(--line2);color:var(--text);background:rgba(255,255,255,.02)}
+.btn-g:hover{border-color:var(--mint)}
+
+/* nav */
+.nav{position:sticky;top:0;z-index:50;backdrop-filter:blur(14px) saturate(140%);-webkit-backdrop-filter:blur(14px) saturate(140%);background:rgba(4,7,15,.72);border-bottom:1px solid rgba(39,57,94,.55)}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;min-height:72px;gap:18px}
+.brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--text)}
+.brand b{font-family:var(--display);font-stretch:125%;font-weight:800;font-size:19px;letter-spacing:.04em}
+.brand b span{color:var(--mint)}
+.nav nav{display:flex;gap:30px}
+.nav nav a{color:var(--mist);text-decoration:none;font-size:15px}
+.nav nav a:hover{color:#fff}
+
+/* hero */
+.hero{position:relative;min-height:calc(100vh - 72px);display:flex;align-items:center;overflow:hidden;isolation:isolate}
+.hero canvas.terrain{position:absolute;inset:0;width:100%;height:100%;z-index:-2}
+.hero::before{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(1100px 600px at 72% 42%,rgba(69,226,163,.10),transparent 65%),linear-gradient(180deg,rgba(4,7,15,0) 60%,var(--abyss))}
+.hero .wrap{display:grid;grid-template-columns:minmax(0,11fr) minmax(0,13fr);gap:40px;align-items:center;padding-top:56px;padding-bottom:72px}
+.hero h1{font-size:clamp(40px,4.3vw,62px)}
+.hero .lead{margin-top:26px}
+.hero .ctas{display:flex;gap:14px;flex-wrap:wrap;margin-top:36px}
+.proof{display:flex;gap:34px;flex-wrap:wrap;margin-top:44px;padding-top:28px;border-top:1px solid var(--line)}
+.proof div{display:flex;flex-direction:column}
+.proof strong{font-family:var(--display);font-stretch:110%;font-size:30px;line-height:1}
+.proof span{font-size:14px;color:var(--dim);margin-top:6px}
+
+.stage-wrap{perspective:1700px;perspective-origin:50% 40%;height:620px;position:relative}
+.stage{position:absolute;inset:0;transform-style:preserve-3d;transform:rotateX(9deg) rotateY(-20deg) rotateZ(1deg);transition:transform .6s cubic-bezier(.2,.7,.2,1)}
+.chartplane{position:absolute;left:-30px;top:90px;width:600px;height:430px;border-radius:14px;overflow:hidden;transform:translateZ(-150px);background:#060A12;border:1px solid #1A2440;box-shadow:0 60px 120px -30px rgba(0,0,0,.8)}
+.chartplane canvas{width:100%;height:100%}
+.chartplane .ctag{position:absolute;left:14px;top:10px;font:600 12px var(--mono);color:#8FA0BA}
+.panelhost{position:absolute;right:-20px;top:0;width:500px;height:660px;overflow:hidden;border-radius:12px;transform:translateZ(70px) scale(.84);transform-origin:top right;box-shadow:0 0 0 1px rgba(69,226,163,.18),0 50px 120px -20px rgba(0,0,0,.85),0 0 80px -20px rgba(69,226,163,.25)}
+.panelhost::after{content:"";position:absolute;inset:auto 0 0 0;height:120px;background:linear-gradient(180deg,transparent,#0B0F17)}
+.floatchip{position:absolute;transform-style:preserve-3d;padding:12px 16px;border-radius:14px;background:rgba(12,22,48,.82);border:1px solid var(--line2);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);box-shadow:0 30px 60px -20px rgba(0,0,0,.7);font-size:13px;color:var(--mist);white-space:nowrap}
+.floatchip b{display:block;font:600 18px var(--mono);color:#fff}
+.fc1{left:-10px;top:500px;transform:translateZ(170px)}
+.fc2{left:10px;top:20px;transform:translateZ(210px)}
+.fc1 b{color:var(--ember)}
+
+/* load sequence */
+@media (prefers-reduced-motion:no-preference){
+  .hero h1,.hero .lead,.hero .ctas,.proof{opacity:0;transform:translateY(18px);animation:rise .9s cubic-bezier(.2,.7,.2,1) forwards}
+  .hero .lead{animation-delay:.12s}.hero .ctas{animation-delay:.22s}.proof{animation-delay:.32s}
+  .stage{animation:stageIn 1.6s cubic-bezier(.16,.8,.2,1) both}
+  .panelhost{animation:panelIn 1.6s .15s cubic-bezier(.16,.8,.2,1) both}
+  .floatchip{animation:chipIn 1.2s .9s cubic-bezier(.16,.8,.2,1) both}
+}
+@keyframes rise{to{opacity:1;transform:none}}
+@keyframes stageIn{from{opacity:0;transform:rotateX(24deg) rotateY(-38deg) translateY(60px)}}
+@keyframes panelIn{from{opacity:0;transform:translateZ(260px) scale(.84)}}
+@keyframes chipIn{from{opacity:0}}
+
+/* markets */
+.markets{border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:linear-gradient(180deg,#060B18,#050913)}
+.markets .wrap{display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;padding-top:26px;padding-bottom:26px}
+.mk{display:flex;gap:10px;flex-wrap:wrap}
+.mk span{display:inline-flex;align-items:center;gap:10px;padding:10px 16px;border:1px solid var(--line);border-radius:12px;font:500 15px var(--body);color:var(--text);background:rgba(255,255,255,.015)}
+.mk i{width:22px;height:22px;border-radius:50%;display:inline-block;flex:none}
+
+/* sections */
+section.s{padding:130px 0;position:relative}
+.s-alt{background:linear-gradient(180deg,#060C1B,#050912);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.head{display:grid;grid-template-columns:minmax(0,6fr) minmax(0,5fr);gap:48px;align-items:end;margin-bottom:64px}
+.head h2{font-size:clamp(36px,4.2vw,60px)}
+.head.single{grid-template-columns:minmax(0,1fr);max-width:880px}
+.head.single .lead{margin-top:22px}
+
+/* native panel section */
+.native{display:grid;grid-template-columns:minmax(0,1fr) 520px minmax(0,1fr);gap:28px;align-items:start}
+.callouts{display:flex;flex-direction:column;gap:22px;padding-top:30px}
+.callouts.right{padding-top:180px}
+.co{border-left:2px solid var(--line2);padding:4px 0 4px 18px}
+.co h3{font-size:19px}
+.co p{font-size:15.5px;color:var(--mist);margin-top:6px}
+.co.hl{border-left-color:var(--mint)}
+.panelframe{padding:10px;border-radius:18px;background:linear-gradient(160deg,#1A2A4A,#0B1224 40%,#0E1A33);box-shadow:0 60px 140px -40px rgba(0,0,0,.9),0 0 0 1px #24365C}
+.panelframe .cap{text-align:center;margin-top:14px}
+
+/* ===== native MT4 panel recreation (English) ===== */
+.lp{width:500px;background:#0B0F17;font-family:Arial,Helvetica,sans-serif;color:#E9EDF3;padding:10px 10px 8px;font-size:10px;line-height:1.25;text-align:left;-webkit-font-smoothing:auto}
+.lp *{box-sizing:border-box}
+.lp .hd{display:flex;justify-content:space-between;align-items:flex-start}
+.lp .ttl{font-size:17px;letter-spacing:.02em}
+.lp .sub{font-size:9px;color:#9AA3B2;margin-top:2px}
+.lp .iaTop{font-size:12.5px;color:#E5483F;margin-top:2px}
+.lp .tb{display:flex;gap:4px}
+.lp .tb span{width:20px;height:18px;border:1px solid #3A4352;display:flex;align-items:center;justify-content:center;font-size:10px;color:#C9D0DA}
+.lp .tabs{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:4px;margin:8px 0}
+.lp .tabs span{border:1px solid #333C4A;text-align:center;padding:4px 0;font-size:10.5px;color:#C9D0DA;white-space:nowrap}
+.lp .tabs span.on{border-color:#3FBF8F;color:#fff;background:#0F1E1A}
+.lp .card{border:1px solid #232B38;background:#0E131C;padding:7px;margin-bottom:7px}
+.lp .ch{display:flex;justify-content:space-between;font-size:10px;color:#DDE3EA;margin-bottom:6px}
+.lp .ch .g{color:#9AA3B2}
+.lp .box{border:1px solid #2A3341;background:#121823;padding:3px 5px;min-height:30px}
+.lp .box .l{display:flex;justify-content:space-between;font-size:7.5px;color:#9AA3B2}
+.lp .box .v{font-size:12px;margin-top:2px;color:#E9EDF3}
+.lp .box .v.dim{color:#9AA3B2}
+.lp .g4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;margin-bottom:4px}
+.lp .wide{display:grid;grid-template-columns:2fr 1.4fr 1fr;gap:4px;border:1px solid #2A3341;background:#121823;padding:4px 6px}
+.lp .wide .l{font-size:7.5px;color:#9AA3B2}
+.lp .wide .v{font-size:12px;color:#9AA3B2}
+.lp .verd{display:grid;grid-template-columns:1fr 88px;gap:6px}
+.lp .vbox{border:1px solid #6B2522;background:#2A1213;padding:5px 7px}
+.lp .vbox .big{font-size:18px;font-weight:bold;color:#F05A50;letter-spacing:.02em}
+.lp .vbox .s{font-size:9px;color:#D9C9C7;margin-top:1px}
+.lp .cbox{border:1px solid #C9A23A;background:#191709;text-align:center;padding-top:5px}
+.lp .cbox .s{font-size:9px;color:#C9CFD8}
+.lp .cbox .big{font-size:18px;font-weight:bold;color:#F2C94C}
+.lp .meter{display:grid;grid-template-columns:36px 1fr 36px;align-items:center;gap:6px;margin-top:6px;font-size:8.5px}
+.lp .segs{display:grid;grid-template-columns:repeat(20,minmax(0,1fr));gap:2px}
+.lp .segs i{height:8px;background:#232A36;display:block}
+.lp .segs i.r1{background:#7A2622}.lp .segs i.r2{background:#C93A33}
+.lp .scale{display:grid;grid-template-columns:1fr auto 1fr;font-size:8.5px;color:#9AA3B2;margin:2px 42px 0}
+.lp .scale b{color:#E5483F;font-weight:normal}
+.lp .chips{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:3px;margin-top:5px}
+.lp .chip{border:1px solid #6B2522;background:#1D1012;padding:2px 4px}
+.lp .chip .t{display:flex;justify-content:space-between;font-size:8px;color:#C9CFD8}
+.lp .chip .v{display:flex;justify-content:space-between;align-items:baseline}
+.lp .chip .v b{font-size:14px;color:#F05A50}
+.lp .chip .v i{font-style:normal;font-size:7px;color:#F05A50}
+.lp .chip.gr{border-color:#2F7A45;background:#0F2216}.lp .chip.gr .v b,.lp .chip.gr .v i{color:#4FD27A}
+.lp .chip.na{border-color:#2A3341;background:#121823}.lp .chip.na .v b{color:#5A6372}
+.lp .read{margin-top:6px;font-size:9.5px;line-height:1.42}
+.lp .read .h{color:#4FD27A;font-size:9px;margin-bottom:1px}
+.lp .read div{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lp .rd{color:#F05A50}.lp .gn{color:#4FD27A}.lp .gy{color:#A4ACB8}.lp .bl{color:#6E95FF}.lp .yl{color:#F2C94C}
+.lp .row2{display:grid;grid-template-columns:1.18fr 1fr;gap:7px}
+.lp table{border-collapse:collapse;width:100%}
+.lp .rsi td{padding:1px 0;font-size:9px}
+.lp .rsi .c{width:9px;height:9px;display:block;margin:0 1px}
+.lp .rsi th{font-weight:normal;font-size:8.5px;color:#F2C94C;text-align:center}
+.lp .rsi td.n{color:#C9CFD8;text-align:right;padding-left:5px}
+.lp .rsi td.tf{color:#C9CFD8;padding-right:3px}
+.lp .sum{border:1px solid #2A3341;background:#0B0F16;margin-top:6px;padding:4px 8px;display:grid;grid-template-columns:62px 1fr;row-gap:2px;font-size:9.5px}
+.lp .sum span:nth-child(odd){color:#C9CFD8}
+.lp .adx td{padding:1px}
+.lp .adx .c{width:12px;height:12px;display:block}
+.lp .adx th{font-weight:normal;font-size:8.5px;color:#F2C94C}
+.lp .adx td.p{color:#F2C94C;font-size:9px;padding-left:4px}
+.lp .noent{margin-top:6px;border:1px solid #3A4352;background:#151A22;text-align:center;font-weight:bold;font-size:12px;padding:4px;letter-spacing:.03em}
+.lp .row3{display:grid;grid-template-columns:1fr 112px;gap:7px}
+.lp .struct{border:1px solid #2A3341;background:#0B0F16;padding:4px 5px}
+.lp .st{display:grid;grid-template-columns:26px 50px 1fr 1fr 58px;gap:4px;align-items:center;font-size:8.8px;padding:2px 0 2px 4px;border-left:2px solid transparent}
+.lp .st.b{border-left-color:#3FBF6B}.lp .st.s{border-left-color:#E0443E}
+.lp .tag{font-size:8px;text-align:center;padding:1px 0}
+.lp .tag.b{background:#14492A;color:#7FE0A0}.lp .tag.s{background:#5A1A18;color:#FF9C92}
+.lp .st .t{text-align:right;color:#C9CFD8}
+.lp .nos{border:1px solid #6B5512;background:#1F1A0B;margin-top:4px;padding:3px 6px;font-size:9px}
+.lp .nos b{color:#F2C94C;font-weight:normal}
+.lp .btnr{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:3px;margin-top:4px}
+.lp .btnr span{border:1px solid #333C4A;text-align:center;font-size:8.5px;padding:2px 0;color:#C9CFD8}
+.lp .btnr span.k1{background:#256E68;border-color:#256E68;color:#fff}.lp .btnr span.k2{background:#A3302C;border-color:#A3302C;color:#fff}
+.lp .btnr span.k3{background:#555D69;color:#fff}.lp .btnr span.k4{background:#3E63D6;border-color:#3E63D6;color:#fff}
+.lp .flow td{font-size:9px;padding:1.5px 2px}
+.lp .flow td.tf{color:#C9CFD8}
+.lp .flow td.v{text-align:right;font-weight:bold}
+.lp .flow .ar{font-size:9px}
+.lp .pair{display:grid;grid-template-columns:30px 22px 1fr;gap:4px;align-items:center;font-size:9.5px}
+.lp .pair .bars{display:flex;gap:1px}
+.lp .pair .bars i{width:4px;height:6px;background:#4C7CF0;display:block}
+.lp .ft{display:flex;justify-content:space-between;font-size:8px;color:#C9CFD8;margin-top:4px;line-height:1.5}
+
+/* gallery */
+.gallery{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:56px;align-items:center}
+.fan{position:relative;height:570px;perspective:1600px}
+.fan figure{position:absolute;margin:0;width:56%;top:0;border-radius:18px;overflow:hidden;box-shadow:0 50px 100px -30px rgba(0,0,0,.9),0 0 0 1px rgba(255,255,255,.06);transition:transform .7s cubic-bezier(.2,.7,.2,1),z-index 0s .2s;cursor:pointer;background:#0A1226}
+.fan figure img{width:100%;height:auto}
+.fan .f1{left:2%;transform:rotateY(18deg) rotateZ(-3deg) translateZ(-60px);z-index:1}
+.fan .f2{right:2%;top:40px;transform:rotateY(-14deg) rotateZ(2deg) translateZ(20px);z-index:2}
+.fan figure.front{transform:rotateY(0) rotateZ(0) translateZ(80px);z-index:3}
+.fan button{all:unset;position:absolute;inset:0}
+.figcap{margin-top:16px}
+
+/* stack (six voices) */
+.voices{display:grid;grid-template-columns:minmax(0,6fr) minmax(0,5fr);gap:56px;align-items:center}
+.iso{height:560px;perspective:2000px;display:flex;align-items:center;justify-content:center}
+.stack{position:relative;width:340px;height:340px;transform-style:preserve-3d;transform:rotateX(58deg) rotateZ(-40deg)}
+.plate{position:absolute;inset:0;border-radius:22px;border:1px solid rgba(111,168,255,.28);background:linear-gradient(135deg,rgba(17,29,58,.86),rgba(9,17,36,.7));box-shadow:0 0 0 1px rgba(255,255,255,.02) inset;display:flex;align-items:flex-end;padding:18px 22px;transition:border-color .3s,background .3s,transform .5s cubic-bezier(.2,.7,.2,1)}
+.plate span{font:600 15px var(--mono);color:#C8D4E6;letter-spacing:.04em}
+.plate em{font-style:normal;font:500 13px var(--mono);color:var(--dim);margin-left:auto}
+.plate.top{border-color:rgba(240,100,90,.65);background:linear-gradient(135deg,rgba(64,20,22,.92),rgba(30,10,14,.86))}
+.plate.top span{color:#FF8E84;font-size:17px}
+.plate.on{border-color:var(--mint);background:linear-gradient(135deg,rgba(15,79,58,.9),rgba(9,30,26,.8))}
+.vlist{display:flex;flex-direction:column;gap:6px}
+.vitem{display:grid;grid-template-columns:90px minmax(0,1fr) 56px;gap:16px;align-items:baseline;padding:16px 16px;border-radius:12px;border:1px solid transparent;cursor:default;transition:background .2s,border-color .2s}
+.vitem:hover,.vitem:focus-within{background:rgba(17,29,58,.6);border-color:var(--line2)}
+.vitem b{font:600 15px var(--mono);color:var(--mint)}
+.vitem h3{font-size:18px}
+.vitem p{font-size:15px;color:var(--mist);margin-top:4px}
+.vitem .w{font:500 14px var(--mono);color:var(--dim);text-align:right}
+
+/* verdict ladder */
+.ladder{border:1px solid var(--line);border-radius:20px;overflow:hidden;background:var(--navy)}
+.lrow{display:grid;grid-template-columns:260px minmax(0,1fr) 170px;gap:24px;align-items:center;padding:20px 28px;border-top:1px solid var(--line)}
+.lrow:first-child{border-top:0}
+.lrow .st{font:700 16px var(--mono);letter-spacing:.02em}
+.lrow p{color:var(--mist);font-size:16px}
+.lrow .when{font-size:14px;color:var(--dim);text-align:right}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:10px;vertical-align:middle}
+
+/* landscape */
+.land{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:56px;align-items:center}
+.landcard{border-radius:22px;border:1px solid var(--line);background:radial-gradient(700px 400px at 50% 30%,#0E1A36,#070C1A);padding:18px;position:relative}
+.landcard canvas{width:100%;height:auto;display:block}
+.pts{display:flex;flex-direction:column;gap:26px;margin-top:34px}
+.pts div h3{font-size:20px}
+.pts div p{color:var(--mist);margin-top:6px;font-size:16.5px}
+
+/* tools */
+.tgroups{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px}
+.tg{border:1px solid var(--line);border-radius:22px;padding:30px 32px;background:linear-gradient(180deg,rgba(17,29,58,.45),rgba(8,16,34,.4))}
+.tg h3{font-size:24px}
+.tg>p{color:var(--mist);font-size:15.5px;margin-top:8px}
+.tg ul{list-style:none;margin:20px 0 0;padding:0;display:flex;flex-direction:column}
+.tg li{display:grid;grid-template-columns:190px minmax(0,1fr);gap:18px;padding:14px 0;border-top:1px solid rgba(39,57,94,.6)}
+.tg li b{font-weight:600;font-size:16px}
+.tg li span{font-size:15.5px;color:var(--mist)}
+
+/* protection */
+.prot{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:56px;align-items:center}
+.tilt{perspective:1600px}
+.tilt>div{transform:rotateY(10deg) rotateX(4deg);transform-style:preserve-3d;border-radius:20px;border:1px solid var(--line2);background:#060A12;box-shadow:0 60px 140px -40px rgba(0,0,0,.9);overflow:hidden}
+.tilt svg{display:block;width:100%;height:auto}
+.plist{display:flex;flex-direction:column;gap:26px}
+.plist h3{font-size:21px}
+.plist p{color:var(--mist);margin-top:6px;font-size:16.5px}
+
+/* drops */
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:28px}
+.tabs button{font:500 15px var(--body);color:var(--mist);background:transparent;border:1px solid var(--line2);border-radius:999px;padding:10px 18px;cursor:pointer;min-height:44px}
+.tabs button[aria-selected="true"]{background:var(--text);color:var(--abyss);border-color:var(--text)}
+.dchart{border:1px solid var(--line);border-radius:22px;padding:32px;background:var(--navy)}
+.drow{display:grid;grid-template-columns:230px minmax(0,1fr) 190px;gap:20px;align-items:center;padding:11px 0;border-top:1px solid rgba(39,57,94,.5)}
+.drow:first-of-type{border-top:0}
+.drow .nm{font-size:16px}
+.drow .dt{font:400 13px var(--mono);color:var(--dim)}
+.dbar{position:relative;height:30px;border-radius:6px;background:rgba(255,255,255,.03)}
+.dbar i{position:absolute;left:0;top:0;bottom:0;border-radius:0 6px 6px 0;background:linear-gradient(90deg,#8A4416,var(--amber))}
+.dbar span{position:absolute;top:5px;font:600 14px var(--mono);color:#fff}
+.drow .rc{font:400 14px var(--mono);color:var(--mist);text-align:right}
+.drow .rc.no{color:var(--ember)}
+
+/* results */
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:20px;overflow:hidden}
+.kpi{background:var(--navy);padding:28px}
+.kpi .k{font-size:14px;color:var(--mist)}
+.kpi .v{font:600 34px var(--mono);margin-top:8px;letter-spacing:-.02em}
+.kpi .d{font-size:14px;color:var(--dim);margin-top:4px}
+.curve{margin-top:22px;border:1px solid var(--line);border-radius:22px;padding:30px 30px 18px;background:var(--navy)}
+.curve .top{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:14px}
+.curve svg{display:block;width:100%;height:auto}
+#eqline{stroke-dasharray:2600;stroke-dashoffset:0}
+.drawn #eqline{animation:none}
+.rgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px;margin-top:22px}
+.rc2{border:1px solid var(--line);border-radius:22px;padding:30px;background:var(--navy)}
+.hb{display:grid;grid-template-columns:110px minmax(0,1fr);gap:14px;align-items:center;margin-top:16px}
+.hb .bar{display:flex;align-items:center;gap:12px}
+.hb .bar i{display:block;height:28px;border-radius:0 6px 6px 0}
+.honest{margin-top:22px;border:1px solid #5A3C1B;border-radius:22px;padding:32px;background:linear-gradient(135deg,#171009,#0E0B08);display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:40px;align-items:center}
+.proofimgs{margin-top:60px;display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:34px;align-items:center}
+.shot{perspective:1800px}
+.shot>div{transform:rotateY(12deg) rotateX(3deg);border-radius:16px;overflow:hidden;border:1px solid var(--line2);box-shadow:0 60px 120px -40px rgba(0,0,0,.9)}
+.shot.r>div{transform:rotateY(-10deg) rotateX(3deg)}
+
+/* language */
+.lang{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:56px;align-items:center}
+.pair3d{position:relative;height:760px;perspective:1800px}
+.pair3d .pa,.pair3d .pb{position:absolute;top:0;border-radius:12px;overflow:hidden;box-shadow:0 50px 100px -30px rgba(0,0,0,.9),0 0 0 1px rgba(255,255,255,.07)}
+.pair3d .pa{left:0;width:300px;transform:rotateY(16deg) translateZ(-40px)}
+.pair3d .pb{right:0;top:30px;width:300px;height:692px;transform:rotateY(-14deg) translateZ(30px);background:#0B0F17}
+.pair3d .pb .inner{transform:scale(.6);transform-origin:top left;width:500px}
+.pair3d .lbl{position:absolute;bottom:-34px;font-size:14px;color:var(--dim)}
+
+/* steps */
+.steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px;counter-reset:st}
+.step{border-top:2px solid var(--line2);padding-top:26px}
+.step .n{font:600 15px var(--mono);color:var(--mint)}
+.step h3{font-size:24px;margin-top:14px}
+.step p{color:var(--mist);margin-top:10px;font-size:16.5px}
+
+/* faq */
+.faq{max-width:900px}
+.faq details{border-top:1px solid var(--line);padding:22px 4px}
+.faq details:last-child{border-bottom:1px solid var(--line)}
+.faq summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:20px;font-family:var(--display);font-stretch:105%;font-weight:700;font-size:21px}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";font-family:var(--mono);color:var(--mint);font-weight:400}
+.faq details[open] summary::after{content:"\2212"}
+.faq details p{color:var(--mist);margin-top:12px;max-width:70ch}
+
+/* final */
+.final{position:relative;overflow:hidden;padding:170px 0 150px;text-align:center;isolation:isolate}
+.final canvas{position:absolute;inset:0;width:100%;height:100%;z-index:-1}
+.final h2{font-size:clamp(40px,5vw,74px);max-width:15ch;margin:0 auto}
+.final .lead{margin:24px auto 0}
+.final .ctas{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:38px}
+
+footer{border-top:1px solid var(--line);padding:56px 0 70px;background:#03050B}
+footer h3{font-size:16px;margin:26px 0 10px}
+footer p{font-size:13.5px;color:var(--dim);line-height:1.65;max-width:110ch;margin-top:10px}
+
+/* responsive */
+@media (max-width:1100px){
+  .native{grid-template-columns:minmax(0,1fr)}
+  .native .panelframe{order:-1;justify-self:center}
+  .callouts,.callouts.right{padding-top:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:960px){
+  .hero .wrap,.head,.gallery,.voices,.land,.prot,.lang,.honest,.proofimgs{grid-template-columns:minmax(0,1fr)}
+  .stage-wrap{height:560px;max-width:600px;width:100%;margin:0 auto}
+  .tgroups,.rgrid,.steps{grid-template-columns:minmax(0,1fr)}
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .lrow{grid-template-columns:minmax(0,1fr);gap:6px}.lrow .when{text-align:left}
+  .drow{grid-template-columns:minmax(0,1fr)}.drow .rc{text-align:left}
+  .nav nav{display:none}
+  section.s{padding:90px 0}
+  .fan{height:560px}
+  .iso{height:460px;margin-top:150px}.stack{width:240px;height:240px}
+}
+@media (max-width:600px){
+  body{font-size:17px}
+  .wrap{padding:0 18px}
+  .stage-wrap{height:430px}
+  .stage{transform:rotateX(8deg) rotateY(-12deg) scale(.62);transform-origin:50% 0}
+  .chartplane{display:none}
+  .panelhost{left:50%;right:auto;margin-left:-250px;transform:translateZ(40px)}
+  .fc2{display:none}.fc1{left:10px;top:520px}
+  .callouts,.callouts.right{grid-template-columns:minmax(0,1fr)}
+  .panelframe{transform:scale(.68);transform-origin:top center;margin-bottom:-400px}
+  .tg li{grid-template-columns:minmax(0,1fr);gap:2px}
+  .fan{height:470px}.fan figure{width:62%}
+  .pair3d{height:520px}.pair3d .pa{width:190px}.pair3d .pb{width:190px;height:440px;top:20px}.pair3d .pb .inner{transform:scale(.38)}
+  .kpi .v{font-size:26px}
+  .vitem{grid-template-columns:70px minmax(0,1fr)}.vitem .w{display:none}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none !important;animation:none !important}}
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="Legion AI home">
+      <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6DF0BB"/><stop offset="1" stop-color="#1D9E70"/></linearGradient></defs><path d="M17 2 31 10v14L17 32 3 24V10Z" fill="none" stroke="url(#lg)" stroke-width="2"/><path d="M10 21l5-6 4 3 5-7" fill="none" stroke="#45E2A3" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <b>LEGION <span>AI</span></b>
+    </a>
+    <nav aria-label="Main">
+      <a href="#panel">The panel</a>
+      <a href="#how">How it reads</a>
+      <a href="#protect">Protection</a>
+      <a href="#results">Results</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <a class="btn btn-p" href="https://wa.me/51960685684" style="min-height:44px;padding:0 20px;font-size:15px">Talk to us</a>
+  </div>
+</header>
+
+<main id="top">
+
+<!-- HERO -->
+<section class="hero" aria-label="Introduction">
+  <canvas class="terrain" id="terrain" aria-hidden="true"></canvas>
+  <div class="wrap">
+    <div>
+      <h1>See what the market is doing before you risk a dollar.</h1>
+      <p class="lead">Legion AI is a smart panel for MetaTrader 4. It watches every timeframe of Gold, Bitcoin, indices and forex at the same time, and tells you in plain English whether to wait, look for buys or look for sells.</p>
+      <div class="ctas">
+        <a class="btn btn-p" href="https://wa.me/51960685684">Get Legion AI</a>
+        <a class="btn btn-g" href="#panel">Tour the panel</a>
+      </div>
+      <div class="proof">
+        <div><strong>14</strong><span>tools in one panel</span></div>
+        <div><strong>9</strong><span>timeframes, M1 to MN</span></div>
+        <div><strong>0</strong><span>trades placed for you</span></div>
+      </div>
+    </div>
+    <div class="stage-wrap" id="stageWrap" aria-hidden="true">
+      <div class="stage" id="stage">
+        <div class="chartplane"><canvas id="mt4chart" width="1280" height="940"></canvas><span class="ctag">XAUUSD, M15</span></div>
+        <div class="panelhost" data-panel></div>
+        <div class="floatchip fc1">Overall reading<b>SELL BIAS -43</b></div>
+        <div class="floatchip fc2">Confidence<b style="color:#F2C94C">61%</b></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MARKETS -->
+<div class="markets">
+  <div class="wrap">
+    <p class="small" style="font-size:15px">Works on any symbol your MT4 broker offers, including</p>
+    <div class="mk">
+      <span><i style="background:radial-gradient(circle at 35% 30%,#FFE6A6,#C8902E)"></i>Gold</span>
+      <span><i style="background:radial-gradient(circle at 35% 30%,#FFD08A,#E8871E)"></i>Bitcoin</span>
+      <span><i style="background:radial-gradient(circle at 35% 30%,#B9D2FF,#3E63D6)"></i>S&amp;P 500</span>
+      <span><i style="background:radial-gradient(circle at 35% 30%,#A9F3D6,#1D9E70)"></i>Nasdaq 100</span>
+      <span><i style="background:radial-gradient(circle at 35% 30%,#E7ECF5,#7F8AA0)"></i>US30</span>
+      <span><i style="background:radial-gradient(circle at 35% 30%,#D7C2FF,#7A55D6)"></i>Forex pairs</span>
+    </div>
+  </div>
+</div>
+
+<!-- NATIVE PANEL -->
+<section class="s" id="panel">
+  <div class="wrap">
+    <div class="head">
+      <h2>The real panel, now fully in English.</h2>
+      <p class="lead">This is Legion AI exactly as it sits on the right side of your MT4 chart: one column, six tabs, every reading explained by a tooltip when you hover it.</p>
+    </div>
+    <div class="native">
+      <div class="callouts">
+        <div class="co hl"><h3>Overall reading</h3><p>One verdict for the whole market, with a confidence score that measures how much the tools agree.</p></div>
+        <div class="co"><h3>Your account, live</h3><p>Balance, equity, margin level, leverage and the price where your broker would close you out.</p></div>
+        <div class="co"><h3>Momentum on 6 timeframes</h3><p>Each square is one candle. Green rows lean up, red rows lean down, gray means undecided.</p></div>
+        <div class="co"><h3>Trend grid</h3><p>Trend strength from 1-minute to monthly. When it says Do not enter, it means it.</p></div>
+      </div>
+      <figure class="panelframe" style="margin:0">
+        <div data-panel data-full></div>
+        <figcaption class="cap small">English recreation of a real panel capture (XAUUSD, 15-minute chart).</figcaption>
+      </figure>
+      <div class="callouts right">
+        <div class="co"><h3>Six module scores</h3><p>RSI, ADX, Flow, Pair, Structure and Candle each vote from -100 to +100.</p></div>
+        <div class="co"><h3>Reading in plain words</h3><p>A short line per tool, so you know why the panel thinks what it thinks.</p></div>
+        <div class="co"><h3>Market structure</h3><p>Is each timeframe pushing or pulling back, and where it breaks. Monthly down to 1-minute.</p></div>
+        <div class="co"><h3>Buyers vs. sellers</h3><p>FlowPulse scores 20 windows, from the last minute to the last 8 days.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CAMPAIGN GALLERY -->
+<section class="s s-alt" aria-labelledby="gal-h">
+  <div class="wrap gallery">
+    <div>
+      <h2 id="gal-h" style="font-size:clamp(36px,4.2vw,60px)">On your desk, with alerts in your pocket.</h2>
+      <p class="lead" style="margin-top:22px">Legion AI runs inside MetaTrader 4 on your computer or VPS. When a signal fires, it can reach you as a pop-up, a sound, an email or a push notification on the MT4 app on your phone.</p>
+      <p class="muted" style="margin-top:18px;font-size:16px">Click either poster to bring it to the front.</p>
+    </div>
+    <div>
+      <div class="fan" id="fan">
+        <figure class="f1"><img src="/img/poster-gold-bitcoin.jpg?v=e7236ad275" alt="Legion AI campaign poster: an MT4 system for Gold, Bitcoin, S&amp;P 500, Nasdaq, US30 and DXY, with AI-powered analysis and real-time multi-timeframe reading" loading="lazy" width="825" height="1024"><button aria-label="Bring the desktop poster to the front"></button></figure>
+        <figure class="f2"><img src="/img/poster-trade-smarter.jpg?v=95e6c1ad37" alt="Legion AI campaign poster: Trade smarter, not harder. Real-time AI market scanner, multi-timeframe analysis and trend and pattern detection" loading="lazy" width="960" height="1192"><button aria-label="Bring the mobile poster to the front"></button></figure>
+      </div>
+      <p class="small figcap">Legion AI campaign artwork. Screens in the posters are illustrations.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SIX VOICES -->
+<section class="s" id="how">
+  <div class="wrap">
+    <div class="head">
+      <h2>Six analysts vote. You get one clear answer.</h2>
+      <p class="lead">Each tool looks at the market from a different angle and scores it from -100 (sellers in control) to +100 (buyers in control). Legion AI weighs the votes, checks how much they agree, and stacks it all into one reading.</p>
+    </div>
+    <div class="voices">
+      <div class="iso" aria-hidden="true">
+        <div class="stack" id="stack">
+          <div class="plate" style="transform:translateZ(0px)" data-k="CANDLE"><span>CANDLE</span><em>-- </em></div>
+          <div class="plate" style="transform:translateZ(46px)" data-k="STRUCT"><span>STRUCTURE</span><em>+33</em></div>
+          <div class="plate" style="transform:translateZ(92px)" data-k="PAIR"><span>PAIR</span><em>-63</em></div>
+          <div class="plate" style="transform:translateZ(138px)" data-k="FLOW"><span>FLOW</span><em>-39</em></div>
+          <div class="plate" style="transform:translateZ(184px)" data-k="ADX"><span>ADX</span><em>-59</em></div>
+          <div class="plate" style="transform:translateZ(230px)" data-k="RSI"><span>RSI</span><em>-83</em></div>
+          <div class="plate top" style="transform:translateZ(300px)"><span>SELL BIAS  -43</span><em style="color:#F2C94C">61%</em></div>
+        </div>
+      </div>
+      <div class="vlist">
+        <div class="vitem" data-k="RSI" tabindex="0"><b>RSI</b><div><h3>Is price speeding up?</h3><p>Momentum on six timeframes at once, with overbought and oversold warnings.</p></div><span class="w">30%</span></div>
+        <div class="vitem" data-k="ADX" tabindex="0"><b>ADX</b><div><h3>Is there a real trend?</h3><p>Strong trends light the grid up; choppy markets stay gray.</p></div><span class="w">30%</span></div>
+        <div class="vitem" data-k="FLOW" tabindex="0"><b>FLOW</b><div><h3>Who is pushing?</h3><p>Where price sits inside its recent range, from minutes to weeks.</p></div><span class="w">25%</span></div>
+        <div class="vitem" data-k="STRUCT" tabindex="0"><b>STRUCT</b><div><h3>Higher highs or lower lows?</h3><p>Structure on the weekly, daily and 4-hour charts.</p></div><span class="w">25%</span></div>
+        <div class="vitem" data-k="PAIR" tabindex="0"><b>PAIR</b><div><h3>Which side is stronger?</h3><p>Gold vs. the dollar, the euro vs. the dollar, scored 0 to 10.</p></div><span class="w">15%</span></div>
+        <div class="vitem" data-k="CANDLE" tabindex="0"><b>CANDLE</b><div><h3>Who won the big candle?</h3><p>Did the key candle close near its high or near its low?</p></div><span class="w">10%</span></div>
+        <p class="small" style="padding:10px 16px 0">Right column: default weight of each vote. You can change every weight in the settings.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VERDICT LADDER -->
+<section class="s s-alt" aria-labelledby="lad-h">
+  <div class="wrap">
+    <div class="head">
+      <h2 id="lad-h">Every reading tells you what to do next.</h2>
+      <p class="lead">No lines to interpret. The panel moves through clear stages, from waiting to getting out, and says it in one sentence.</p>
+    </div>
+    <div class="ladder" role="table" aria-label="Panel readings and their meaning">
+      <div class="lrow" role="row"><span class="st" role="cell"><i class="dot" style="background:#A9B7CB"></i>WAIT</span><p role="cell">No clear edge. Patience: not trading is also a position.</p><span class="when" role="cell">Tools disagree</span></div>
+      <div class="lrow" role="row"><span class="st" role="cell" style="color:#45E2A3"><i class="dot" style="background:#45E2A3"></i>BUY BIAS</span><p role="cell">Moderate buyer edge. Wait for the ADX gun to enter.</p><span class="when" role="cell">Most tools lean up</span></div>
+      <div class="lrow" role="row"><span class="st" role="cell" style="color:#F0645A"><i class="dot" style="background:#F0645A"></i>SELL BIAS</span><p role="cell">Moderate seller edge. Wait for the ADX gun to enter.</p><span class="when" role="cell">Most tools lean down</span></div>
+      <div class="lrow" role="row"><span class="st" role="cell" style="color:#45E2A3"><i class="dot" style="background:#45E2A3;box-shadow:0 0 0 4px rgba(69,226,163,.2)"></i>BUY CONFIRMED</span><p role="cell">Buy gun with support. Valid entry: define your stop loss and lot size.</p><span class="when" role="cell">Arrow plus agreement</span></div>
+      <div class="lrow" role="row"><span class="st" role="cell" style="color:#F5A54A"><i class="dot" style="background:#F5A54A"></i>SELL WITHOUT SUPPORT</span><p role="cell">The gun marked sell but the rest does not agree. Low quality.</p><span class="when" role="cell">Arrow, no agreement</span></div>
+      <div class="lrow" role="row"><span class="st" role="cell" style="color:#F2C94C"><i class="dot" style="background:#F2C94C"></i>WATCH EXIT</span><p role="cell">Trade open against the confluence. Watch the exit closely.</p><span class="when" role="cell">Market turned on you</span></div>
+      <div class="lrow" role="row"><span class="st" role="cell" style="color:#F0645A"><i class="dot" style="background:#F0645A;box-shadow:0 0 0 4px rgba(240,100,90,.2)"></i>EXIT NOW</span><p role="cell">The trigger changed sides. Protect profits or close the position.</p><span class="when" role="cell">Trend flipped</span></div>
+    </div>
+    <p class="small" style="margin-top:16px">Sentences shown are the panel's own wording. The confidence score measures agreement between tools; it is not a probability of winning.</p>
+  </div>
+</section>
+
+<!-- LANDSCAPE -->
+<section class="s" aria-labelledby="land-h">
+  <div class="wrap land">
+    <div class="landcard">
+      <canvas id="iso" width="1400" height="780" role="img" aria-label="3D landscape of the RSI grid: six timeframes by ten candles, taller red blocks show stronger selling, taller green blocks show stronger buying"></canvas>
+      <p class="small" style="padding:4px 10px 6px">The RSI grid from the panel above, turned into a landscape. Taller blocks mean a stronger lean.</p>
+    </div>
+    <div>
+      <h2 id="land-h" style="font-size:clamp(34px,3.8vw,54px)">From the 1&#8209;minute to the monthly, in one glance.</h2>
+      <div class="pts">
+        <div><h3>When everything lines up, you see it</h3><p>Fast traders and big money rarely agree. When every timeframe turns the same color, the move usually has fuel behind it.</p></div>
+        <div><h3>Arrows only on closed candles</h3><p>The ADX gun waits for the candle to close before it marks an entry, so the arrow does not appear and disappear while you watch.</p></div>
+        <div><h3>It checks itself</h3><p>The panel tests its own pattern on your chart's history. If it has been losing lately, it shows Do not enter instead of an arrow.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TOOLS -->
+<section class="s s-alt" id="tools" aria-labelledby="tools-h">
+  <div class="wrap">
+    <div class="head">
+      <h2 id="tools-h">Fourteen tools. One clean chart.</h2>
+      <p class="lead">Every tool lives in its own tab and folds away with one key. Turn on what you use, hide the rest.</p>
+    </div>
+    <div class="tgroups">
+      <div class="tg">
+        <h3>Read the market</h3>
+        <p>Know the direction before you look for a trade.</p>
+        <ul>
+          <li><b>AI Status</b><span>Wait, buy bias or sell bias, a confidence score and a one-line explanation.</span></li>
+          <li><b>RSI Scanner</b><span>Momentum on up to six timeframes, with streaks and overbought / oversold warnings.</span></li>
+          <li><b>Pair Strength</b><span>Which side of the pair is really stronger, from 0 to 10.</span></li>
+          <li><b>FlowPulse</b><span>Buyers vs. sellers over 20 windows, from one minute to eight days.</span></li>
+        </ul>
+      </div>
+      <div class="tg">
+        <h3>Time your entry</h3>
+        <p>Find the moment, not just the direction.</p>
+        <ul>
+          <li><b>ADX Gun</b><span>Trend-strength grid with entry arrows on closed candles and a history test.</span></li>
+          <li><b>Market Structure</b><span>Trend from monthly to 1-minute, breakouts, trend changes and Fibonacci entry zones.</span></li>
+          <li><b>Order Blocks + FVG Radar</b><span>Zones where big players left footprints, with an alert when price gets close.</span></li>
+          <li><b>Relative Volume</b><span>Flags candles with unusual activity compared to a normal day.</span></li>
+        </ul>
+      </div>
+      <div class="tg">
+        <h3>Protect your account</h3>
+        <p>Size your trades with the math already done.</p>
+        <ul>
+          <li><b>Account Card</b><span>Balance, equity, floating P/L, margin level and leverage, always on screen.</span></li>
+          <li><b>Wipeout Meter</b><span>Simulate any trade and see the exact price where your broker would close it.</span></li>
+          <li><b>Historical Drops</b><span>The biggest crashes of your market and the safe lot size for your balance.</span></li>
+        </ul>
+      </div>
+      <div class="tg">
+        <h3>Work faster</h3>
+        <p>Small things that save time every day.</p>
+        <ul>
+          <li><b>Candle Zoom</b><span>Click any candle to see what happened inside it, smaller candle by smaller candle.</span></li>
+          <li><b>Sessions + Key Levels</b><span>Tokyo, London and New York boxes, plus the round numbers traders watch.</span></li>
+          <li><b>Chart Tools</b><span>Price rectangles, a measuring crosshair, 9 chart themes, hotkeys and phone alerts.</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROTECTION -->
+<section class="s" id="protect" aria-labelledby="prot-h">
+  <div class="wrap">
+    <div class="head">
+      <h2 id="prot-h">Know where your broker would close you out, before you click buy.</h2>
+      <p class="lead">Most blown accounts are not one bad idea. They are one position that was too big. The Wipeout Meter is a flight simulator for your trade: nothing is sent to your broker.</p>
+    </div>
+    <div class="prot">
+      <div class="tilt"><div>
+        <svg viewBox="0 0 900 560" role="img" aria-label="Simulated buy on Gold: blue entry line at 4,082.73, green take profit above at 4,180, amber broker warning at 3,968 and red wipeout line at 3,912 below">
+          <rect width="900" height="560" fill="#060A12"/>
+          <g stroke="#111A2C" stroke-width="1"><line x1="0" y1="70" x2="900" y2="70"/><line x1="0" y1="160" x2="900" y2="160"/><line x1="0" y1="250" x2="900" y2="250"/><line x1="0" y1="340" x2="900" y2="340"/><line x1="0" y1="430" x2="900" y2="430"/><line x1="0" y1="520" x2="900" y2="520"/></g>
+          <g id="wcandles"></g>
+          <line x1="0" y1="96" x2="900" y2="96" stroke="#45E2A3" stroke-width="2"/>
+          <text x="16" y="88" fill="#45E2A3" font-family="Geist Mono, monospace" font-size="15">TAKE PROFIT   4,180.00   (you would have $25,844)</text>
+          <line x1="0" y1="226" x2="900" y2="226" stroke="#6FA8FF" stroke-width="2" stroke-dasharray="8 6"/>
+          <text x="16" y="218" fill="#9CC3FF" font-family="Geist Mono, monospace" font-size="15">SIMULATED ENTRY   4,082.73   (drag the line)</text>
+          <line x1="0" y1="392" x2="900" y2="392" stroke="#F5A54A" stroke-width="2"/>
+          <text x="16" y="384" fill="#F5A54A" font-family="Geist Mono, monospace" font-size="15">BROKER WARNING   3,968.10   (you have $9,560 left)</text>
+          <line x1="0" y1="468" x2="900" y2="468" stroke="#F0645A" stroke-width="3"/>
+          <text x="16" y="460" fill="#FF8E84" font-family="Geist Mono, monospace" font-size="15" font-weight="600">WIPEOUT: EVERYTHING GETS CLOSED   3,912.40   (-4.2%)</text>
+          <rect x="652" y="16" width="232" height="58" rx="10" fill="#0E1A33" stroke="#27395E"/>
+          <text x="668" y="40" fill="#A9B7CB" font-family="Geist, sans-serif" font-size="13">Distance to wipeout</text>
+          <text x="668" y="63" fill="#F5A54A" font-family="Geist Mono, monospace" font-size="18" font-weight="600">CAUTION  2.1 ATR D1</text>
+        </svg>
+      </div></div>
+      <div class="plist">
+        <div><h3>Pick a direction and a lot size</h3><p>A red line appears where your broker would close everything. The percentage tells you how far price has to fall.</p></div>
+        <div><h3>Drag the green line to your target</h3><p>See your profit at the take profit before you place a single order.</p></div>
+        <div><h3>Wide, Caution or Danger</h3><p>The meter measures the distance to the wipeout line in typical days of movement, so you know if your cushion is real.</p></div>
+        <p class="small">Illustrative values for a $23,900 account buying Gold. No commissions or swap included.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HISTORICAL DROPS -->
+<section class="s s-alt" aria-labelledby="drops-h">
+  <div class="wrap">
+    <div class="head">
+      <h2 id="drops-h">Markets fall. The question is whether your account survives.</h2>
+      <p class="lead">Legion AI carries the biggest drops of five markets inside the panel. It uses them to tell you the largest lot your balance could hold through a similar fall.</p>
+    </div>
+    <div class="tabs" role="tablist" aria-label="Choose a market" id="dtabs"></div>
+    <div class="dchart" role="tabpanel" id="dpanel" aria-live="polite">
+      <div style="display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:18px">
+        <h3 id="dtitle" style="font-size:22px">S&amp;P 500</h3>
+        <span class="small">Bar = fall from peak to low. Right column = time from the low back to the old high.</span>
+      </div>
+      <div id="drows"></div>
+    </div>
+    <p class="small" style="margin-top:14px">Source: the event table built into Legion AI. Depths are approximate, based on closing prices.</p>
+  </div>
+</section>
+
+<!-- RESULTS -->
+<section class="s" id="results" aria-labelledby="res-h">
+  <div class="wrap">
+    <div class="head">
+      <h2 id="res-h">One live account, seven weeks, every number shown.</h2>
+      <p class="lead">Synced results of a live account traded by our team from July 30 to September 18. The report is in Mexican pesos; we converted it to US dollars at 18.20 MXN per USD. A person placed every trade, not the panel.</p>
+    </div>
+    <div class="kpis">
+      <div class="kpi"><div class="k">Net profit</div><div class="v" style="color:var(--mint)">+$5,585.89</div><div class="d">after commissions and swap</div></div>
+      <div class="kpi"><div class="k">Win rate</div><div class="v">91.3%</div><div class="d">95 of 104 closed trades</div></div>
+      <div class="kpi"><div class="k">Profit factor</div><div class="v">3.51</div><div class="d">$3.51 won per $1 lost</div></div>
+      <div class="kpi"><div class="k">Max drawdown</div><div class="v" style="color:var(--amber)">$774.48</div><div class="d">worst peak-to-valley dip</div></div>
+    </div>
+    <figure class="curve" id="curve" style="margin:22px 0 0">
+      <div class="top">
+        <div><h3 style="font-size:22px">Cumulative net profit</h3><p class="small">Closed trades, USD</p></div>
+        <div style="text-align:right"><p class="small">Total</p><p class="num" style="font-size:28px;font-weight:600;color:var(--mint)">+$5,585.89</p></div>
+      </div>
+      <svg viewBox="0 0 1000 300" role="img" aria-label="Line chart of cumulative net profit rising from 0 on July 30 to 5,585.89 dollars on September 18, with a pullback around August 20">
+        <defs><linearGradient id="eqfill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#45E2A3" stop-opacity=".28"/><stop offset="1" stop-color="#45E2A3" stop-opacity="0"/></linearGradient></defs>
+        <g stroke="#152241"><line x1="56" y1="16" x2="984" y2="16"/><line x1="56" y1="91.4" x2="984" y2="91.4"/><line x1="56" y1="166.9" x2="984" y2="166.9"/></g>
+        <line x1="56" y1="242.3" x2="984" y2="242.3" stroke="#33466B"/>
+        <g fill="#7787A0" font-size="12" font-family="Geist Mono, monospace" text-anchor="end"><text x="46" y="20">$6k</text><text x="46" y="95">$4k</text><text x="46" y="171">$2k</text><text x="46" y="246">$0</text></g>
+        <path id="eqarea" d="M56.0 242.3 L93.1 234.0 L130.2 227.8 L148.8 223.6 L167.4 244.4 L185.9 240.2 L223.0 231.9 L260.2 223.6 L297.3 215.3 L353.0 209.1 L390.1 205.0 L427.2 198.8 L436.5 190.5 L445.8 219.5 L455.0 213.3 L464.3 186.3 L482.9 173.9 L501.4 120.0 L510.7 147.0 L520.0 134.5 L538.6 122.1 L557.1 109.7 L575.7 101.4 L594.2 95.2 L631.4 86.9 L668.5 78.6 L687.0 72.4 L705.6 66.1 L742.7 59.9 L761.3 49.6 L779.8 43.4 L835.5 39.2 L909.8 35.1 L984.0 31.6 L984.0 242.3 L56.0 242.3 Z" fill="url(#eqfill)"/>
+        <path id="eqline" d="M56.0 242.3 L93.1 234.0 L130.2 227.8 L148.8 223.6 L167.4 244.4 L185.9 240.2 L223.0 231.9 L260.2 223.6 L297.3 215.3 L353.0 209.1 L390.1 205.0 L427.2 198.8 L436.5 190.5 L445.8 219.5 L455.0 213.3 L464.3 186.3 L482.9 173.9 L501.4 120.0 L510.7 147.0 L520.0 134.5 L538.6 122.1 L557.1 109.7 L575.7 101.4 L594.2 95.2 L631.4 86.9 L668.5 78.6 L687.0 72.4 L705.6 66.1 L742.7 59.9 L761.3 49.6 L779.8 43.4 L835.5 39.2 L909.8 35.1 L984.0 31.6" fill="none" stroke="#45E2A3" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"/>
+        <circle cx="984" cy="31.6" r="6" fill="#45E2A3" stroke="#081022" stroke-width="3"><title>Sep 18: +$5,585.89</title></circle>
+        <circle cx="445.8" cy="219.5" r="6" fill="#F5A54A" stroke="#081022" stroke-width="3"><title>Aug 20: biggest pullback of the period</title></circle>
+        <g fill="#7787A0" font-size="12" font-family="Geist Mono, monospace" text-anchor="middle"><text x="70" y="270">Jul 30</text><text x="185.9" y="270">Aug 6</text><text x="315.8" y="270">Aug 13</text><text x="445.8" y="270">Aug 20</text><text x="575.7" y="270">Aug 27</text><text x="705.6" y="270">Sep 3</text><text x="835.5" y="270">Sep 10</text><text x="964" y="270">Sep 18</text></g>
+      </svg>
+      <figcaption class="small" style="margin-top:6px">Traced from the account report. Start and end values are exact; points in between are approximate.</figcaption>
+    </figure>
+    <div class="rgrid">
+      <figure class="rc2" style="margin:0" aria-label="95 winning trades and 9 losing trades">
+        <h3 style="font-size:20px">Winning vs. losing trades</h3>
+        <div style="display:flex;gap:3px;height:46px;margin-top:24px"><div title="95 winners" style="width:91.3%;background:linear-gradient(90deg,#1D9E70,#45E2A3);border-radius:8px 0 0 8px"></div><div title="9 losers" style="width:8.7%;background:var(--amber);border-radius:0 8px 8px 0"></div></div>
+        <div style="display:flex;justify-content:space-between;margin-top:16px"><div><p class="num" style="font-size:30px;font-weight:600">95</p><p class="small">winners, 91%</p></div><div style="text-align:right"><p class="num" style="font-size:30px;font-weight:600">9</p><p class="small">losers, 9%</p></div></div>
+      </figure>
+      <figure class="rc2" style="margin:0" aria-label="Money won 7,814 dollars, money lost 2,228 dollars, costs 299 dollars">
+        <h3 style="font-size:20px">Money won vs. money lost</h3>
+        <div class="hb"><span class="muted" style="font-size:15px">Won</span><div class="bar"><i style="width:78%;background:#45E2A3"></i><span class="num">$7,814</span></div></div>
+        <div class="hb"><span class="muted" style="font-size:15px">Lost</span><div class="bar"><i style="width:22%;background:var(--amber)"></i><span class="num">$2,228</span></div></div>
+        <div class="hb"><span class="muted" style="font-size:15px">Costs</span><div class="bar"><i style="width:3%;background:#7787A0"></i><span class="num">$299</span></div></div>
+      </figure>
+    </div>
+    <div class="kpis" style="margin-top:22px">
+      <div class="kpi"><div class="k">Average per trade</div><div class="v" style="font-size:26px">+$53.71</div><div class="d">net, all 104 trades</div></div>
+      <div class="kpi"><div class="k">Best trade</div><div class="v" style="font-size:26px;color:var(--mint)">+$1,551.93</div><div class="d">single trade</div></div>
+      <div class="kpi"><div class="k">Longest streaks</div><div class="v" style="font-size:26px">34 W / 2 L</div><div class="d">in a row</div></div>
+      <div class="kpi"><div class="k">System quality (SQN)</div><div class="v" style="font-size:26px">2.59</div><div class="d">Van Tharp score</div></div>
+    </div>
+    <div class="honest">
+      <div>
+        <h3 style="font-size:24px">The honest part: small wins, bigger losses</h3>
+        <p style="color:#D2C2AA;margin-top:12px">The average win was <b class="num" style="color:#fff">$82.25</b>. The average loss was <b class="num" style="color:#fff">$247.59</b>. That is normal for a high win-rate style, but it means a few bad trades can erase many good ones. It is exactly why the Wipeout Meter and the safe lot size live inside the panel.</p>
+      </div>
+      <div>
+        <div class="hb"><span class="muted" style="font-size:15px">Average win</span><div class="bar"><i style="width:30%;background:#45E2A3"></i><span class="num">$82</span></div></div>
+        <div class="hb"><span class="muted" style="font-size:15px">Average loss</span><div class="bar"><i style="width:84%;background:var(--amber)"></i><span class="num">$248</span></div></div>
+      </div>
+    </div>
+    <div class="proofimgs">
+      <figure class="shot" style="margin:0"><div><img src="/img/report-performance.jpg?v=6aaafb565e" alt="Original performance report in Spanish: 104 closed trades, 91.3% win rate, profit factor 3.51, net 101,663.21 MXN" loading="lazy" width="1300" height="1072"></div><figcaption class="small" style="margin-top:14px">The original report, in Spanish. Account number hidden.</figcaption></figure>
+      <figure class="shot r" style="margin:0"><div><img src="/img/report-curve.jpg?v=7cf80d99bc" alt="Original results curve in Spanish, from July 30 to September 18, ending at 101,663.21 MXN" loading="lazy" width="1300" height="430"></div><figcaption class="small" style="margin-top:14px">The original results curve, in Mexican pesos.</figcaption></figure>
+    </div>
+    <p class="small" style="margin-top:30px;max-width:900px">One account over seven weeks is a small sample. Past results do not guarantee future results. Your results depend on your own decisions, your broker, your position size and the market.</p>
+  </div>
+</section>
+
+<!-- LANGUAGE -->
+<section class="s s-alt" aria-labelledby="lang-h">
+  <div class="wrap lang">
+    <div>
+      <h2 id="lang-h" style="font-size:clamp(34px,3.8vw,54px)">English by default. Spanish with one setting.</h2>
+      <p class="lead" style="margin-top:22px">Every button, tooltip, alert and push notification switches language from the Language setting. The math, the signals and the alerts stay exactly the same.</p>
+      <p class="muted" style="margin-top:18px;font-size:16px">On the left, a real MetaTrader 4 capture in Spanish. On the right, the same panel in English.</p>
+    </div>
+    <div class="pair3d" aria-hidden="true">
+      <div class="pa"><img src="/img/panel-spanish.jpg?v=fc440b0808" alt="" width="500" height="1203" loading="lazy"></div>
+      <div class="pb"><div class="inner" data-panel></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- STEPS -->
+<section class="s" aria-labelledby="st-h">
+  <div class="wrap">
+    <div class="head single"><h2 id="st-h">Running on your chart in about five minutes.</h2></div>
+    <div class="steps">
+      <div class="step"><span class="n">Step 1</span><h3>Message us</h3><p>Send us a WhatsApp. We answer your questions and send your copy of Legion AI with simple install steps.</p></div>
+      <div class="step"><span class="n">Step 2</span><h3>Drop it on your chart</h3><p>Copy one file into MetaTrader 4 and drag it onto any chart. No extra software, no add-ons.</p></div>
+      <div class="step"><span class="n">Step 3</span><h3>Read, then decide</h3><p>Check the overall reading, look at your wipeout line, and make your call with the full picture in front of you.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="s s-alt" id="faq" aria-labelledby="faq-h">
+  <div class="wrap">
+    <div class="head single"><h2 id="faq-h">Questions traders ask us</h2></div>
+    <div class="faq">
+      <details><summary>Does Legion AI trade for me?</summary><p>No. It is an analysis panel. It reads the market and your account, but every trade is your decision. It never opens, changes or closes an order.</p></details>
+      <details><summary>Do I need experience?</summary><p>Basic MetaTrader 4 knowledge is enough. Every number has a tooltip that explains it in simple words, and the overall reading sums everything up in one sentence.</p></details>
+      <details><summary>Which markets does it work on?</summary><p>Any symbol your MT4 broker offers: Gold, Bitcoin, S&amp;P 500, Nasdaq, US30, forex pairs and more. The Historical Drops tool includes crash history for Gold, Bitcoin, S&amp;P 500, Nasdaq and US30.</p></details>
+      <details><summary>Will it work with my broker?</summary><p>If your broker gives you MetaTrader 4, yes. Legion AI runs inside MT4 and only uses the price data your platform already has.</p></details>
+      <details><summary>Does it run on my phone?</summary><p>The panel runs on MT4 for desktop (Windows, or a Mac or VPS that runs MT4). Your phone gets the alerts through MT4 push notifications.</p></details>
+      <details><summary>Can it guarantee profits?</summary><p>No tool can. Legion AI helps you see the market and your risk more clearly. Results always depend on your decisions, your position size and the market.</p></details>
+      <details><summary>Will it slow down MetaTrader?</summary><p>It only redraws what changed instead of repainting everything on every tick, so it stays light even with all fourteen tools on.</p></details>
+      <details><summary>Is it in English?</summary><p>Yes. The whole panel, including tooltips, buttons and alerts, is in English by default, with Spanish as an option.</p></details>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL -->
+<section class="final" aria-labelledby="fin-h">
+  <canvas id="terrain2" aria-hidden="true"></canvas>
+  <div class="wrap">
+    <h2 id="fin-h">Trade with the full picture, not a hunch.</h2>
+    <p class="lead">Message us today. We will show you the panel live, answer your questions and help you install it.</p>
+    <div class="ctas">
+      <a class="btn btn-p" href="https://wa.me/51960685684">Message us on WhatsApp</a>
+      <a class="btn btn-g" href="#panel">Tour the panel again</a>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="Back to top"><b>LEGION <span>AI</span></b></a>
+    <h3>Risk disclosure</h3>
+    <p>Trading foreign exchange, CFDs, metals, stock indices and cryptocurrencies on margin carries a high level of risk and may not be suitable for all investors. You could lose some or all of your money. Legion AI is an analysis tool for MetaTrader 4. It does not place, modify or close trades, does not manage money and does not provide personalized investment advice. Readings such as Buy bias, Sell bias and the confidence score measure agreement between technical tools; they are not predictions or guarantees.</p>
+    <p>The results on this page come from one live account traded manually by our team from July 30 to September 18, converted from Mexican pesos to US dollars at 18.20 MXN/USD. The equity curve between its start and end points is approximate. These results are not typical and are not a promise of what you will earn. Past performance is not indicative of future results. Panel images on this page are recreations of the software with sample values; campaign posters are artwork.</p>
+    <p>MetaTrader 4 is a trademark of its owner. Legion AI is not affiliated with MetaQuotes or with any broker.</p>
+  </div>
+</footer>
+
+<!-- ===== Native panel template (English) ===== -->
+<template id="panelTpl">
+<div class="lp">
+  <div class="hd">
+    <div><div class="ttl">LEGION AI</div><div class="sub">MARKET DASHBOARD  /  XAUUSD  |  M15</div></div>
+    <div class="iaTop">AI: SELL BIAS  -43  |  61%</div>
+    <div class="tb"><span>R</span><span>-</span><span>&gt;&gt;</span></div>
+  </div>
+  <div class="tabs"><span class="on">SUMMARY</span><span>TOOLS</span><span>CANDLE ZOOM</span><span>WIPEOUT</span><span>DROPS</span><span>OB + FVG</span></div>
+
+  <div class="card">
+    <div class="ch"><span>ACCOUNT AND POSITION</span><span class="g">BID 4082.564   ASK 4082.732   SPR 16.8   <span style="color:#E5483F">D1 -1.74%</span></span></div>
+    <div class="g4">
+      <div class="box"><div class="l"><span>BALANCE</span><span>USD</span></div><div class="v">23,893.31</div></div>
+      <div class="box"><div class="l"><span>EQUITY</span></div><div class="v">23,893.31</div></div>
+      <div class="box"><div class="l"><span>FLOATING</span><span>0.00%</span></div><div class="v dim">0.00</div></div>
+      <div class="box"><div class="l"><span>MARGIN LEVEL</span><span>SO 0%</span></div><div class="v dim">UNUSED</div></div>
+      <div class="box"><div class="l"><span>POSITION</span></div><div class="v dim">NO POSITION</div></div>
+      <div class="box"><div class="l"><span>SIZE USD</span></div><div class="v dim">0</div></div>
+      <div class="box"><div class="l"><span>SIZE MXN</span><span>FX 18.48</span></div><div class="v dim">0</div></div>
+      <div class="box"><div class="l"><span>LEVERAGE</span></div><div class="v dim">0x</div></div>
+    </div>
+    <div class="wide">
+      <div><div class="l">WIPED OUT AT (STOP OUT)</div><div class="v">NO POSITION</div><div class="l">No trades on XAUUSD</div></div>
+      <div><div class="l">MARGIN CALL</div><div class="v">--</div></div>
+      <div><div class="l">CUSHION</div><div class="v">--</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="ch"><span>AI STATUS</span><span class="g">OVERALL MARKET READING</span></div>
+    <div class="verd">
+      <div class="vbox"><div class="big">SELL BIAS</div><div class="s">Moderate seller edge. Wait for the ADX gun to enter.</div></div>
+      <div class="cbox"><div class="s">CONFIDENCE</div><div class="big">61%</div></div>
+    </div>
+    <div class="meter"><span style="color:#E5483F">SELL</span><div class="segs"><i></i><i></i><i></i><i></i><i></i><i></i><i class="r1"></i><i class="r2"></i><i class="r2"></i><i class="r2"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><span style="color:#4FD27A;text-align:right">BUY</span></div>
+    <div class="scale"><span>-100</span><b>SCORE -43</b><span style="text-align:right">+100</span></div>
+    <div class="chips">
+      <div class="chip"><div class="t"><span>RSI</span><span>P30</span></div><div class="v"><b>-83</b><i>BEAR+</i></div></div>
+      <div class="chip"><div class="t"><span>ADX</span><span>P30</span></div><div class="v"><b>-59</b><i>BEAR+</i></div></div>
+      <div class="chip"><div class="t"><span>FLOW</span><span>P25</span></div><div class="v"><b>-39</b><i>BEAR</i></div></div>
+      <div class="chip"><div class="t"><span>PAIR</span><span>P15</span></div><div class="v"><b>-63</b><i>BEAR+</i></div></div>
+      <div class="chip gr"><div class="t"><span>STRUCT</span><span>P25</span></div><div class="v"><b>+33</b><i>BULL</i></div></div>
+      <div class="chip na"><div class="t"><span>CANDLE</span><span>P10</span></div><div class="v"><b>--</b><i></i></div></div>
+    </div>
+    <div class="read">
+      <div class="h">AI READING</div>
+      <div class="rd">&gt; RSI   STRONG BEARISH -83% | 6/6 BEAR | accelerating in favor</div>
+      <div class="rd">&gt; ADX   high -46 sell | low -70 strong sell | no gun</div>
+      <div class="rd">&gt; FLOW  short +1 | medium -35 | long -84 | no consensus</div>
+      <div class="rd">&gt; PAIR  XAU 0.9 vs USD 9.0 (D1) | XAU 2.7 (M15x20) | dominates USD</div>
+      <div class="gn">&gt; STRUCT  2 bull / 1 bear | NOT SYNCED</div>
+      <div class="gy">&gt; CANDLE  no mother candle (key S + click or LAST CANDLE)</div>
+      <div class="bl">&gt; VOL   RVOL 1.77x HIGH proj | NEW YORK</div>
+      <div class="rd">&gt; VOTES for 4 | against 1 | neutral 0 of 5 | no gun</div>
+    </div>
+  </div>
+
+  <div class="row2">
+    <div class="card">
+      <div class="ch"><span>RSI Dash</span></div>
+      <table class="rsi" data-rsi></table>
+      <div class="sum">
+        <span>BIAS</span><span class="rd">STRONG BEARISH</span>
+        <span>STRENGTH</span><span class="rd">-83%  6/6 BEAR</span>
+        <span>MOMENTUM</span><span class="rd">ACCEL  3 FALLING</span>
+        <span>CLOSE</span><span>M1   00:55</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ch"><span>ADX GUN MTF</span></div>
+      <table class="adx" data-adx></table>
+      <div class="noent">DO NOT ENTER</div>
+    </div>
+  </div>
+
+  <div class="row3">
+    <div>
+      <div class="card">
+        <div class="ch"><span>MTF STRUCTURE  |  ATR IMPULSES</span></div>
+        <div class="struct">
+          <div style="display:flex;justify-content:space-between;font-size:9.5px;margin-bottom:3px"><span>XAUUSD   <span class="yl">MIXED 2/1</span></span><span>18:04:05</span></div>
+          <div data-struct></div>
+          <div class="nos"><b>NOT SYNCED</b><br>Do not trade: 2 bull / 1 bear on W1 D1 H4</div>
+          <div class="btnr"><span>CURRENT</span><span>H1</span><span>H4</span><span>D1</span><span>W1</span></div>
+          <div class="btnr"><span class="k1">SCREEN</span><span class="k2">STRUCT</span><span>FIBO</span><span class="k3">SHOW</span><span class="k4">DRAWINGS</span></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="ch"><span>PAIR STRENGTH</span></div>
+        <div class="pair"><span class="yl">XAU</span><span class="yl">0.9<br>2.7</span><div><div class="bars" data-bars="2"></div><div class="bars" data-bars="5" style="margin-top:2px"></div></div></div>
+        <div class="pair" style="margin-top:4px"><span class="yl">USD</span><span class="yl">9.0<br>7.2</span><div><div class="bars" data-bars="18"></div><div class="bars" data-bars="14" style="margin-top:2px"></div></div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ch"><span>FLOWPULSE</span></div>
+      <table class="flow" data-flow></table>
+      <div style="display:flex;justify-content:space-between;font-size:8.5px;color:#9AA3B2;margin-top:3px"><span>TF</span><span>DIR</span><span>FLOW</span></div>
+    </div>
+  </div>
+  <div class="ft"><span>KEYS  P fold  Z/X zoom  C cross  R rectangle<br>ON/OFF  E sessions  Y psy  O OB  F FVG  T structure  H drops  V candle zoom</span><span>DOES NOT GUARANTEE RESULTS</span></div>
+</div>
+</template>
+
+<script>
+(function(){
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- native panel ---------- */
+  var C = {R:'#E0443E', r:'#8E2F2B', n:'#3A414D', g:'#2E7D4A', G:'#45C46E'};
+  var rsiRows = [
+    ['M1','nrnrRRnRrR','45.6','+0.5','2'],
+    ['M5','GggGngrrrR','46.7','-2.4','1'],
+    ['M15','RRRRRRRRrR','38.6','-0.8','10+'],
+    ['H1','RRRRRRRRRR','22.2','-0.4','10+'],
+    ['H4','gnRRRRRRnR','29.3','+0.9','4'],
+    ['D1','RRRRRRRRRR','36.1','-5.9','10+']
+  ];
+  var adxCols = ['M','W','D','H4','H1','30','15','5','1'];
+  var adxRows = [['7','rrRRRRRRR'],['21','RRRRRRrRR'],['42','RrRrRRRRR'],['89','RRGRRRRRR'],['144','RRgrRRRRR'],['ALL','nnnRRnRRR']];
+  var structRows = [
+    ['MN','b','Correcting','below 1,614.652','17d 05:55:55'],
+    ['W1','b','Correcting','below 3,886.564','3d 05:55:55'],
+    ['D1','b','CHoCH','below 3,942.138','05:55:55'],
+    ['H4','s','Impulsing','above 4,228.612','01:55:55'],
+    null,
+    ['H1','b','CHoCH','below 4,066.339','00:55:55'],
+    ['M30','s','Correcting','above 4,155.832','00:25:55'],
+    ['M15','s','Impulsing','above 4,154.684','00:10:55'],
+    ['M5','s','Impulsing','above 4,107.349','00:00:55'],
+    ['M1','s','CHoCH','above 4,090.685','00:00:55']
+  ];
+  var flow = [['8 D',-78],['7 D',-78],['6 D',-87],['5 D',-87],['4 D',-87],['3 D',-87],['2 D',-85],['1 D',-81],['18 H',-81],['12 H',-78],['6 H',-45],['4 H',8],['2 H',-24],['1 H',7],['45 M',-53],['30 M',7],['15 M',7],['10 M',7],['5 M',7],['1 M',34]];
+
+  function buildPanel(host, full){
+    var node = document.getElementById('panelTpl').content.cloneNode(true);
+    var h = '<tr><td></td>'; for (var i=10;i>=1;i--) h += '<th>'+i+'</th>';
+    h += '<th style="color:#C9CFD8">RSI</th><th style="color:#C9CFD8">CHG</th><th style="color:#C9CFD8">STREAK</th></tr>';
+    rsiRows.forEach(function(r){
+      h += '<tr><td class="tf">'+r[0]+'</td>';
+      for (var j=0;j<10;j++) h += '<td><i class="c" style="background:'+C[r[1][j]]+'"></i></td>';
+      var chgc = r[3].charAt(0)==='+' ? '#4FD27A' : '#F05A50';
+      h += '<td class="n">'+r[2]+'</td><td class="n" style="color:'+chgc+'">'+r[3]+'</td><td class="n" style="color:#F05A50">'+r[4]+'</td></tr>';
+    });
+    node.querySelector('[data-rsi]').innerHTML = h;
+    var a = '<tr>'; adxCols.forEach(function(c){ a += '<th>'+c+'</th>'; }); a += '<th></th></tr>';
+    adxRows.forEach(function(r){
+      a += '<tr>'; for (var j=0;j<9;j++) a += '<td><i class="c" style="background:'+C[r[1][j]]+'"></i></td>';
+      a += '<td class="p">'+r[0]+'</td></tr>';
+    });
+    node.querySelector('[data-adx]').innerHTML = a;
+    var s = '';
+    structRows.forEach(function(r){
+      if (!r) { s += '<div style="height:1px;background:#2A3341;margin:3px 0"></div>'; return; }
+      s += '<div class="st '+r[1]+'"><span>'+r[0]+'</span><span class="tag '+r[1]+'">'+(r[1]==='b'?'BULLISH':'BEARISH')+'</span><span>'+r[2]+'</span><span>'+r[3]+'</span><span class="t">'+r[4]+'</span></div>';
+    });
+    node.querySelector('[data-struct]').innerHTML = s;
+    var f = '';
+    flow.forEach(function(r){
+      var up = r[1] >= 0, col = up ? '#4FD27A' : '#F05A50';
+      f += '<tr><td class="tf">'+r[0]+'</td><td class="ar" style="color:'+col+'">'+(up?'&#9650;':'&#9660;')+'</td><td class="v" style="color:'+col+'">'+(up?'+':'')+r[1]+'</td></tr>';
+    });
+    node.querySelector('[data-flow]').innerHTML = f;
+    node.querySelectorAll('[data-bars]').forEach(function(el){
+      var n = +el.getAttribute('data-bars'), b = '';
+      for (var k=0;k<n;k++) b += '<i style="background:'+(k<10?'#4C7CF0':(k<15?'#F2C94C':'#4FD27A'))+'"></i>';
+      el.innerHTML = b;
+    });
+    host.appendChild(node);
+  }
+  document.querySelectorAll('[data-panel]').forEach(function(h){ buildPanel(h); });
+
+  /* ---------- 3D dot terrain ---------- */
+  function terrain(canvas, opts){
+    var ctx = canvas.getContext('2d'), w, h, dpr, t = 0, running = false, raf;
+    var COLS = 64, ROWS = 36;
+    function size(){
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      w = canvas.clientWidth; h = canvas.clientHeight;
+      canvas.width = w * dpr; canvas.height = h * dpr; ctx.setTransform(dpr,0,0,dpr,0,0);
+    }
+    function frame(){
+      ctx.clearRect(0,0,w,h);
+      var horizon = h * opts.horizon, f = w * 0.9, camH = opts.camH;
+      for (var zi = ROWS - 1; zi >= 0; zi--) {
+        var z = 1.2 + zi * 0.42;
+        for (var xi = 0; xi < COLS; xi++) {
+          var x = (xi - COLS/2) * 0.34;
+          var y = Math.sin(x*0.55 + t*0.7) * 0.32 + Math.cos(z*0.62 - t*0.5) * 0.38 + Math.sin((x+z)*0.3 + t*0.3) * 0.25;
+          var sx = w * opts.cx + (x * f) / z;
+          var sy = horizon + ((camH - y) * f * 0.42) / z;
+          if (sx < -10 || sx > w + 10 || sy > h + 10) continue;
+          var a = Math.max(0, 1 - zi / ROWS) * 0.85;
+          var lift = (y + 0.9) / 1.8;
+          var r = Math.max(0.5, 2.3 / z * 1.6);
+          ctx.fillStyle = 'rgba(' + Math.round(69 + 60*lift) + ',' + Math.round(170 + 60*lift) + ',' + Math.round(150 + 40*lift) + ',' + (a * (0.35 + 0.65*lift)).toFixed(3) + ')';
+          ctx.fillRect(sx - r/2, sy - r/2, r, r);
+        }
+      }
+    }
+    function loop(){ if (!running) return; t += 0.012; frame(); raf = requestAnimationFrame(loop); }
+    size(); frame();
+    window.addEventListener('resize', function(){ size(); frame(); });
+    if (!reduce && 'IntersectionObserver' in window) {
+      new IntersectionObserver(function(es){
+        es.forEach(function(e){ if (e.isIntersecting && !running) { running = true; loop(); } else if (!e.isIntersecting) { running = false; cancelAnimationFrame(raf); } });
+      }).observe(canvas);
+    }
+  }
+  terrain(document.getElementById('terrain'), {horizon:0.48, cx:0.62, camH:1.9});
+  terrain(document.getElementById('terrain2'), {horizon:0.5, cx:0.5, camH:1.6});
+
+  /* ---------- MT4 chart behind the hero panel ---------- */
+  (function(){
+    var cv = document.getElementById('mt4chart'), ctx = cv.getContext('2d'), W = cv.width, H = cv.height;
+    ctx.fillStyle = '#060A12'; ctx.fillRect(0,0,W,H);
+    ctx.strokeStyle = '#101828'; ctx.lineWidth = 2;
+    for (var gy = 80; gy < H; gy += 110) { ctx.beginPath(); ctx.moveTo(0,gy); ctx.lineTo(W,gy); ctx.stroke(); }
+    var seed = 7; function rnd(){ seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; }
+    var p = 4152, bars = [], n = 58;
+    for (var i = 0; i < n; i++) { var drift = i < 24 ? 0.6 : -2.3; var o = p, c = p + drift + (rnd() - 0.5) * 13; var hi = Math.max(o,c) + rnd()*6, lo = Math.min(o,c) - rnd()*6; bars.push([o,hi,lo,c]); p = c; }
+    var mx = -1e9, mn = 1e9; bars.forEach(function(b){ mx = Math.max(mx,b[1]); mn = Math.min(mn,b[2]); });
+    function Y(v){ return 60 + (mx - v) / (mx - mn) * (H - 140); }
+    var bw = (W - 120) / n;
+    bars.forEach(function(b,i){
+      var x = 20 + i * bw + bw/2, up = b[3] >= b[0];
+      ctx.strokeStyle = up ? '#45E2A3' : '#E0443E'; ctx.fillStyle = up ? 'rgba(69,226,163,.15)' : '#E0443E'; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(x, Y(b[1])); ctx.lineTo(x, Y(b[2])); ctx.stroke();
+      var top = Y(Math.max(b[0],b[3])), bot = Y(Math.min(b[0],b[3]));
+      ctx.fillRect(x - bw*0.32, top, bw*0.64, Math.max(2, bot-top)); ctx.strokeRect(x - bw*0.32, top, bw*0.64, Math.max(2, bot-top));
+    });
+    var last = bars[n-1][3]; ctx.strokeStyle = '#6FA8FF'; ctx.setLineDash([10,8]); ctx.beginPath(); ctx.moveTo(0,Y(last)); ctx.lineTo(W,Y(last)); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle = '#6FA8FF'; ctx.fillRect(W-100, Y(last)-16, 100, 32); ctx.fillStyle = '#04070F'; ctx.font = '600 20px Geist Mono, monospace'; ctx.fillText(last.toFixed(2), W-94, Y(last)+7);
+  })();
+
+  /* ---------- wipeout chart candles ---------- */
+  (function(){
+    var g = document.getElementById('wcandles'), seed = 11, p = 4128, out = '';
+    function rnd(){ seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; }
+    function Y(v){ return 226 + (4082.73 - v) * 1.94; }
+    for (var i = 0; i < 44; i++) {
+      var o = p, c = p + (i < 30 ? -1.9 : 0.6) + (rnd() - 0.5) * 16, hi = Math.max(o,c) + rnd()*7, lo = Math.min(o,c) - rnd()*7, x = 480 + i * 9.4, up = c >= o;
+      var col = up ? '#45E2A3' : '#E0443E';
+      out += '<line x1="'+x+'" y1="'+Y(hi).toFixed(1)+'" x2="'+x+'" y2="'+Y(lo).toFixed(1)+'" stroke="'+col+'" stroke-width="1.4"/>';
+      out += '<rect x="'+(x-4)+'" y="'+Y(Math.max(o,c)).toFixed(1)+'" width="8" height="'+Math.max(1.5,Math.abs(Y(o)-Y(c))).toFixed(1)+'" fill="'+(up?'rgba(69,226,163,.2)':col)+'" stroke="'+col+'" stroke-width="1"/>';
+      p = c;
+    }
+    g.innerHTML = out;
+  })();
+
+  /* ---------- hero tilt (pointer) ---------- */
+  var sw = document.getElementById('stageWrap'), st = document.getElementById('stage');
+  if (!reduce && window.matchMedia('(pointer:fine)').matches) {
+    sw.parentElement.parentElement.addEventListener('pointermove', function(e){
+      var r = sw.getBoundingClientRect(), dx = (e.clientX - (r.left + r.width/2)) / r.width, dy = (e.clientY - (r.top + r.height/2)) / r.height;
+      st.style.transform = 'rotateX(' + (9 - dy*8).toFixed(2) + 'deg) rotateY(' + (-20 + dx*14).toFixed(2) + 'deg) rotateZ(1deg)';
+    });
+  }
+
+  /* ---------- poster fan ---------- */
+  var figs = document.querySelectorAll('#fan figure');
+  figs.forEach(function(f){ f.querySelector('button').addEventListener('click', function(){ figs.forEach(function(o){ o.classList.remove('front'); }); f.classList.add('front'); }); });
+
+  /* ---------- six voices highlight ---------- */
+  var plates = document.querySelectorAll('#stack .plate[data-k]');
+  document.querySelectorAll('.vitem').forEach(function(v){
+    function on(){ var k = v.getAttribute('data-k'); plates.forEach(function(p){ p.classList.toggle('on', p.getAttribute('data-k') === k); }); }
+    function off(){ plates.forEach(function(p){ p.classList.remove('on'); }); }
+    v.addEventListener('mouseenter', on); v.addEventListener('focus', on); v.addEventListener('mouseleave', off); v.addEventListener('blur', off);
+  });
+
+  /* ---------- isometric RSI landscape ---------- */
+  (function(){
+    var cv = document.getElementById('iso'), ctx = cv.getContext('2d'), W = cv.width, H = cv.height;
+    var lvl = {R:-1, r:-0.55, n:0.1, g:0.55, G:1};
+    var cx = 86, cy = 40, ox = W*0.30, oy = 200;
+    function P(gx, gy, z){ return [ox + gx * cx - gy * cx * 0.55, oy + gx * cy * 0.42 + gy * cy * 1.05 - z]; }
+    function poly(pts, fill, stroke){ ctx.beginPath(); ctx.moveTo(pts[0][0], pts[0][1]); for (var i=1;i<pts.length;i++) ctx.lineTo(pts[i][0], pts[i][1]); ctx.closePath(); ctx.fillStyle = fill; ctx.fill(); if (stroke) { ctx.strokeStyle = stroke; ctx.lineWidth = 1; ctx.stroke(); } }
+    function shade(hex, k){ var n = parseInt(hex.slice(1),16), r = n>>16, g = (n>>8)&255, b = n&255; return 'rgb(' + Math.min(255,Math.round(r*k)) + ',' + Math.min(255,Math.round(g*k)) + ',' + Math.min(255,Math.round(b*k)) + ')'; }
+    poly([P(-0.2,-0.2,0),P(10.2,-0.2,0),P(10.2,6.2,0),P(-0.2,6.2,0)], '#0A1428', '#1C2B4A');
+    for (var gy = 0; gy < 6; gy++) for (var gx = 0; gx < 10; gx++) poly([P(gx+.05,gy+.05,0),P(gx+.95,gy+.05,0),P(gx+.95,gy+.95,0),P(gx+.05,gy+.95,0)], '#0E1A33');
+    for (var y2 = 0; y2 < 6; y2++) for (var x2 = 0; x2 < 10; x2++) {
+      var code = rsiRows[y2][1][x2], v = lvl[code], hgt = 8 + Math.abs(v) * 120;
+      var base = v > 0.2 ? '#45E2A3' : (v < -0.2 ? '#F0645A' : '#6A7894');
+      var m = 0.16, a0 = x2 + m, a1 = x2 + 1 - m, b0 = y2 + m, b1 = y2 + 1 - m;
+      poly([P(a0,b1,0),P(a1,b1,0),P(a1,b1,hgt),P(a0,b1,hgt)], shade(base,0.55));
+      poly([P(a1,b0,0),P(a1,b1,0),P(a1,b1,hgt),P(a1,b0,hgt)], shade(base,0.38));
+      poly([P(a0,b0,hgt),P(a1,b0,hgt),P(a1,b1,hgt),P(a0,b1,hgt)], shade(base,1.05));
+    }
+    ctx.font = '600 24px Geist Mono, monospace'; ctx.fillStyle = '#C8D4E6'; ctx.textAlign = 'right';
+    for (var r = 0; r < 6; r++) { var q = P(-0.45, r + 0.5, 0); ctx.fillText(rsiRows[r][0], q[0] - 4, q[1] + 8); }
+    ctx.textAlign = 'center'; ctx.fillStyle = '#7787A0'; ctx.font = '500 22px Geist, sans-serif';
+    var l1 = P(0.5, 6.55, 0), l2 = P(9.5, 6.55, 0);
+    ctx.fillText('10 candles ago', l1[0], l1[1] + 34); ctx.fillText('newest candle', l2[0], l2[1] + 34);
+  })();
+
+  /* ---------- historical drops ---------- */
+  var drops = {
+    'S&P 500': [['Stagflation','1973.01','1974.10','1980.07',48,'-48%'],['Black Monday','1987.08','1987.12','1989.07',34,'-34%'],['Dot-com bust','2000.03','2002.10','2007.05',49,'-49%'],['Financial crisis','2007.10','2009.03','2013.03',57,'-57%'],['COVID crash','2020.02','2020.03','2020.08',34,'-34%'],['Inflation and rates','2022.01','2022.10','2024.01',25,'-25%'],['Tariff shock','2025.02','2025.04','2025.06',19,'-19%']],
+    'Nasdaq 100': [['Black Monday','1987.08','1987.10','1989.08',36,'-36%'],['Dot-com bubble','2000.03','2002.10','2016.08',83,'-83%'],['Financial crisis','2007.10','2009.03','2011.01',54,'-54%'],['COVID crash','2020.02','2020.03','2020.06',30,'-28% to -30%'],['Bear market 2022','2021.11','2022.12','2023.12',36,'-35% to -36%'],['Tariff shock','2025.02','2025.04','2025.06',23,'-23%']],
+    'US30': [['Stagflation','1973.01','1974.12','1982.11',45,'-45%'],['Black Monday','1987.08','1987.10','1989.08',36,'-36%'],['Dot-com + 9/11','2000.01','2002.10','2006.10',38,'-38%'],['Financial crisis','2007.10','2009.03','2013.03',54,'-54%'],['COVID crash','2020.02','2020.03','2020.11',37,'-37%'],['Inflation and rates','2022.01','2022.09','2023.12',21,'-21%'],['Tariff shock','2024.12','2025.04','2025.08',19,'-16% to -19%']],
+    'Gold': [['Correction 1975-76','1974.12','1976.08','1978.07',47,'-47%'],['End of the 70s rally','1980.01','1999.07','2008.01',70,'-70%'],['Financial crisis','2008.03','2008.10','2009.09',33,'-30% to -33%'],['End of the 2011-15 rally','2011.09','2015.12','2020.07',45,'-45%'],['Correction 2020-22','2020.08','2022.09','2023.05',22,'-22%']],
+    'Bitcoin': [['Mt.Gox bubble','2011.06','2011.11','2013.02',93,'-93%'],['Flash crash','2013.04','2013.04','2013.11',80,'-75% to -80%'],['Bear market 2014','2013.11','2015.01','2017.02',87,'-87%'],['Bear market 2018','2017.12','2018.12','2020.12',84,'-84%'],['COVID crash','2020.02','2020.03','2020.07',63,'-63%'],['China mining ban','2021.04','2021.06','2021.10',56,'-56%'],['Bear market 2022','2021.11','2022.11','2024.03',77,'-77%'],['Correction 2024','2024.03','2024.08','2024.11',33,'-33%'],['Tariff shock','2025.01','2025.04','2025.05',32,'-32%'],['Cycle 2025-26','2025.10','2026.06','',54,'-52% to -54%']]
+  };
+  var MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  function md(s){ var p = s.split('.'); return MON[+p[1]-1] + ' ' + p[0]; }
+  function months(a,b){ var p = a.split('.'), q = b.split('.'); return (q[0]-p[0])*12 + (q[1]-p[1]); }
+  function dur(m){ if (m < 1) return 'under a month'; if (m < 24) return m + (m === 1 ? ' month' : ' months'); var y = m/12; return (Math.round(y*10)/10) + ' years'; }
+  var tabs = document.getElementById('dtabs'), rows = document.getElementById('drows'), title = document.getElementById('dtitle');
+  function show(name){
+    title.textContent = name;
+    tabs.querySelectorAll('button').forEach(function(b){ b.setAttribute('aria-selected', b.textContent === name ? 'true' : 'false'); b.tabIndex = b.textContent === name ? 0 : -1; });
+    var max = name === 'Bitcoin' || name === 'Nasdaq 100' ? 100 : 70, h = '';
+    drops[name].forEach(function(d){
+      var w = d[4] / max * 100, dates = d[1] === d[2] ? md(d[1]) : md(d[1]) + ' to ' + md(d[2]);
+      var rec = d[3] ? 'back in ' + dur(months(d[2], d[3])) : 'not recovered yet';
+      h += '<div class="drow"><div><div class="nm">' + d[0] + '</div><div class="dt">' + dates + '</div></div>' +
+           '<div class="dbar" title="' + d[0] + ': ' + d[5] + ' peak to low"><i style="width:' + w.toFixed(1) + '%"></i><span style="left:calc(' + w.toFixed(1) + '% + 10px)">' + d[5] + '</span></div>' +
+           '<div class="rc' + (d[3] ? '' : ' no') + '">' + rec + '</div></div>';
+    });
+    rows.innerHTML = h;
+  }
+  Object.keys(drops).forEach(function(k){
+    var b = document.createElement('button'); b.type = 'button'; b.setAttribute('role','tab'); b.textContent = k;
+    b.addEventListener('click', function(){ show(k); });
+    b.addEventListener('keydown', function(e){
+      var all = Array.prototype.slice.call(tabs.querySelectorAll('button')), i = all.indexOf(b);
+      if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { var n = all[(i + (e.key === 'ArrowRight' ? 1 : all.length - 1)) % all.length]; n.focus(); n.click(); e.preventDefault(); }
+    });
+    tabs.appendChild(b);
+  });
+  show('S&P 500');
+
+  /* ---------- equity curve reveal ---------- */
+  var line = document.getElementById('eqline');
+  if (!reduce && 'IntersectionObserver' in window) {
+    line.style.strokeDashoffset = '2600'; document.getElementById('eqarea').style.opacity = '0';
+    new IntersectionObserver(function(es, obs){
+      es.forEach(function(e){
+        if (!e.isIntersecting) return;
+        line.style.transition = 'stroke-dashoffset 2.2s cubic-bezier(.3,.6,.2,1)'; line.style.strokeDashoffset = '0';
+        var ar = document.getElementById('eqarea'); ar.style.transition = 'opacity 1.2s 1.4s'; ar.style.opacity = '1';
+        obs.disconnect();
+      });
+    }, {threshold: 0.35}).observe(document.getElementById('curve'));
+  }
+})();
+</script>
+<script src="/pwa-banner.js" defer></script>
+</body>
+</html>
