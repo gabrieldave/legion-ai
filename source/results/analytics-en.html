@@ -1,0 +1,256 @@
+<!doctype html>
+<!--
+  Recreación en inglés del resumen de Analytics MT4 (la app solo existe en español).
+  Mismas cifras que source/results/analytics-resumen.jpg. Las barras y la curva semanal se
+  redibujaron midiendo la captura original, así que sus valores son aproximados.
+  Render: scripts/render-analytics-en.sh → source/results/analytics-resumen-en.png
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=670">
+<style>
+:root{--bg:#060a14;--card:#0b1222;--card2:#0e162a;--line:#1a2440;--line2:#22305a;--text:#eef2fb;--mist:#9aa6bf;--dim:#5f6b85;--mint:#2fd69c;--red:#f2667a;--violet:#7c6cf2;--gold:#e8b44f}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:670px;background:var(--bg);color:var(--text);font-family:"Inter","SF Pro Text",-apple-system,"Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased}
+body{padding:6px 10px 12px}
+.eyebrow{font-size:5.5px;letter-spacing:.16em;color:var(--violet);font-weight:700}
+h1{font-size:15.5px;font-weight:800;letter-spacing:-.01em;margin-top:2px}
+.sub{font-size:5.5px;color:var(--mist);margin-top:2px}
+.top{display:flex;justify-content:space-between;align-items:flex-start}
+.btns{display:flex;gap:5px;margin-top:14px}
+.btn{font-size:5.5px;font-weight:700;border:1px solid var(--line2);border-radius:5px;padding:5px 7px;background:var(--card);color:var(--text);display:flex;gap:4px;align-items:center}
+.btn.ai{background:var(--violet);border-color:var(--violet)}
+.btn small{color:var(--dim);font-size:5px}
+.card{background:linear-gradient(180deg,var(--card2),var(--card));border:1px solid var(--line);border-radius:8px}
+.hero{margin-top:7px;padding:8px 10px 9px}
+.pills{display:flex;gap:4px}
+.pill{font-size:5px;color:var(--mist);border:1px solid var(--line2);border-radius:20px;padding:3px 6px}
+.lbl{font-size:5px;letter-spacing:.12em;color:var(--mist);font-weight:700;text-transform:uppercase}
+.big{font-size:25px;font-weight:800;color:var(--mint);letter-spacing:-.01em;margin-top:3px;display:flex;align-items:center;gap:6px}
+.big i{width:13px;height:13px;border-radius:4px;background:#11352b;display:inline-block}
+.tiny{font-size:4.2px;color:var(--dim);margin-top:2px}
+.herogrid{display:grid;grid-template-columns:1.3fr 1fr;gap:9px;margin-top:7px;align-items:end}
+.minis{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+.mini{border:1px solid var(--line2);border-radius:5px;padding:6px 5px;background:var(--card)}
+.mini.g{background:#0c2420;border-color:#16463a}.mini.r{background:#2a1220;border-color:#4a1d2e}
+.mini b{display:block;font-size:6.3px;margin-top:4px}
+.mini.g b{color:var(--mint)}.mini.r b{color:var(--red)}
+.mini span{font-size:4px;color:var(--dim)}
+.trio{border:1px solid var(--line2);border-radius:6px;display:grid;grid-template-columns:repeat(3,1fr);padding:8px 4px;text-align:center}
+.trio div+div{border-left:1px solid var(--line)}
+.trio .ic{width:7px;height:7px;border-radius:50%;margin:0 auto 4px;border:1.5px solid var(--violet)}
+.trio b{display:block;font-size:8.5px;margin-top:5px}
+.trio span{font-size:4.2px;color:var(--dim);display:block;margin-top:2px}
+h2{font-size:7px;font-weight:700;margin-top:10px}
+.h2s{font-size:4.6px;color:var(--dim);margin-top:1px}
+.row3{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-top:5px}
+.stat{padding:7px 8px 9px;position:relative}
+.ico{width:12px;height:12px;border-radius:4px;background:#17203a;display:block}
+.ico.g{background:#123128}.ico.r{background:#34162a}
+.stat .lbl{margin-top:16px}
+.stat b{display:block;font-size:15px;font-weight:800;margin-top:2px}
+.stat span{font-size:4.6px;color:var(--dim)}
+.view{margin-top:6px;padding:6px 8px;display:flex;gap:5px;align-items:center;flex-wrap:wrap}
+.view .t{font-size:5.3px;font-weight:700;margin-right:4px}.view .t small{display:block;color:var(--dim);font-weight:400;font-size:4.3px}
+.in{font-size:5px;border:1px solid var(--line2);border-radius:5px;padding:4px 6px;background:#0a1020;color:var(--mist)}
+.blur{width:62px;height:12px;border-radius:5px;background:linear-gradient(90deg,#141c33,#1c2541,#141c33);filter:blur(1px)}
+.chip{font-size:4.6px;border:1px solid var(--line2);border-radius:4px;padding:4px 5px;color:var(--mist)}
+.chip.on{background:#1d2650;color:#fff;border-color:#3a4590}
+.view .note{flex-basis:100%;font-size:4px;color:var(--dim)}
+.row6{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;margin-top:5px}
+.q{padding:6px 6px 7px}
+.q .lbl{font-size:4.4px;margin-top:9px}
+.q b{display:block;font-size:8.4px;font-weight:800;margin-top:3px}
+.q span{font-size:4px;color:var(--dim)}
+.two{display:grid;grid-template-columns:2fr 1fr;gap:5px;margin-top:7px}
+.cardh{display:flex;justify-content:space-between;padding:7px 8px 0}
+.cardh h3{font-size:6px;font-weight:700}.cardh p{font-size:4.2px;color:var(--dim);margin-top:1px}
+.cardh .r{text-align:right}.cardh .r .lbl{font-size:4.4px}.cardh .r b{font-size:8px;color:var(--mint);display:block;margin-top:2px}
+svg{display:block}
+.axis{font-size:4.2px;fill:var(--dim)}
+.qual{padding:7px 7px 8px}
+.pf{border:1px solid var(--line2);border-radius:6px;padding:6px 7px;margin-top:6px}
+.pf b{font-size:13px;color:var(--mint);font-weight:800}
+.pf .row{display:flex;justify-content:space-between;align-items:flex-end}
+.pf .row span{font-size:4.6px;color:var(--mint);font-weight:700}
+.bar{height:3.5px;border-radius:3px;background:var(--mint);margin-top:4px}
+.scale{display:flex;justify-content:space-between;font-size:3.6px;color:var(--dim);margin-top:2px}
+.qg{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:5px}
+.qg div{border:1px solid var(--line2);border-radius:5px;padding:5px 5px 6px}
+.qg .lbl{font-size:4.2px}.qg b{display:block;font-size:6.6px;margin-top:4px}
+.g{color:var(--mint)}.rd{color:var(--red)}
+.pat{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:5px}
+.sym{padding:0 8px 8px}
+.sym .it{margin-top:8px}
+.sym .it .h{display:flex;justify-content:space-between;font-size:5px;font-weight:700}
+.sym .it .h em{font-style:normal;color:var(--mint)}
+.sym .track{height:3px;border-radius:3px;background:#17203a;margin-top:3px}
+.sym .track i{display:block;height:100%;border-radius:3px;background:var(--mint)}
+.hist{margin-top:6px;padding:7px 8px;display:flex;justify-content:space-between;align-items:center}
+.hist h3{font-size:6px}.hist p{font-size:4.2px;color:var(--dim)}.hist span{font-size:4.6px;color:var(--mist)}
+</style>
+</head>
+<body>
+<div class="top">
+  <div>
+    <p class="eyebrow">PERFORMANCE DASHBOARD</p>
+    <h1>Your trading summary</h1>
+    <p class="sub">Net results, risk and consistency of your synced trades.</p>
+  </div>
+  <div class="btns">
+    <span class="btn">⇄ MXN <small>→ USD</small></span>
+    <span class="btn ai">✦ AI analysis</span>
+    <span class="btn">↻ Refresh data</span>
+  </div>
+</div>
+
+<section class="card hero">
+  <div class="pills"><span class="pill">∿ 104 closed trades</span><span class="pill">Solid statistical edge</span></div>
+  <p class="lbl" style="margin-top:6px">Net trading profit</p>
+  <p class="big">$101,663.21 MXN <i></i></p>
+  <p class="tiny">Automatic exchange rate 18.20 MXN/USD</p>
+  <p class="tiny">Trades only (profit + commission + swap). Withdrawals are not losses: that is money you took out.</p>
+  <div class="herogrid">
+    <div class="minis">
+      <div class="mini g"><p class="lbl">Gross profit</p><b>$142,217.95 MXN</b></div>
+      <div class="mini r"><p class="lbl">Gross loss</p><b>-$40,554.74 MXN</b></div>
+      <div class="mini"><p class="lbl">Withdrawals</p><b>$106,920.31 MXN</b></div>
+      <div class="mini"><p class="lbl">Deposits</p><b>$510,683.16 MXN</b></div>
+    </div>
+    <div class="trio">
+      <div><span class="ic"></span><p class="lbl">Win rate</p><b>91.3%</b><span>% of winning trades</span></div>
+      <div><span class="ic" style="border-color:var(--mint)"></span><p class="lbl">Profit factor</p><b>3.51</b><span>Gains ÷ losses</span></div>
+      <div><span class="ic" style="border-color:var(--gold)"></span><p class="lbl">Drawdown</p><b>$14,095.61 MXN</b><span>Peak-to-trough drop</span></div>
+    </div>
+  </div>
+</section>
+
+<h2>Trades in the period</h2>
+<p class="h2s">Count of closed trades for the current filter.</p>
+<div class="row3">
+  <div class="card stat"><span class="ico"></span><p class="lbl">Total trades</p><b>104</b><span>Closed in the period</span></div>
+  <div class="card stat"><span class="ico g"></span><p class="lbl">Trades won</p><b class="g">95</b><span class="g">91% of total</span></div>
+  <div class="card stat"><span class="ico r"></span><p class="lbl">Trades lost</p><b class="rd">9</b><span class="rd">9% of total</span></div>
+</div>
+
+<div class="card view">
+  <p class="t">Analysis view<small>Account and period</small></p>
+  <span class="blur" aria-label="Account hidden"></span>
+  <span class="in">mm/dd/yyyy</span><span class="in">mm/dd/yyyy</span>
+  <span class="chip">7D</span><span class="chip">14D</span><span class="chip">30D</span><span class="chip">90D</span><span class="chip on">All</span>
+  <span class="in" style="flex:1">Closed weeks…</span>
+  <p class="note">Cut-offs in broker time (UTC-05).</p>
+</div>
+
+<h2>Quality metrics</h2>
+<p class="h2s">What really explains performance.</p>
+<div class="row6">
+  <div class="card q"><span class="ico g"></span><p class="lbl">Expectancy / trade</p><b>$977.53 MXN</b><span>Avg net per trade</span></div>
+  <div class="card q"><span class="ico g"></span><p class="lbl">Average win</p><b>$1,497.03 MXN</b><span>95 winners</span></div>
+  <div class="card q"><span class="ico r"></span><p class="lbl">Average loss</p><b>-$4,506.08 MXN</b><span>9 losers</span></div>
+  <div class="card q"><span class="ico"></span><p class="lbl">Payoff ratio</p><b>0.33</b><span>Avg win ÷ avg loss</span></div>
+  <div class="card q"><span class="ico"></span><p class="lbl">Max drawdown</p><b>$14,095.61 MXN</b><span>Peak to valley</span></div>
+  <div class="card q"><span class="ico g"></span><p class="lbl">System quality</p><b>2.59</b><span>SQN by Van Tharp</span></div>
+</div>
+
+<div class="two">
+  <div class="card">
+    <div class="cardh"><div><h3>Results curve</h3><p>Cumulative net P&amp;L by close</p></div><div class="r"><p class="lbl">Cumulative change</p><b>$101,663.21 MXN</b></div></div>
+    <svg id="curve" width="430" height="140" viewBox="0 0 1000 330" preserveAspectRatio="none"></svg>
+  </div>
+  <div class="card qual">
+    <h3 style="font-size:6px">Strategy quality</h3><p class="tiny" style="margin-top:1px">Efficiency, streaks and costs</p>
+    <div class="pf"><p class="lbl">Profit factor</p><div class="row"><b>3.51</b><span>Good efficiency</span></div><div class="bar"></div><div class="scale"><span>0</span><span>Break-even</span><span>3+</span></div></div>
+    <div class="qg">
+      <div><p class="lbl">↗ Best trade</p><b>$28,245.10 MXN</b></div>
+      <div><p class="lbl">↘ Worst trade</p><b>-$14,095.61 MXN</b></div>
+      <div><p class="lbl">Max streaks</p><b><span class="g">34W</span> / <span class="rd">2L</span></b></div>
+      <div><p class="lbl">MT4 costs</p><b>-$5,446.02 MXN</b></div>
+    </div>
+  </div>
+</div>
+
+<h2>Performance patterns</h2>
+<p class="h2s">Where, when and with which instruments the results come from.</p>
+<div class="pat">
+  <div class="card"><div class="cardh"><div><h3>Performance by hour</h3><p>Net P&amp;L by opening hour</p></div></div><svg id="hour" width="318" height="78" viewBox="0 0 318 78"></svg></div>
+  <div class="card"><div class="cardh"><div><h3>Performance by weekday</h3><p>Net result Monday to Friday</p></div></div><svg id="day" width="318" height="78" viewBox="0 0 318 78"></svg></div>
+  <div class="card"><div class="cardh"><div><h3>Recent weeks</h3><p>Weekly net result</p></div></div><svg id="week" width="318" height="88" viewBox="0 0 318 88"></svg></div>
+  <div class="card sym"><div class="cardh" style="padding:7px 0 0"><div><h3>Result by symbol</h3><p>Instruments ranked by net P&amp;L</p></div></div>
+    <div class="it"><div class="h"><span>1&nbsp;&nbsp;XAUUSD</span><em>$61,979.17 MXN</em></div><div class="track"><i style="width:100%"></i></div></div>
+    <div class="it"><div class="h"><span>2&nbsp;&nbsp;BTCUSD</span><em>$39,684.04 MXN</em></div><div class="track"><i style="width:64%"></i></div></div>
+  </div>
+</div>
+
+<div class="card hist"><div><h3>Trade history</h3><p>Browse, filter and export 104 records.</p></div><span>View trades ⌄</span></div>
+
+<script>
+var NS = "http://www.w3.org/2000/svg";
+function el(svg, tag, attrs, text) {
+  var e = document.createElementNS(NS, tag);
+  for (var k in attrs) e.setAttribute(k, attrs[k]);
+  if (text) e.textContent = text;
+  svg.appendChild(e);
+  return e;
+}
+
+// Curva: mismo trazo que la landing (USD, $2k = 36.4k MXN), y=242.3 es 0.
+(function () {
+  var s = document.getElementById("curve");
+  var d = "M56.0 242.3 L93.1 234.0 L130.2 227.8 L148.8 223.6 L167.4 244.4 L185.9 240.2 L223.0 231.9 L260.2 223.6 L297.3 215.3 L353.0 209.1 L390.1 205.0 L427.2 198.8 L436.5 190.5 L445.8 219.5 L455.0 213.3 L464.3 186.3 L482.9 173.9 L501.4 120.0 L510.7 147.0 L520.0 134.5 L538.6 122.1 L557.1 109.7 L575.7 101.4 L594.2 95.2 L631.4 86.9 L668.5 78.6 L687.0 72.4 L705.6 66.1 L742.7 59.9 L761.3 49.6 L779.8 43.4 L835.5 39.2 L909.8 35.1 L984.0 31.6";
+  var ticks = [[16, "109.2k"], [91.4, "72.8k"], [166.9, "36.4k"], [242.3, "0"], [317.7, "-36.4k"]];
+  ticks.forEach(function (t) {
+    el(s, "line", { x1: 56, x2: 984, y1: t[0], y2: t[0], stroke: t[1] === "0" ? "#2a3762" : "#141d36", "stroke-width": 1.4 });
+    el(s, "text", { x: 46, y: t[0] + 5, "text-anchor": "end", class: "axis", style: "font-size:14px" }, t[1]);
+  });
+  var g = el(s, "defs", {});
+  g.innerHTML = '<linearGradient id="f" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2fd69c" stop-opacity=".28"/><stop offset="1" stop-color="#2fd69c" stop-opacity="0"/></linearGradient>';
+  el(s, "path", { d: d + " L984 242.3 L56 242.3 Z", fill: "url(#f)" });
+  el(s, "path", { d: d, fill: "none", stroke: "#2fd69c", "stroke-width": 3.4, "stroke-linejoin": "round" });
+  ["Jul 30", "Aug 6", "Aug 13", "Aug 20", "Aug 27", "Sep 3", "Sep 10", "Sep 18"].forEach(function (t, i) {
+    el(s, "text", { x: 70 + i * 128, y: 322, "text-anchor": "middle", class: "axis", style: "font-size:14px" }, t);
+  });
+})();
+
+function bars(id, values, labels, max, ticks) {
+  var s = document.getElementById(id), top = 8, h = 52, zero = top + h / 2, x0 = 24, w = 286;
+  ticks.forEach(function (t) {
+    var y = zero - (t / max) * (h / 2);
+    el(s, "line", { x1: x0, x2: x0 + w, y1: y, y2: y, stroke: t === 0 ? "#2a3762" : "#131b33", "stroke-width": 0.5 });
+    el(s, "text", { x: x0 - 3, y: y + 1.5, "text-anchor": "end", class: "axis" }, t === 0 ? "0" : (t > 0 ? "" : "-") + Math.abs(t).toFixed(1) + "k");
+  });
+  var step = w / values.length, bw = step * (values.length > 8 ? 0.72 : 0.78);
+  values.forEach(function (v, i) {
+    var bh = Math.max(0.8, Math.abs(v) / max * (h / 2));
+    el(s, "rect", { x: x0 + i * step + (step - bw) / 2, y: v >= 0 ? zero - bh : zero, width: bw, height: bh, rx: 1.2, fill: v >= 0 ? "#2fd69c" : "#f2667a" });
+    if (labels) el(s, "text", { x: x0 + i * step + step / 2, y: top + h + 9, "text-anchor": "middle", class: "axis" }, labels[i]);
+  });
+}
+bars("hour", [1.5, 10.2, 3.8, 6.9, 0.5, 4.1, 2.3, -26.0, 33.4, 11.7, 9.4, 3.8, 3.1, 1.8, 5.6, 29.6], null, 30.8, [30.8, 15.4, 0, -15.4, -30.8]);
+bars("day", [-8.9, 30.6, 15.3, 49.8, 14.8], ["Mon", "Tue", "Wed", "Thu", "Fri"], 50, [48, 24, 0, -24, -48]);
+
+(function () {
+  var s = document.getElementById("week"), v = [0.6, 5.0, 2.0, 7.2, 46.3, 13.5, 16.0, 6.8, 5.5];
+  var labels = ["Jul 20", "Jul 27", "Aug 3", "Aug 10", "Aug 17", "Aug 24", "Aug 31", "Sep 7", "Sep 14"];
+  var x0 = 26, w = 280, top = 8, h = 64, max = 47;
+  [0, 11.8, 23.5, 35.3, 47].forEach(function (t) {
+    var y = top + h - (t / max) * h;
+    el(s, "line", { x1: x0, x2: x0 + w, y1: y, y2: y, stroke: "#131b33", "stroke-width": 0.5 });
+    el(s, "text", { x: x0 - 3, y: y + 1.5, "text-anchor": "end", class: "axis" }, t === 0 ? "0" : t.toFixed(1) + "k");
+  });
+  var pts = v.map(function (val, i) { return [x0 + (i * w) / (v.length - 1), top + h - (val / max) * h]; });
+  var d = "M" + pts[0][0] + " " + pts[0][1];
+  for (var i = 0; i < pts.length - 1; i++) {
+    var p0 = pts[i - 1] || pts[i], p1 = pts[i], p2 = pts[i + 1], p3 = pts[i + 2] || p2;
+    d += " C" + (p1[0] + (p2[0] - p0[0]) / 6) + " " + (p1[1] + (p2[1] - p0[1]) / 6) + " " + (p2[0] - (p3[0] - p1[0]) / 6) + " " + (p2[1] - (p3[1] - p1[1]) / 6) + " " + p2[0] + " " + p2[1];
+  }
+  el(s, "path", { d: d, fill: "none", stroke: "#7c6cf2", "stroke-width": 1.4 });
+  pts.forEach(function (p, i) {
+    el(s, "circle", { cx: p[0], cy: p[1], r: 1.4, fill: "#9a8cff" });
+    el(s, "text", { x: p[0], y: top + h + 9, "text-anchor": "middle", class: "axis" }, labels[i]);
+  });
+})();
+</script>
+</body>
+</html>

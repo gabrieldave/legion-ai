@@ -96,6 +96,7 @@ RESULTS_CSS = """
 .pr-stats dd{margin:9px 0 0;font:600 18px/1.15 var(--mono);color:var(--text)}
 .pr-stats .mint{color:var(--mint)}.pr-stats .ember{color:var(--ember)}.pr-stats .amber{color:var(--amber)}
 .pr-note{margin-top:22px}
+.pr-note a{color:var(--mint)}
 .pr-shot{display:block;justify-self:end;width:100%;max-width:670px;border-radius:16px;overflow:hidden;border:1px solid var(--line2);background:#0B0F17;box-shadow:0 50px 110px -30px rgba(0,0,0,.9),0 0 80px -28px rgba(69,226,163,.35)}
 .pr-shot img{display:block;width:100%;height:auto}
 @media (max-width:960px){.proofreal{grid-template-columns:minmax(0,1fr);gap:36px}.pr-shot{justify-self:center}}
@@ -121,9 +122,17 @@ PROOF_IMGS = re.compile(r'<div class="proofimgs">.*?</div>\s*(?=<p class="small"
 
 def results_proof(locale: str) -> str:
     c = RESULTS.ES if locale == "es" else RESULTS.EN
-    version = hashlib.sha256((RESULTS_SRC / RESULTS.IMAGE).read_bytes()).hexdigest()[:10]
-    src = f"/img/results/{RESULTS.IMAGE}?v={version}"
-    w, h = RESULTS.SIZE
+
+    def url(name: str) -> str:
+        return f"/img/results/{name}?v={hashlib.sha256((RESULTS_SRC / name).read_bytes()).hexdigest()[:10]}"
+
+    src = url(c["image"])
+    w, h = c["size"]
+    original = (
+        f' <a href="{url(RESULTS.ORIGINAL)}" target="_blank" rel="noopener">{escape(c["original_link"])}</a>.'
+        if c.get("original_link")
+        else ""
+    )
     stats = "".join(
         f'<div><dt>{escape(k)}</dt><dd class="{tone}">{escape(v)}</dd></div>' for k, v, tone in c["stats"]
     )
@@ -134,17 +143,24 @@ def results_proof(locale: str) -> str:
         <p class="pr-big">{escape(c["big"])} <span>{escape(c["currency"])}</span></p>
         <p class="pr-usd">{escape(c["usd"])}</p>
         <dl class="pr-stats">{stats}</dl>
-        <p class="small pr-note">{escape(c["note"])} {escape(c["hint"])}</p>
+        <p class="small pr-note">{escape(c["note"])} {escape(c["hint"])}{original}</p>
       </div>
       <a class="pr-shot" href="{src}" target="_blank" rel="noopener"><img src="{src}" alt="{escape(c["alt"])}" width="{w}" height="{h}" loading="lazy" decoding="async"></a>
     </div>
     """
 
 
-def scanner_img(name: str, alt: str, eager: bool = False) -> str:
-    version = hashlib.sha256((SCANNER_SRC / name).read_bytes()).hexdigest()[:10]
-    w, h = SCANNER.SIZES[name]
-    src = f"/img/scanner/{name}?v={version}"
+def scanner_file(name: str, locale: str) -> str:
+    """Ruta relativa a source/scanner/: usa source/scanner/en/<name> en inglés si existe."""
+    return f"en/{name}" if locale == "en" and (SCANNER_SRC / "en" / name).exists() else name
+
+
+def scanner_img(name: str, alt: str, locale: str, eager: bool = False) -> str:
+    rel = scanner_file(name, locale)
+    path = SCANNER_SRC / rel
+    version = hashlib.sha256(path.read_bytes()).hexdigest()[:10]
+    w, h = Image.open(path).size
+    src = f"/img/scanner/{rel}?v={version}"
     loading = "" if eager else ' loading="lazy"'
     return (
         f'<a class="scn-shot" href="{src}" target="_blank" rel="noopener">'
@@ -154,19 +170,21 @@ def scanner_img(name: str, alt: str, eager: bool = False) -> str:
 
 def scanner_section(locale: str) -> str:
     c = SCANNER.ES if locale == "es" else SCANNER.EN
+    files = [f for t in c["tabs"] for f, _ in t["shots"] + ([t["figure"][:2]] if t.get("figure") else [])]
+    hint = c["hint"] if locale == "es" or any(scanner_file(f, locale) == f for f in files) else c["hint_translated"]
     tabs, panes = [], []
     for i, t in enumerate(c["tabs"]):
         tabs.append(
             f'<button type="button" role="tab" id="scn-t{i}" aria-controls="scn-p{i}" '
             f'aria-selected="{"true" if i == 0 else "false"}">{escape(t["label"])}</button>'
         )
-        shots = "".join(scanner_img(f, alt) for f, alt in t["shots"])
+        shots = "".join(scanner_img(f, alt, locale) for f, alt in t["shots"])
         how = "".join(f"<li><b>{escape(b)}</b>{escape(txt)}</li>" for b, txt in t["how"])
         keys = f'<p class="scn-keys">{escape(t["keys"])}</p>' if t.get("keys") else ""
         fig = ""
         if t.get("figure"):
             f, alt, cap = t["figure"]
-            fig = f'<figure class="scn-fig">{scanner_img(f, alt)}<figcaption class="small">{escape(cap)}</figcaption></figure>'
+            fig = f'<figure class="scn-fig">{scanner_img(f, alt, locale)}<figcaption class="small">{escape(cap)}</figcaption></figure>'
         cls = "scn-pane wide" if t.get("wide") else "scn-pane"
         panes.append(
             f'<div class="{cls}" role="tabpanel" id="scn-p{i}" aria-labelledby="scn-t{i}" tabindex="0">'
@@ -184,7 +202,7 @@ def scanner_section(locale: str) -> str:
     </div>
     <div class="scn-tabs" role="tablist" aria-label="{escape(c["tablist"])}">{"".join(tabs)}</div>
     {"".join(panes)}
-    <p class="small scn-hint">{escape(c["hint"])}</p>
+    <p class="small scn-hint">{escape(hint)}</p>
   </div>
 </section>
 
@@ -323,7 +341,7 @@ def main() -> None:
     for name in ("i18n.js", "scanner.js"):
         shutil.copyfile(ROOT / "assets" / name, PUBLIC / name)
     shutil.copytree(SCANNER_SRC, PUBLIC / "img" / "scanner")
-    shutil.copytree(RESULTS_SRC, PUBLIC / "img" / "results")
+    shutil.copytree(RESULTS_SRC, PUBLIC / "img" / "results", ignore=shutil.ignore_patterns("*.html"))
     for img in (PUBLIC / "img").glob("*.*"):
         if f"/img/{img.name}" not in html_en + html_es:
             img.unlink()

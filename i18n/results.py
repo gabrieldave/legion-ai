@@ -1,14 +1,16 @@
 """Bloque «reporte original» de la sección de resultados.
 
-Sustituye las dos capturas inclinadas del HTML original por la captura plana de
-Analytics MT4 (source/results/analytics-resumen.jpg: sin menú lateral y con el número
-de cuenta oculto). Cifras tal cual del reporte, en pesos mexicanos.
+Sustituye las dos capturas inclinadas del HTML original. En español va la captura real de
+Analytics MT4 (source/results/analytics-resumen.jpg: sin menú lateral y con el número de
+cuenta oculto). La app solo existe en español, así que en inglés va una recreación con las
+mismas cifras (source/results/analytics-en.html → scripts/render-analytics-en.sh).
 """
 
-IMAGE = "analytics-resumen.jpg"
-SIZE = (670, 1024)
+ORIGINAL = "analytics-resumen.jpg"
 
 ES = {
+    "image": ORIGINAL,
+    "size": (670, 1024),
     "kicker": "REPORTE ORIGINAL · ANALYTICS MT4",
     "label": "Ganado en trading (neto)",
     "big": "+$101,663.21",
@@ -28,7 +30,9 @@ ES = {
 }
 
 EN = {
-    "kicker": "ORIGINAL REPORT · ANALYTICS MT4",
+    "image": "analytics-resumen-en.png",
+    "size": (670, 944),
+    "kicker": "REAL ACCOUNT REPORT · ANALYTICS MT4",
     "label": "Net trading profit",
     "big": "+$101,663.21",
     "currency": "MXN",
@@ -41,7 +45,8 @@ EN = {
         ("Profit factor", "3.51", ""),
         ("Max drawdown", "$14,095.61 MXN", "amber"),
     ],
-    "note": "A real capture of the performance dashboard synced to the account, in Spanish and Mexican pesos. We only cropped the side menu and hid the account number.",
-    "alt": "Analytics MT4 capture: trading summary showing 101,663.21 MXN net profit, 104 trades, 91.3% win rate and a 3.51 profit factor",
-    "hint": "Click the capture to see it full size.",
+    "note": "Our performance dashboard only exists in Spanish, so this is an English recreation of the real report with the same numbers. The bar and weekly charts were redrawn from the original and are approximate.",
+    "alt": "English recreation of the Analytics MT4 trading summary: 101,663.21 MXN net profit, 104 trades, 91.3% win rate and a 3.51 profit factor",
+    "hint": "Click to enlarge.",
+    "original_link": "See the original capture in Spanish",
 }

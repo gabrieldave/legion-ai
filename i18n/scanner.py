@@ -1,19 +1,11 @@
 """Sección «El escáner por dentro»: capturas reales de cada pestaña del panel.
 
-Las imágenes viven en source/scanner/ y el build las publica en /img/scanner/.
+Las imágenes viven en source/scanner/ y el build las publica en /img/scanner/. Para la versión
+en inglés, pon la captura con el panel en inglés y el MISMO nombre en source/scanner/en/; si
+falta alguna, el inglés usa la de español y avisa que las capturas están en español.
 Cada pestaña: label, title, what, how [(nombre, texto)], keys (opcional),
 shots [(archivo, alt)] y figure (archivo, alt, pie) opcional a todo el ancho.
 """
-
-SIZES = {
-    "grafico-completo.jpg": (1024, 692),
-    "grafico-vela-zoom.jpg": (1024, 773),
-    "vela-zoom.jpg": (467, 792),
-    "quiebre.jpg": (471, 724),
-    "caidas.jpg": (458, 771),
-    "ob-fvg.jpg": (477, 640),
-    "herramientas.jpg": (458, 520),
-}
 
 ES = {
     "title": "Cada pestaña, tal como se ve en tu MT4.",
@@ -117,6 +109,7 @@ EN = {
     "tablist": "Scanner tabs",
     "how": "How it works",
     "hint": "Click any capture to see it full size. Captures are in Spanish; every label switches to English with the Language setting.",
+    "hint_translated": "Click any capture to see it full size.",
     "tabs": [
         {
             "label": "ON THE CHART",
