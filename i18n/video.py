@@ -3,7 +3,7 @@
 La miniatura se sirve desde /img/video/ para no depender de i.ytimg.com en la CSP.
 """
 
-YOUTUBE_ID = "AOTE2ZBsEcM"
+YOUTUBE_ID = "U1yL8E0BOs4"
 THUMB = "how-it-works.jpg"
 
 ES = {
