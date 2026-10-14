@@ -83,6 +83,22 @@ SCANNER_CSS = """
 }
 """
 
+VIDEO_CSS = """
+.vid-sec .head{margin-bottom:44px}
+.vid-frame{position:relative;aspect-ratio:16/9;max-width:1040px;margin:0 auto;border-radius:20px;overflow:hidden;border:1px solid var(--line2);background:#000;box-shadow:0 60px 120px -40px rgba(0,0,0,.9),0 0 90px -30px rgba(69,226,163,.35)}
+.vid-frame iframe,.vid{position:absolute;inset:0;width:100%;height:100%;border:0}
+.vid{display:block;cursor:pointer}
+.vid img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s ease,filter .5s ease}
+.vid:hover img{transform:scale(1.02);filter:brightness(1.08)}
+.vid-play{position:absolute;left:50%;top:50%;width:84px;height:84px;margin:-42px 0 0 -42px;border-radius:50%;background:var(--mint);box-shadow:0 0 0 10px rgba(69,226,163,.18),0 20px 50px -10px rgba(0,0,0,.8);transition:transform .25s ease}
+.vid-play::after{content:"";position:absolute;left:34px;top:27px;border-style:solid;border-width:15px 0 15px 24px;border-color:transparent transparent transparent var(--abyss)}
+.vid:hover .vid-play,.vid:focus-visible .vid-play{transform:scale(1.08)}
+.vid:focus-visible{outline:3px solid var(--mint);outline-offset:-3px}
+.vid-yt{display:block;text-align:center;margin-top:18px}
+.vid-yt a{color:var(--mist)}.vid-yt a:hover{color:#fff}
+@media (max-width:600px){.vid-frame{border-radius:14px}.vid-play{width:64px;height:64px;margin:-32px 0 0 -32px}.vid-play::after{left:26px;top:20px;border-width:12px 0 12px 19px}}
+"""
+
 RESULTS_CSS = """
 .proofreal{margin-top:60px;display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:56px;align-items:center}
 .pr-kicker{margin:0;font:600 12px/1 var(--mono);letter-spacing:.14em;color:var(--mint)}
@@ -118,6 +134,36 @@ SCANNER_SRC = ROOT / "source" / "scanner"
 RESULTS = load_module("results")
 RESULTS_SRC = ROOT / "source" / "results"
 PROOF_IMGS = re.compile(r'<div class="proofimgs">.*?</div>\s*(?=<p class="small" style="margin-top:30px)', re.S)
+
+
+VIDEO = load_module("video")
+VIDEO_SRC = ROOT / "source" / "video"
+
+
+def video_section(locale: str) -> str:
+    c = VIDEO.ES if locale == "es" else VIDEO.EN
+    thumb = VIDEO_SRC / VIDEO.THUMB
+    version = hashlib.sha256(thumb.read_bytes()).hexdigest()[:10]
+    w, h = Image.open(thumb).size
+    watch = f"https://www.youtube.com/watch?v={VIDEO.YOUTUBE_ID}"
+    return f"""<!-- VIDEO -->
+<section class="s s-alt vid-sec" id="video" aria-labelledby="vid-h">
+  <div class="wrap">
+    <div class="head">
+      <h2 id="vid-h">{escape(c["title"])}</h2>
+      <p class="lead">{escape(c["lead"])}</p>
+    </div>
+    <div class="vid-frame">
+      <a class="vid" href="{watch}" target="_blank" rel="noopener" data-yt="{VIDEO.YOUTUBE_ID}" aria-label="{escape(c["play"])}">
+        <img src="/img/video/{VIDEO.THUMB}?v={version}" alt="{escape(c["alt"])}" width="{w}" height="{h}" loading="lazy" decoding="async">
+        <span class="vid-play" aria-hidden="true"></span>
+      </a>
+    </div>
+    <p class="small vid-yt"><a href="{watch}" target="_blank" rel="noopener">{escape(c["youtube"])} ↗</a></p>
+  </div>
+</section>
+
+"""
 
 
 def results_proof(locale: str) -> str:
@@ -235,7 +281,14 @@ def lang_switch(locale: str) -> str:
 
 
 def localize(html: str, locale: str, meta: dict) -> str:
-    html = html.replace("</style>", LANG_CSS + SCANNER_CSS + RESULTS_CSS + "</style>", 1)
+    html = html.replace("</style>", LANG_CSS + SCANNER_CSS + RESULTS_CSS + VIDEO_CSS + "</style>", 1)
+    if html.count("<!-- NATIVE PANEL -->") != 1:
+        sys.exit("ERROR: no encuentro <!-- NATIVE PANEL --> para insertar el video")
+    html = html.replace("<!-- NATIVE PANEL -->", video_section(locale) + "<!-- NATIVE PANEL -->", 1)
+    nav = VIDEO.ES["nav"] if locale == "es" else VIDEO.EN["nav"]
+    html, n = re.subn(r'(<nav aria-label="[^"]+">\s*)', rf'\1<a href="#video">{nav}</a>\n      ', html, count=1)
+    if n != 1:
+        sys.exit("ERROR: no encuentro el <nav> del header")
     html, n = PROOF_IMGS.subn(results_proof(locale), html, count=1)
     if n != 1:
         sys.exit('ERROR: no encuentro <div class="proofimgs"> en resultados para poner el reporte original')
@@ -246,7 +299,7 @@ def localize(html: str, locale: str, meta: dict) -> str:
     html = html.replace(WHATSAPP_BTN, f'<div class="nav-end">{lang_switch(locale)}{WHATSAPP_BTN}', 1)
     html = re.sub(r'(<div class="nav-end">.*?</a>)', r"\1</div>", html, count=1, flags=re.S)
     scripts = "".join(
-        f'<script src="/{name}?v={asset_version(name)}" defer></script>\n' for name in ("i18n.js", "scanner.js")
+        f'<script src="/{name}?v={asset_version(name)}" defer></script>\n' for name in ("i18n.js", "scanner.js", "video.js")
     )
     return html.replace("</body>", scripts + "</body>", 1)
 
@@ -338,9 +391,10 @@ def main() -> None:
     (PUBLIC / "index.en.html").write_text(html_en, encoding="utf-8")
     (PUBLIC / "index.es.html").write_text(html_es, encoding="utf-8")
     (PUBLIC / "favicon.svg").write_text(FAVICON_SVG, encoding="utf-8")
-    for name in ("i18n.js", "scanner.js"):
+    for name in ("i18n.js", "scanner.js", "video.js"):
         shutil.copyfile(ROOT / "assets" / name, PUBLIC / name)
     shutil.copytree(SCANNER_SRC, PUBLIC / "img" / "scanner")
+    shutil.copytree(VIDEO_SRC, PUBLIC / "img" / "video")
     shutil.copytree(RESULTS_SRC, PUBLIC / "img" / "results", ignore=shutil.ignore_patterns("*.html"))
     for img in (PUBLIC / "img").glob("*.*"):
         if f"/img/{img.name}" not in html_en + html_es:

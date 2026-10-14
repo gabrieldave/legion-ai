@@ -30,6 +30,10 @@ oculto) y las cifras en pesos de `i18n/results.py`. Analytics MT4 solo existe en
 versión en inglés usa una recreación (`source/results/analytics-en.html`); si cambias cifras ahí,
 vuelve a generar la imagen con `scripts/render-analytics-en.sh`. Después del push, Coolify redespliega.
 
+El video «Cómo funciona» (YouTube) se configura en `i18n/video.py`; la miniatura vive en
+`source/video/`. El reproductor se carga solo al hacer clic, desde `youtube-nocookie.com`
+(permitido en la CSP con `frame-src`).
+
 ## Idiomas (§12.10)
 
 Español por defecto; inglés solo por elección o por país. Una sola URL (`/`), sin rutas `/en`.

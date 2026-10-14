@@ -440,6 +440,20 @@ footer p{font-size:13.5px;color:var(--dim);line-height:1.65;max-width:110ch;marg
 .pr-shot img{display:block;width:100%;height:auto}
 @media (max-width:960px){.proofreal{grid-template-columns:minmax(0,1fr);gap:36px}.pr-shot{justify-self:center}}
 @media (max-width:600px){.pr-big{font-size:clamp(32px,10vw,42px)}.pr-stats dd{font-size:15px}}
+
+.vid-sec .head{margin-bottom:44px}
+.vid-frame{position:relative;aspect-ratio:16/9;max-width:1040px;margin:0 auto;border-radius:20px;overflow:hidden;border:1px solid var(--line2);background:#000;box-shadow:0 60px 120px -40px rgba(0,0,0,.9),0 0 90px -30px rgba(69,226,163,.35)}
+.vid-frame iframe,.vid{position:absolute;inset:0;width:100%;height:100%;border:0}
+.vid{display:block;cursor:pointer}
+.vid img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s ease,filter .5s ease}
+.vid:hover img{transform:scale(1.02);filter:brightness(1.08)}
+.vid-play{position:absolute;left:50%;top:50%;width:84px;height:84px;margin:-42px 0 0 -42px;border-radius:50%;background:var(--mint);box-shadow:0 0 0 10px rgba(69,226,163,.18),0 20px 50px -10px rgba(0,0,0,.8);transition:transform .25s ease}
+.vid-play::after{content:"";position:absolute;left:34px;top:27px;border-style:solid;border-width:15px 0 15px 24px;border-color:transparent transparent transparent var(--abyss)}
+.vid:hover .vid-play,.vid:focus-visible .vid-play{transform:scale(1.08)}
+.vid:focus-visible{outline:3px solid var(--mint);outline-offset:-3px}
+.vid-yt{display:block;text-align:center;margin-top:18px}
+.vid-yt a{color:var(--mist)}.vid-yt a:hover{color:#fff}
+@media (max-width:600px){.vid-frame{border-radius:14px}.vid-play{width:64px;height:64px;margin:-32px 0 0 -32px}.vid-play::after{left:26px;top:20px;border-width:12px 0 12px 19px}}
 </style>
 </head>
 <body>
@@ -451,6 +465,7 @@ footer p{font-size:13.5px;color:var(--dim);line-height:1.65;max-width:110ch;marg
       <b>LEGION <span>AI</span></b>
     </a>
     <nav aria-label="Main">
+      <a href="#video">Video</a>
       <a href="#panel">The panel</a>
       <a href="#how">How it reads</a>
       <a href="#protect">Protection</a>
@@ -505,6 +520,23 @@ footer p{font-size:13.5px;color:var(--dim);line-height:1.65;max-width:110ch;marg
     </div>
   </div>
 </div>
+
+<!-- VIDEO -->
+<section class="s s-alt vid-sec" id="video" aria-labelledby="vid-h">
+  <div class="wrap">
+    <div class="head">
+      <h2 id="vid-h">See how Legion AI works.</h2>
+      <p class="lead">A video walkthrough of the panel running in MetaTrader 4.</p>
+    </div>
+    <div class="vid-frame">
+      <a class="vid" href="https://www.youtube.com/watch?v=AOTE2ZBsEcM" target="_blank" rel="noopener" data-yt="AOTE2ZBsEcM" aria-label="Play the video: how Legion AI works">
+        <img src="/img/video/how-it-works.jpg?v=64ce4e8e60" alt="Cover of the How Legion AI works video" width="1280" height="720" loading="lazy" decoding="async">
+        <span class="vid-play" aria-hidden="true"></span>
+      </a>
+    </div>
+    <p class="small vid-yt"><a href="https://www.youtube.com/watch?v=AOTE2ZBsEcM" target="_blank" rel="noopener">Watch on YouTube ↗</a></p>
+  </div>
+</section>
 
 <!-- NATIVE PANEL -->
 <section class="s" id="panel">
@@ -1233,5 +1265,6 @@ footer p{font-size:13.5px;color:var(--dim);line-height:1.65;max-width:110ch;marg
 </script>
 <script src="/i18n.js?v=f1c68ee2fb" defer></script>
 <script src="/scanner.js?v=239afd819a" defer></script>
+<script src="/video.js?v=585af72c7c" defer></script>
 </body>
 </html>
