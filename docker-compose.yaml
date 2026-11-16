@@ -1,5 +1,10 @@
 # Coolify (Docker Compose). Puerto host 3043 → contenedor 3000.
 # Dominio: legionai.iareal.net
+networks:
+  coolify:
+    external: true
+    name: coolify
+
 services:
   app:
     build:
@@ -8,6 +13,9 @@ services:
     restart: unless-stopped
     ports:
       - "127.0.0.1:3043:3000"
+    networks:
+      - default
+      - coolify
     env_file:
       - .env
     environment:
