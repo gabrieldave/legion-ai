@@ -273,14 +273,8 @@ export function CuentaClient({
 
             <form onSubmit={saveAccounts} style={{ display: "grid", gap: "0.7rem" }}>
               {slots.map((s, idx) => (
-                <div
-                  key={s.slot}
-                  style={{
-                    display: "grid",
-                    gridTemplateColumns: "1fr 1fr",
-                    gap: "0.6rem",
-                  }}
-                >
+                <div key={s.slot} className="slot-grid">
+
                   <label style={{ fontSize: "0.88rem", fontWeight: 600 }}>
                     Cuenta MT4 #{s.slot}
                     <input
@@ -485,7 +479,7 @@ export function CuentaClient({
       {okMsg ? <p className="ok">{okMsg}</p> : null}
       {msg ? <p className="bad">{msg}</p> : null}
 
-      <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
+      <div className="stack-actions">
         {isAdmin ? (
           <a className="btn secondary" href="/admin">
             Dashboard admin
