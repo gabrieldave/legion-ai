@@ -5,6 +5,7 @@ import {
   changelogToBullets,
   formatBuildDateYmd,
 } from "@/lib/access";
+import TutorialInstalacionLegion from "@/components/TutorialInstalacionLegion";
 
 type SlotItem = {
   slot: 1 | 2 | 3;
@@ -62,6 +63,7 @@ export function CuentaClient({
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
   const [okMsg, setOkMsg] = useState<string | null>(null);
+  const [tutorialOpen, setTutorialOpen] = useState(true);
   const [lic, setLic] = useState<LicenseView | null>(initialLicense);
   const [slots, setSlots] = useState<SlotItem[]>(
     initialLicense?.slots || [
@@ -202,6 +204,54 @@ export function CuentaClient({
         </p>
       ) : (
         <>
+          <section
+            style={{
+              border: "1px solid #1f2937",
+              borderRadius: 12,
+              padding: "0.85rem",
+              background: "#0b0f17",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                flexWrap: "wrap",
+                gap: "0.65rem",
+                alignItems: "center",
+                justifyContent: "space-between",
+                marginBottom: tutorialOpen ? "0.75rem" : 0,
+              }}
+            >
+              <div>
+                <h3
+                  style={{
+                    margin: 0,
+                    color: "#f8fafc",
+                    fontSize: "1.05rem",
+                  }}
+                >
+                  Video Tutorial Animado con Voz (Windows y Mac)
+                </h3>
+                <p
+                  className="muted"
+                  style={{ margin: "0.25rem 0 0", color: "#94a3b8", fontSize: "0.88rem" }}
+                >
+                  Guia paso a paso para instalar y activar Legion SuperPanel en
+                  MetaTrader 4.
+                </p>
+              </div>
+              <button
+                type="button"
+                className="btn secondary"
+                onClick={() => setTutorialOpen((v) => !v)}
+                aria-expanded={tutorialOpen}
+              >
+                {tutorialOpen ? "Ocultar tutorial" : "Mostrar tutorial"}
+              </button>
+            </div>
+            {tutorialOpen ? <TutorialInstalacionLegion /> : null}
+          </section>
+
           <section
             style={{
               border: "1px solid var(--rule)",

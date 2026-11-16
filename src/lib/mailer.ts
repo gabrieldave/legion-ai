@@ -174,6 +174,7 @@ export async function sendMigrationUpdateEmail(input: {
     bodyHtml: `
 <p style="margin-top:0;">Hola ${escapeHtml(name)},</p>
 <p>Ya esta disponible la nueva version de <b>Legion SuperPanel v${escapeHtml(version)}</b> (compatible con Windows y Mac). Ahora las licencias son <b>100% automaticas</b> desde tu panel personal: hasta <b>3 cuentas MT4</b> con graficos ilimitados.</p>
+<p style="margin:14px 0;padding:12px 14px;border-radius:10px;border:1px solid rgba(36,211,169,.4);background:rgba(36,211,169,.1);color:#E5E7EB;">Al entrar a <a href="${CUENTA_URL}" style="color:#24D3A9;font-weight:700;">https://legionai.iareal.net/cuenta</a> veras arriba el <b>Video Tutorial Animado con Voz Paso a Paso para Windows y Mac</b>.</p>
 ${changelogBlockHtml(version, input.changelog)}
 <p style="margin-bottom:8px;"><b>Activalo en 3 pasos:</b></p>
 ${threeSteps(input.to)}
@@ -198,6 +199,7 @@ export async function sendPurchaseWelcomeEmail(input: {
     bodyHtml: `
 <p style="margin-top:0;">Hola ${escapeHtml(name)},</p>
 <p>Tu licencia oficial ya esta activa: hasta <b>3 cuentas MT4</b>, graficos ilimitados y <b>1 ano de actualizaciones</b> incluidas hasta <b>${until}</b>.</p>
+<p style="margin:14px 0;padding:12px 14px;border-radius:10px;border:1px solid rgba(36,211,169,.4);background:rgba(36,211,169,.1);color:#E5E7EB;">Al entrar a <a href="${CUENTA_URL}" style="color:#24D3A9;font-weight:700;">https://legionai.iareal.net/cuenta</a> veras arriba el <b>Video Tutorial Animado con Voz Paso a Paso para Windows y Mac</b>.</p>
 <p style="margin-bottom:8px;"><b>Instalacion en 3 pasos:</b></p>
 ${threeSteps(input.to)}
 <p style="margin-bottom:0;">Guarda este correo. Tu panel personal siempre estara en ${CUENTA_URL}.</p>`,
