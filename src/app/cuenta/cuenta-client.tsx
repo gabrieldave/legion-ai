@@ -501,11 +501,14 @@ export function CuentaClient({
         </button>
         <a
           className="btn secondary"
-          href="https://wa.me/525645674407"
+          href="https://wa.me/525645674407?text=Hola%2C%20necesito%20soporte%20de%20Legion%20AI"
           target="_blank"
           rel="noopener noreferrer"
         >
           Soporte WhatsApp
+        </a>
+        <a className="btn secondary" href="mailto:legion@iareal.net">
+          Soporte correo
         </a>
       </div>
     </div>

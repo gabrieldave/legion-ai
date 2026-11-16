@@ -25,6 +25,12 @@ export const CHARGEBACK_LEASE_DAYS = 35;
 export const RELEASES_STORAGE_DIR =
   process.env.RELEASES_STORAGE_DIR?.trim() || "/app/storage/releases";
 
+/** Soporte publico (Cloudflare Email Routing -> Gmail + WhatsApp) */
+export const SUPPORT_EMAIL = "legion@iareal.net";
+export const SUPPORT_EMAIL_HREF = `mailto:${SUPPORT_EMAIL}`;
+export const SUPPORT_WHATSAPP_E164 = "525645674407";
+export const SUPPORT_WHATSAPP_HREF = `https://wa.me/${SUPPORT_WHATSAPP_E164}`;
+
 export function adminEmails(): Set<string> {
   const raw =
     process.env.ADMIN_ALLOWED_EMAILS || "david.del.rio.colin@gmail.com";

@@ -1,6 +1,11 @@
-import { APP_URL } from "@/lib/access";
+import {
+  APP_URL,
+  SUPPORT_EMAIL,
+  SUPPORT_EMAIL_HREF,
+  SUPPORT_WHATSAPP_HREF,
+} from "@/lib/access";
 
-const WHATSAPP_SUPPORT = "https://wa.me/525645674407";
+const WHATSAPP_SUPPORT = SUPPORT_WHATSAPP_HREF;
 const CUENTA_URL = `${APP_URL.replace(/\/$/, "")}/cuenta`;
 
 export type MailResult = { sent: boolean; error?: string; id?: string };
@@ -59,7 +64,9 @@ function baseLayout(opts: {
           </tr>
           <tr>
             <td style="padding:0 24px 24px;font-size:13px;color:#9CA3AF;">
-              Soporte WhatsApp:
+              Soporte:
+              <a href="${SUPPORT_EMAIL_HREF}" style="color:#24D3A9;text-decoration:none;">${SUPPORT_EMAIL}</a>
+              · WhatsApp
               <a href="${WHATSAPP_SUPPORT}" style="color:#24D3A9;text-decoration:none;">+52 56 4567 4407</a>
             </td>
           </tr>

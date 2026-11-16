@@ -32,6 +32,18 @@ export default async function LoginPage({
             Volver
           </Link>
         </p>
+        <p className="muted" style={{ marginBottom: 0, fontSize: "0.9rem" }}>
+          Soporte:{" "}
+          <a href="mailto:legion@iareal.net">legion@iareal.net</a>
+          {" · "}
+          <a
+            href="https://wa.me/525645674407?text=Hola%2C%20necesito%20soporte%20de%20Legion%20AI"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            WhatsApp
+          </a>
+        </p>
       </div>
     </main>
   );

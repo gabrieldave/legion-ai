@@ -351,6 +351,16 @@ section.s{padding:130px 0;position:relative}
 footer{border-top:1px solid var(--line);padding:56px 0 70px;background:#03050B}
 footer h3{font-size:16px;margin:26px 0 10px}
 footer p{font-size:13.5px;color:var(--dim);line-height:1.65;max-width:110ch;margin-top:10px}
+footer .support-links{display:flex;flex-wrap:wrap;gap:14px 22px;margin:18px 0 8px;font-size:14.5px}
+footer .support-links a{color:var(--mint);text-decoration:none;font-weight:600}
+footer .support-links a:hover{text-decoration:underline}
+
+/* burbuja soporte WhatsApp */
+.wa-bubble{position:fixed;right:max(16px,env(safe-area-inset-right));bottom:max(16px,env(safe-area-inset-bottom));z-index:90;width:56px;height:56px;border-radius:16px;display:grid;place-items:center;background:#128C7E;color:#fff;box-shadow:0 12px 28px rgba(0,0,0,.35);transition:transform .18s ease,background .18s ease}
+.wa-bubble:hover{transform:translateY(-2px);background:#0E7A6E}
+.wa-bubble:focus-visible{outline:2px solid var(--mint);outline-offset:3px}
+.wa-bubble svg{width:28px;height:28px;display:block}
+@media (max-width:600px){.wa-bubble{width:52px;height:52px;border-radius:14px}}
 
 /* responsive */
 @media (max-width:1100px){
@@ -903,7 +913,8 @@ footer p{font-size:13.5px;color:var(--dim);line-height:1.65;max-width:110ch;marg
     <h2 id="fin-h">Opera con el panorama completo, no con una corazonada.</h2>
     <p class="lead">Escríbenos hoy. Te mostramos el panel en vivo, respondemos tus preguntas y te ayudamos a instalarlo.</p>
     <div class="ctas">
-      <a class="btn btn-p" href="https://wa.me/525645674407">Escríbenos por WhatsApp</a>
+      <a class="btn btn-p" href="https://wa.me/525645674407?text=Hola%2C%20necesito%20soporte%20de%20Legion%20AI">Escríbenos por WhatsApp</a>
+      <a class="btn btn-g" href="mailto:legion@iareal.net">Correo: legion@iareal.net</a>
       <a class="btn btn-g" href="#panel">Ver el panel otra vez</a>
     </div>
   </div>
@@ -913,6 +924,10 @@ footer p{font-size:13.5px;color:var(--dim);line-height:1.65;max-width:110ch;marg
 <footer>
   <div class="wrap">
     <a class="brand" href="#top" aria-label="Volver arriba"><b>LEGION <span>AI</span></b></a>
+    <div class="support-links" aria-label="Soporte">
+      <a href="mailto:legion@iareal.net">Soporte correo: legion@iareal.net</a>
+      <a href="https://wa.me/525645674407?text=Hola%2C%20necesito%20soporte%20de%20Legion%20AI" target="_blank" rel="noopener noreferrer">WhatsApp: +52 56 4567 4407</a>
+    </div>
     <h3>Aviso de riesgo</h3>
     <p>Operar divisas, CFD, metales, índices bursátiles y criptomonedas con margen conlleva un alto nivel de riesgo y puede no ser adecuado para todos los inversionistas. Podrías perder parte o la totalidad de tu dinero. Legion AI es una herramienta de análisis para MetaTrader 4. No abre, modifica ni cierra operaciones, no administra dinero y no brinda asesoría de inversión personalizada. Lecturas como Sesgo comprador, Sesgo vendedor y el puntaje de confianza miden el acuerdo entre herramientas técnicas; no son predicciones ni garantías.</p>
     <p>Los resultados de esta página provienen de una cuenta real operada manualmente por nuestro equipo del 30 de julio al 18 de septiembre, convertidos de pesos mexicanos a dólares a 18.20 MXN/USD. La curva de capital entre su punto inicial y final es aproximada. Estos resultados no son típicos ni una promesa de lo que ganarás. El rendimiento pasado no es indicativo de resultados futuros. Las imágenes del panel en esta página son recreaciones del software con valores de muestra; los pósters de campaña son arte.</p>
@@ -1376,5 +1391,8 @@ footer p{font-size:13.5px;color:var(--dim);line-height:1.65;max-width:110ch;marg
 <script src="/i18n.js?v=f1c68ee2fb" defer></script>
 <script src="/scanner.js?v=239afd819a" defer></script>
 <script src="/video.js?v=585af72c7c" defer></script>
+<a class="wa-bubble" href="https://wa.me/525645674407?text=Hola%2C%20necesito%20soporte%20de%20Legion%20AI" target="_blank" rel="noopener noreferrer" aria-label="Soporte por WhatsApp">
+  <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.435 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+</a>
 </body>
 </html>
