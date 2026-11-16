@@ -4,6 +4,9 @@ import { LICENSE_FILENAME } from "@/lib/access";
 export const MAC_WINE_MQL4_PATH =
   "~/Library/Application Support/net.metaquotes.wine.metatrader4/drive_c/Program Files (x86)/MetaTrader 4/MQL4";
 
+export const MAC_WINE_INDICATORS_PATH = `${MAC_WINE_MQL4_PATH}/Indicators`;
+export const MAC_WINE_FILES_PATH = `${MAC_WINE_MQL4_PATH}/Files`;
+
 const CRC_TABLE = new Uint32Array(256);
 for (let n = 0; n < 256; n++) {
   let c = n;
@@ -177,21 +180,25 @@ export function buildMacManualHtml(input: {
     <h2>ESPAÑOL — 3 Pasos en Mac (Finder)</h2>
     <ol>
       <li>
-        Haz clic en el boton azul de abajo para copiar la ruta de MT4 en Mac, abre <b>Finder</b>, presiona las teclas <b><code>Cmd ⌘ + Shift ⇧ + G</code></b> (menu <i>Ir → Ir a la carpeta...</i>), pega la ruta y presiona <b>Enter</b>:
-        <pre id="macpath">${escapeHtml(MAC_WINE_MQL4_PATH)}</pre>
-        <button onclick="navigator.clipboard.writeText(document.getElementById('macpath').textContent)">Copiar Ruta de Mac para Finder</button>
+        Abre <b>Finder</b>, presiona <b><code>Cmd ⌘ + Shift ⇧ + G</code></b> (menu <i>Ir → Ir a la carpeta...</i>) y usa <b>un boton por archivo</b> para no soltar nada fuera de su carpeta:
+        <p style="margin:0.75rem 0 0.35rem"><b>1A. Indicador (.ex4)</b> — pega con Cmd+Shift+G y suelta ahi mismo el archivo <code>.ex4</code>:</p>
+        <pre id="macpath-indicators">${escapeHtml(MAC_WINE_INDICATORS_PATH)}</pre>
+        <button onclick="navigator.clipboard.writeText(document.getElementById('macpath-indicators').textContent)">Copiar ruta Mac para Indicador (.ex4)</button>
+        <p style="margin:1rem 0 0.35rem"><b>1B. Licencia (.lic)</b> — pega con Cmd+Shift+G y suelta ahi mismo tu <code>${LICENSE_FILENAME}</code>:</p>
+        <pre id="macpath-files">${escapeHtml(MAC_WINE_FILES_PATH)}</pre>
+        <button onclick="navigator.clipboard.writeText(document.getElementById('macpath-files').textContent)">Copiar ruta Mac para Licencia (.lic)</button>
       </li>
       <li>
-        Veras las subcarpetas de tu MT4 (<code>Indicators</code>, <code>Files</code>, etc.). Copia cada archivo por separado dentro de su carpeta correspondiente:
+        Los archivos del ZIP van asi (cada uno a su carpeta, nunca sueltes nada en la carpeta padre <code>MQL4</code>):
         <ul>
-          <li>Mete <b><code>${escapeHtml(input.ex4Filename)}</code></b> (que viene en <code>MQL4/Indicators/</code> de este ZIP) adentro de la carpeta <b><code>Indicators</code></b> de tu Mac.</li>
-          <li>Mete <b><code>${LICENSE_FILENAME}</code></b> (que viene en <code>MQL4/Files/</code> de este ZIP) adentro de la carpeta <b><code>Files</code></b> de tu Mac.</li>
+          <li><b><code>${escapeHtml(input.ex4Filename)}</code></b> (de <code>MQL4/Indicators/</code> del ZIP) → carpeta <b><code>Indicators</code></b> abierta con el boton 1A.</li>
+          <li><b><code>${LICENSE_FILENAME}</code></b> (de <code>MQL4/Files/</code> del ZIP) → carpeta <b><code>Files</code></b> abierta con el boton 1B.</li>
         </ul>
-        <div class="warn"><b>OJO EN MAC:</b> No arrastres la carpeta <code>MQL4</code> completa dando "Reemplazar" en Finder porque macOS borraria tus otros indicadores. Mete cada archivo dentro de <code>Indicators</code> y <code>Files</code> como indica el paso 2.</div>
+        <div class="warn"><b>OJO EN MAC:</b> No arrastres la carpeta <code>MQL4</code> completa dando "Reemplazar" en Finder porque macOS borraria tus otros indicadores. Usa los 2 botones de arriba y suelta cada archivo <b>dentro</b> de su carpeta.</div>
       </li>
       <li>Ve a tu ventana de <b>MetaTrader 4</b>, en el panel izquierdo <b>Navegador → Indicadores</b> haz clic derecho → <b>Actualizar</b> y arrastra <b>Legion_SuperPanel</b> al grafico. ¡Listo!</li>
     </ol>
-    <p class="muted"><i>Nota: Si instalaste MT4 con el instalador personalizado de tu broker (por ejemplo XM o IC Markets) y la ruta de arriba no existe, abre <code>~/Library/Application Support/</code> con <code>Cmd + Shift + G</code>, entra a la carpeta de tu broker/MT4 y abre <code>drive_c/Program Files (x86)/.../MQL4</code>.</i></p>
+    <p class="muted"><i>Nota: Si instalaste MT4 con el instalador personalizado de tu broker (por ejemplo XM o IC Markets) y esas rutas no existen, abre <code>~/Library/Application Support/</code> con <code>Cmd + Shift + G</code>, entra a la carpeta de tu broker/MT4 y abre <code>drive_c/Program Files (x86)/.../MQL4/Indicators</code> y <code>.../MQL4/Files</code>.</i></p>
     ${
       input.licenseToken
         ? `<p class="muted"><b>Alternativa aun mas rapida:</b> Si solo copiaste el <code>.ex4</code> a <code>Indicators</code>, pega este codigo una sola vez en la casilla <code>Codigo_Licencia</code> al abrir el indicador (se guardara solo en <code>Files</code>):</p><pre id="tokmac">${escapeHtml(input.licenseToken)}</pre><button onclick="navigator.clipboard.writeText(document.getElementById('tokmac').textContent)">Copiar Codigo_Licencia</button>`
@@ -202,8 +209,8 @@ export function buildMacManualHtml(input: {
   <div class="card">
     <h2>ENGLISH — 3-Step macOS Setup (Finder + Wine)</h2>
     <ol>
-      <li>Click the button above to copy the Mac MT4 path, switch to <b>Finder</b>, press <b><code>Cmd ⌘ + Shift ⇧ + G</code></b> (<i>Go → Go to Folder...</i>), paste the path, and press <b>Return</b>.</li>
-      <li>Drop <b><code>${escapeHtml(input.ex4Filename)}</code></b> inside the <b><code>Indicators</code></b> folder, and drop <b><code>${LICENSE_FILENAME}</code></b> inside the <b><code>Files</code></b> folder (do <b>not</b> click "Replace" on the parent <code>MQL4</code> folder in Finder).</li>
+      <li>Use the two buttons above: <b>Copiar ruta Mac para Indicador (.ex4)</b> and <b>Copiar ruta Mac para Licencia (.lic)</b>. In <b>Finder</b> press <b><code>Cmd ⌘ + Shift ⇧ + G</code></b>, paste each path, and drop the matching file <b>inside that folder</b>.</li>
+      <li>Drop <b><code>${escapeHtml(input.ex4Filename)}</code></b> into <b><code>Indicators</code></b>, and drop <b><code>${LICENSE_FILENAME}</code></b> into <b><code>Files</code></b> (do <b>not</b> click "Replace" on the parent <code>MQL4</code> folder in Finder).</li>
       <li>In <b>MetaTrader 4</b>, right-click <b>Indicators → Refresh</b> in the Navigator panel and attach <b>Legion_SuperPanel</b> to your chart.</li>
     </ol>
   </div>

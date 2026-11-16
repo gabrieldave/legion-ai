@@ -395,24 +395,48 @@ export function CuentaClient({
                     <b>En Windows:</b> Abre MT4 → <i>Archivo → Abrir carpeta de datos</i> y arrastra adentro la carpeta <code>MQL4</code> del paquete ZIP (también incluye <code>MANUAL_WINDOWS.html</code>).
                   </div>
                   <div>
-                    <b>En Mac (Wine):</b> Abre <b>Finder</b>, presiona <code>Cmd ⌘ + Shift ⇧ + G</code>, pega la ruta de abajo y mete el <code>.ex4</code> en <code>Indicators</code> y el <code>.lic</code> en <code>Files</code> (no reemplaces toda la carpeta <code>MQL4</code>; el ZIP incluye <code>MANUAL_MAC.html</code> paso a paso):
-                    <div style={{ marginTop: 6, display: "flex", gap: "0.5rem", flexWrap: "wrap", alignItems: "center" }}>
-                      <code style={{ fontSize: "0.78rem", wordBreak: "break-all" }}>
-                        ~/Library/Application Support/net.metaquotes.wine.metatrader4/drive_c/Program Files (x86)/MetaTrader 4/MQL4
-                      </code>
-                      <button
-                        type="button"
-                        className="btn secondary"
-                        style={{ padding: "0.3rem 0.6rem", fontSize: "0.78rem" }}
-                        onClick={async () => {
-                          await navigator.clipboard.writeText(
-                            "~/Library/Application Support/net.metaquotes.wine.metatrader4/drive_c/Program Files (x86)/MetaTrader 4/MQL4",
-                          );
-                          setOkMsg("Ruta de Mac copiada. Abre Finder y presiona Cmd + Shift + G.");
-                        }}
-                      >
-                        Copiar ruta Mac
-                      </button>
+                    <b>En Mac (Wine):</b> Abre <b>Finder</b>, usa <code>Cmd ⌘ + Shift ⇧ + G</code> y copia <b>una ruta por archivo</b> (no sueltes nada en la carpeta padre <code>MQL4</code>; el ZIP incluye <code>MANUAL_MAC.html</code>):
+                    <div style={{ marginTop: 8, display: "grid", gap: "0.65rem" }}>
+                      <div style={{ display: "grid", gap: "0.35rem" }}>
+                        <code style={{ fontSize: "0.78rem", wordBreak: "break-all" }}>
+                          ~/Library/Application Support/net.metaquotes.wine.metatrader4/drive_c/Program Files (x86)/MetaTrader 4/MQL4/Indicators
+                        </code>
+                        <button
+                          type="button"
+                          className="btn secondary"
+                          style={{ padding: "0.3rem 0.6rem", fontSize: "0.78rem", justifySelf: "start" }}
+                          onClick={async () => {
+                            await navigator.clipboard.writeText(
+                              "~/Library/Application Support/net.metaquotes.wine.metatrader4/drive_c/Program Files (x86)/MetaTrader 4/MQL4/Indicators",
+                            );
+                            setOkMsg(
+                              "Pega con Cmd+Shift+G y suelta ahi mismo el archivo .ex4",
+                            );
+                          }}
+                        >
+                          Copiar ruta Mac para Indicador (.ex4)
+                        </button>
+                      </div>
+                      <div style={{ display: "grid", gap: "0.35rem" }}>
+                        <code style={{ fontSize: "0.78rem", wordBreak: "break-all" }}>
+                          ~/Library/Application Support/net.metaquotes.wine.metatrader4/drive_c/Program Files (x86)/MetaTrader 4/MQL4/Files
+                        </code>
+                        <button
+                          type="button"
+                          className="btn secondary"
+                          style={{ padding: "0.3rem 0.6rem", fontSize: "0.78rem", justifySelf: "start" }}
+                          onClick={async () => {
+                            await navigator.clipboard.writeText(
+                              "~/Library/Application Support/net.metaquotes.wine.metatrader4/drive_c/Program Files (x86)/MetaTrader 4/MQL4/Files",
+                            );
+                            setOkMsg(
+                              "Pega con Cmd+Shift+G y suelta ahi mismo tu Legion_SuperPanel.lic",
+                            );
+                          }}
+                        >
+                          Copiar ruta Mac para Licencia (.lic)
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
