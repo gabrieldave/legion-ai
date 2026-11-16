@@ -6,6 +6,7 @@ import {
   INITIAL_RELEASE_VERSION,
   INITIAL_RELEASE_YMD,
   PRODUCT_FILENAME,
+  resolveReleaseChangelog,
   SLOT_SWAP_COOLDOWN_DAYS,
 } from "@/lib/access";
 import { getDb, schema } from "@/lib/db";
@@ -210,12 +211,15 @@ export async function getEntitledReleases(updatesUntilYmd: number) {
           version: INITIAL_RELEASE_VERSION,
           buildDateYmd: INITIAL_RELEASE_YMD,
           filename: PRODUCT_FILENAME,
-          changelog: "Version base Legion SuperPanel v3.15 para MetaTrader 4",
+          changelog: resolveReleaseChangelog(INITIAL_RELEASE_VERSION, null),
         },
       ],
       latestUncovered: null as {
+        id: string | null;
         version: string;
         buildDateYmd: number;
+        filename: string;
+        changelog: string;
       } | null,
     };
   }
@@ -227,7 +231,7 @@ export async function getEntitledReleases(updatesUntilYmd: number) {
       version: r.version,
       buildDateYmd: r.buildDateYmd,
       filename: r.filename,
-      changelog: r.changelog,
+      changelog: resolveReleaseChangelog(r.version, r.changelog),
     }));
 
   // Garantiza siempre al menos la version inicial que compro aunque subas builds futuros
@@ -238,17 +242,48 @@ export async function getEntitledReleases(updatesUntilYmd: number) {
       version: oldest.version,
       buildDateYmd: oldest.buildDateYmd,
       filename: oldest.filename,
-      changelog: oldest.changelog,
+      changelog: resolveReleaseChangelog(oldest.version, oldest.changelog),
     });
   }
 
   const newest = allPublished[0];
   const latestUncovered =
     newest && newest.buildDateYmd > updatesUntilYmd
-      ? { version: newest.version, buildDateYmd: newest.buildDateYmd }
+      ? {
+          id: newest.id as string | null,
+          version: newest.version,
+          buildDateYmd: newest.buildDateYmd,
+          filename: newest.filename,
+          changelog: resolveReleaseChangelog(newest.version, newest.changelog),
+        }
       : null;
 
   return { covered, latestUncovered };
+}
+
+/** Ultima version publicada (para correos de update / alta manual) */
+export async function getLatestPublishedReleaseForEmail() {
+  const db = getDb();
+  const rows = await db
+    .select()
+    .from(schema.indicatorReleases)
+    .where(eq(schema.indicatorReleases.isPublished, 1))
+    .orderBy(
+      desc(schema.indicatorReleases.buildDateYmd),
+      desc(schema.indicatorReleases.createdAt),
+    )
+    .limit(1);
+  const latest = rows[0];
+  if (!latest) {
+    return {
+      version: INITIAL_RELEASE_VERSION,
+      changelog: resolveReleaseChangelog(INITIAL_RELEASE_VERSION, null),
+    };
+  }
+  return {
+    version: latest.version,
+    changelog: resolveReleaseChangelog(latest.version, latest.changelog),
+  };
 }
 
 export async function getCustomerLicenseView(user: {

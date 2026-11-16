@@ -1,7 +1,11 @@
 import { mkdir, writeFile } from "fs/promises";
 import path from "path";
 import { and, eq, gte } from "drizzle-orm";
-import { isAdminEmail, RELEASES_STORAGE_DIR } from "@/lib/access";
+import {
+  isAdminEmail,
+  RELEASES_STORAGE_DIR,
+  resolveReleaseChangelog,
+} from "@/lib/access";
 import { fail, handle, ok } from "@/lib/api";
 import { getSessionUser } from "@/lib/auth/session";
 import { getDb, schema } from "@/lib/db";
@@ -9,6 +13,7 @@ import { sendMigrationUpdateEmail } from "@/lib/mailer";
 import {
   isSameOriginRequest,
   logSecurityEvent,
+  readBoundedJson,
   sha256Hex,
 } from "@/lib/security";
 import { getUserById } from "@/lib/users";
@@ -17,12 +22,16 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 const MAX_EX4_BYTES = 25 * 1024 * 1024;
+const MAX_CHANGELOG_CHARS = 4000;
 
-export const POST = handle(async (req: Request) => {
-  if (!isSameOriginRequest(req)) return fail("Origen no autorizado", 403);
-
+async function requireAdmin(req: Request) {
+  if (!isSameOriginRequest(req)) {
+    return { error: fail("Origen no autorizado", 403) as Response };
+  }
   const session = await getSessionUser();
-  if (!session) return fail("No autenticado", 401);
+  if (!session) {
+    return { error: fail("No autenticado", 401) as Response };
+  }
   const admin = await getUserById(session.id);
   if (!admin || admin.role !== "admin" || !isAdminEmail(admin.email)) {
     await logSecurityEvent({
@@ -31,15 +40,24 @@ export const POST = handle(async (req: Request) => {
       req,
       userId: session.id,
     });
-    return fail("Prohibido", 403);
+    return { error: fail("Prohibido", 403) as Response };
   }
+  return { admin };
+}
+
+export const POST = handle(async (req: Request) => {
+  const gate = await requireAdmin(req);
+  if ("error" in gate && gate.error) return gate.error;
+  const admin = gate.admin!;
 
   const form = await req.formData().catch(() => null);
   if (!form) return fail("Formulario invalido", 400);
 
   const version = String(form.get("version") || "").trim();
   const buildDateYmd = Number(String(form.get("buildDateYmd") || "").trim());
-  const changelog = String(form.get("changelog") || "").trim().slice(0, 1000);
+  const changelog = String(form.get("changelog") || "")
+    .trim()
+    .slice(0, MAX_CHANGELOG_CHARS);
   const notifyActiveBuyers =
     String(form.get("notifyActiveBuyers") || "").trim() === "1";
   const file = form.get("file");
@@ -91,6 +109,7 @@ export const POST = handle(async (req: Request) => {
   let notified = 0;
   let notifyErrors = 0;
   if (notifyActiveBuyers) {
+    const mailChangelog = resolveReleaseChangelog(version, changelog);
     const rows = await db
       .select({
         email: schema.users.email,
@@ -114,10 +133,10 @@ export const POST = handle(async (req: Request) => {
         to: email,
         name: row.name,
         version,
+        changelog: mailChangelog,
       });
       if (mail.sent) notified += 1;
       else notifyErrors += 1;
-      // lote seguro: pausa breve entre envios
       await new Promise((r) => setTimeout(r, 120));
     }
 
@@ -138,4 +157,57 @@ export const POST = handle(async (req: Request) => {
   return ok({ release: created, notified, notifyErrors });
 });
 
+export const PATCH = handle(async (req: Request) => {
+  const gate = await requireAdmin(req);
+  if ("error" in gate && gate.error) return gate.error;
+  const admin = gate.admin!;
 
+  const parsed = await readBoundedJson<{
+    action?: string;
+    id?: string;
+    changelog?: string;
+  }>(req, 8_192);
+  if (!parsed.ok) return fail(parsed.error, parsed.status);
+
+  const action = parsed.data.action || "update_changelog";
+  if (action !== "update_changelog") {
+    return fail("Accion desconocida", 400);
+  }
+
+  const id = String(parsed.data.id || "").trim();
+  if (!/^[0-9a-fA-F-]{36}$/.test(id)) {
+    return fail("ID de version invalido", 400);
+  }
+
+  const changelog = String(parsed.data.changelog || "")
+    .trim()
+    .slice(0, MAX_CHANGELOG_CHARS);
+
+  const db = getDb();
+  const existing = await db.query.indicatorReleases.findFirst({
+    where: eq(schema.indicatorReleases.id, id),
+  });
+  if (!existing) return fail("Version no encontrada", 404);
+
+  const [updated] = await db
+    .update(schema.indicatorReleases)
+    .set({
+      changelog: changelog || null,
+    })
+    .where(eq(schema.indicatorReleases.id, id))
+    .returning();
+
+  await logSecurityEvent({
+    eventType: "admin_update_changelog",
+    route: "/api/admin/releases",
+    req,
+    userId: admin.id,
+    detail: JSON.stringify({
+      releaseId: id,
+      version: existing.version,
+      chars: changelog.length,
+    }),
+  });
+
+  return ok({ release: updated });
+});

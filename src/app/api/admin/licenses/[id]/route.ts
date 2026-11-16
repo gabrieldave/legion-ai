@@ -1,10 +1,13 @@
 import { eq } from "drizzle-orm";
-import { INITIAL_RELEASE_VERSION, isAdminEmail } from "@/lib/access";
+import { isAdminEmail } from "@/lib/access";
 import { fail, handle, ok } from "@/lib/api";
 import { getSessionUser } from "@/lib/auth/session";
 import { getDb, schema } from "@/lib/db";
 import { dateToYmdUtc } from "@/lib/license-crypto";
-import { remintLicenseToken } from "@/lib/licenses";
+import {
+  getLatestPublishedReleaseForEmail,
+  remintLicenseToken,
+} from "@/lib/licenses";
 import {
   sendMigrationUpdateEmail,
   sendPurchaseWelcomeEmail,
@@ -157,12 +160,17 @@ export const POST = handle(async (req: Request) => {
     if (!owner?.email) {
       return fail("La licencia no tiene correo de cliente", 404);
     }
+    const latest =
+      action === "send_migration_email"
+        ? await getLatestPublishedReleaseForEmail()
+        : null;
     const mail =
       action === "send_migration_email"
         ? await sendMigrationUpdateEmail({
             to: owner.email,
             name: owner.name,
-            version: INITIAL_RELEASE_VERSION,
+            version: latest!.version,
+            changelog: latest!.changelog,
           })
         : await sendPurchaseWelcomeEmail({
             to: owner.email,

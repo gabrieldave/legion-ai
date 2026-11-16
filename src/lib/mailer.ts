@@ -1,5 +1,7 @@
 import {
   APP_URL,
+  changelogToBullets,
+  resolveReleaseChangelog,
   SUPPORT_EMAIL,
   SUPPORT_EMAIL_HREF,
   SUPPORT_WHATSAPP_HREF,
@@ -30,7 +32,9 @@ function baseLayout(opts: {
   preheader: string;
   title: string;
   bodyHtml: string;
+  ctaLabel?: string;
 }): string {
+  const cta = opts.ctaLabel || "Abrir mi panel /cuenta";
   return `<!doctype html>
 <html lang="es">
 <head>
@@ -58,7 +62,7 @@ function baseLayout(opts: {
           <tr>
             <td style="padding:0 24px 24px;">
               <a href="${CUENTA_URL}" style="display:inline-block;background:#24D3A9;color:#042F2E;text-decoration:none;font-weight:700;padding:12px 18px;border-radius:10px;">
-                Abrir mi panel /cuenta
+                ${escapeHtml(cta)}
               </a>
             </td>
           </tr>
@@ -136,10 +140,29 @@ async function sendResendEmail(input: {
   }
 }
 
+function changelogBlockHtml(version: string, changelog?: string | null): string {
+  const bullets = changelogToBullets(
+    resolveReleaseChangelog(version, changelog),
+  );
+  if (bullets.length === 0) return "";
+  const items = bullets
+    .map(
+      (b) =>
+        `<li style="margin:0 0 8px;color:#D1D5DB;">${escapeHtml(b)}</li>`,
+    )
+    .join("");
+  return `
+<div style="margin:18px 0;padding:16px 18px;border-radius:12px;border:1px solid rgba(36,211,169,.35);background:rgba(36,211,169,.08);">
+  <div style="font-size:13px;letter-spacing:0.06em;text-transform:uppercase;color:#24D3A9;font-weight:700;margin-bottom:10px;">Novedades incluidas en esta version</div>
+  <ul style="margin:0;padding-left:1.15rem;">${items}</ul>
+</div>`;
+}
+
 export async function sendMigrationUpdateEmail(input: {
   to: string;
   name?: string | null;
   version: string;
+  changelog?: string | null;
 }): Promise<MailResult> {
   const version = input.version.replace(/^v/i, "") || "3.15";
   const name = (input.name || "").trim() || "trader";
@@ -147,9 +170,11 @@ export async function sendMigrationUpdateEmail(input: {
   const html = baseLayout({
     preheader: `Ya esta lista la v${version} con licencias automaticas para hasta 3 cuentas MT4.`,
     title: `Nueva actualizacion v${version}`,
+    ctaLabel: "Ir a Mi Cuenta y Descargar",
     bodyHtml: `
 <p style="margin-top:0;">Hola ${escapeHtml(name)},</p>
 <p>Ya esta disponible la nueva version de <b>Legion SuperPanel v${escapeHtml(version)}</b> (compatible con Windows y Mac). Ahora las licencias son <b>100% automaticas</b> desde tu panel personal: hasta <b>3 cuentas MT4</b> con graficos ilimitados.</p>
+${changelogBlockHtml(version, input.changelog)}
 <p style="margin-bottom:8px;"><b>Activalo en 3 pasos:</b></p>
 ${threeSteps(input.to)}
 <p style="margin-bottom:0;">Si necesitas ayuda, escribenos por WhatsApp y te guiamos en vivo.</p>`,

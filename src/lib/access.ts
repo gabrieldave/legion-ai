@@ -17,6 +17,52 @@ export const UPDATES_RENEWAL_TITLE =
 export const INITIAL_RELEASE_VERSION = "3.15";
 export const INITIAL_RELEASE_YMD = 20261116;
 
+/** Novedades reales de v3.15 cuando no hay changelog personalizado en BD */
+export const DEFAULT_V315_CHANGELOG = [
+  "CPU ultra ligero (compuerta de 100 ms): senales tick a tick intactas y refresco MTF optimizado sin tirones en MT4.",
+  "Estabilidad total: proteccion en simbolos sin historial (Bars < 1), zoom sin redibujos infinitos y limpieza 100% al quitar.",
+  "Diseno Segoe UI y mejor contraste: lectura mas nitida y pie de atajos compacto en 1 sola linea con boton [?].",
+  "Bilingue EN/ES completo: traduccion pulida en el panel principal y en los 4 modulos extra (BID/ASK, Chart Resetter, Ganancias y Visor TP).",
+  "Licencias automaticas (hasta 3 cuentas MT4, graficos ilimitados) y paquete .ZIP compatible con Windows y Mac.",
+].join("\n");
+
+export function normalizeReleaseVersion(version: string): string {
+  return version.trim().replace(/^v/i, "");
+}
+
+export function resolveReleaseChangelog(
+  version: string,
+  changelog?: string | null,
+): string {
+  const trimmed = (changelog || "").trim();
+  if (trimmed) return trimmed;
+  if (normalizeReleaseVersion(version) === INITIAL_RELEASE_VERSION) {
+    return DEFAULT_V315_CHANGELOG;
+  }
+  return "";
+}
+
+/** Parsea un changelog (ya resuelto) a vinetas de UI / correo */
+export function changelogToBullets(changelog?: string | null): string[] {
+  return String(changelog || "")
+    .split(/\r?\n/)
+    .map((line) => line.trim().replace(/^[•\-\*]\s*/, ""))
+    .filter(Boolean);
+}
+
+export function formatBuildDateYmd(ymd: number): string {
+  const s = String(ymd);
+  if (!/^\d{8}$/.test(s)) return String(ymd);
+  const y = Number(s.slice(0, 4));
+  const m = Number(s.slice(4, 6));
+  const d = Number(s.slice(6, 8));
+  return new Date(Date.UTC(y, m - 1, d)).toLocaleDateString("es-MX", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    timeZone: "UTC",
+  });
+}
 export const DEFAULT_MAX_MT4_ACCOUNTS = 3;
 export const DEFAULT_MAX_DOWNLOADS_PER_DAY = 5;
 export const SLOT_SWAP_COOLDOWN_DAYS = 30;

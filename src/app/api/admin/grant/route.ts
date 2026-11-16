@@ -1,9 +1,12 @@
 import { eq } from "drizzle-orm";
-import { INITIAL_RELEASE_VERSION, isAdminEmail } from "@/lib/access";
+import { isAdminEmail } from "@/lib/access";
 import { fail, handle, ok } from "@/lib/api";
 import { getSessionUser } from "@/lib/auth/session";
 import { getDb, schema } from "@/lib/db";
-import { ensureLicenseForUser } from "@/lib/licenses";
+import {
+  ensureLicenseForUser,
+  getLatestPublishedReleaseForEmail,
+} from "@/lib/licenses";
 import {
   sendMigrationUpdateEmail,
   sendPurchaseWelcomeEmail,
@@ -102,10 +105,12 @@ export const POST = handle(async (req: Request) => {
   let emailSent = false;
   let emailError: string | undefined;
   if (emailType === "migration") {
+    const latest = await getLatestPublishedReleaseForEmail();
     const mail = await sendMigrationUpdateEmail({
       to: email,
       name: name || user.name,
-      version: INITIAL_RELEASE_VERSION,
+      version: latest.version,
+      changelog: latest.changelog,
     });
     emailSent = mail.sent;
     emailError = mail.error;

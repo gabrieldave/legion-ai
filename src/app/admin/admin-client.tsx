@@ -25,6 +25,7 @@ type ReleaseRow = {
   filename: string;
   sizeBytes: number;
   sha256: string;
+  changelog: string | null;
   createdAt: string;
 };
 
@@ -81,6 +82,8 @@ export function AdminClient({
   const [grantEmailType, setGrantEmailType] = useState<
     "migration" | "welcome" | "none"
   >("migration");
+  const [editingReleaseId, setEditingReleaseId] = useState<string | null>(null);
+  const [editChangelog, setEditChangelog] = useState("");
 
   async function runLicenseAction(id: string, action: string) {
     setBusyId(id);
@@ -192,6 +195,42 @@ export function AdminClient({
     }
   }
 
+  function startEditChangelog(r: ReleaseRow) {
+    setEditingReleaseId(r.id);
+    setEditChangelog(r.changelog || "");
+    setFeedback(null);
+    setErr(null);
+  }
+
+  async function saveChangelog(releaseId: string) {
+    setBusyId(`changelog-${releaseId}`);
+    setFeedback(null);
+    setErr(null);
+    try {
+      const res = await fetch("/api/admin/releases", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "update_changelog",
+          id: releaseId,
+          changelog: editChangelog,
+        }),
+      });
+      const json = (await res.json()) as { ok?: boolean; error?: string };
+      if (!res.ok || !json.ok) {
+        setErr(json.error || "No se pudo guardar las novedades");
+        return;
+      }
+      setFeedback("Novedades actualizadas. Se veran en /cuenta y en correos futuros.");
+      setEditingReleaseId(null);
+      window.setTimeout(() => window.location.reload(), 700);
+    } catch {
+      setErr("Error de red al editar novedades");
+    } finally {
+      setBusyId(null);
+    }
+  }
+
   function accountsText(l: AdminLicenseRow) {
     if (l.accounts.length === 0) return "Sin registrar";
     return l.accounts
@@ -297,9 +336,27 @@ export function AdminClient({
             LLG_BUILD_DATE_YMD
             <input name="buildDateYmd" required placeholder="20261116" />
           </label>
-          <label>
-            Notas (opcional)
-            <input name="changelog" placeholder="Mejoras y ajustes..." />
+          <label style={{ gridColumn: "1 / -1" }}>
+            Novedades de esta version (1 cambio por renglon — visible en /cuenta
+            y en el correo a clientes)
+            <textarea
+              name="changelog"
+              rows={4}
+              maxLength={4000}
+              placeholder={
+                "CPU ultra ligero...\nEstabilidad total...\nDiseno Segoe UI..."
+              }
+              style={{
+                display: "block",
+                width: "100%",
+                marginTop: 4,
+                padding: "0.55rem 0.65rem",
+                borderRadius: 6,
+                border: "1px solid var(--rule)",
+                font: "inherit",
+                resize: "vertical",
+              }}
+            />
           </label>
           <label>
             Archivo compilado (.ex4)
@@ -336,6 +393,7 @@ export function AdminClient({
                   <th>Archivo</th>
                   <th>SHA-256</th>
                   <th>Alta</th>
+                  <th>Novedades</th>
                 </tr>
               </thead>
               <tbody>
@@ -348,6 +406,70 @@ export function AdminClient({
                       {r.sha256.slice(0, 16)}…
                     </td>
                     <td>{fmt(r.createdAt)}</td>
+                    <td>
+                      {editingReleaseId === r.id ? (
+                        <div style={{ display: "grid", gap: "0.45rem", minWidth: 220 }}>
+                          <textarea
+                            rows={4}
+                            maxLength={4000}
+                            value={editChangelog}
+                            onChange={(e) => setEditChangelog(e.target.value)}
+                            style={{
+                              width: "100%",
+                              padding: "0.45rem",
+                              borderRadius: 6,
+                              border: "1px solid var(--rule)",
+                              font: "inherit",
+                              resize: "vertical",
+                            }}
+                          />
+                          <div style={{ display: "flex", gap: "0.4rem", flexWrap: "wrap" }}>
+                            <button
+                              type="button"
+                              className="btn compact"
+                              disabled={busyId === `changelog-${r.id}`}
+                              onClick={() => saveChangelog(r.id)}
+                            >
+                              {busyId === `changelog-${r.id}`
+                                ? "Guardando..."
+                                : "Guardar"}
+                            </button>
+                            <button
+                              type="button"
+                              className="btn secondary compact"
+                              disabled={busyId === `changelog-${r.id}`}
+                              onClick={() => setEditingReleaseId(null)}
+                            >
+                              Cancelar
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        <div style={{ display: "grid", gap: "0.35rem" }}>
+                          <span
+                            className="muted"
+                            style={{
+                              fontSize: "0.8rem",
+                              whiteSpace: "pre-wrap",
+                              maxWidth: 260,
+                            }}
+                          >
+                            {(r.changelog || "").trim()
+                              ? r.changelog!.trim().slice(0, 120) +
+                                (r.changelog!.trim().length > 120 ? "…" : "")
+                              : "Sin notas (v3.15 usara defaults)"}
+                          </span>
+                          <button
+                            type="button"
+                            className="btn secondary compact"
+                            disabled={Boolean(busyId)}
+                            onClick={() => startEditChangelog(r)}
+                          >
+                            Editar Novedades
+                          </button>
+                        </div>
+                      )}
+                    </td>
                   </tr>
                 ))}
               </tbody>

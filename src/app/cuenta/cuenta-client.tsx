@@ -1,6 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import {
+  changelogToBullets,
+  formatBuildDateYmd,
+} from "@/lib/access";
 
 type SlotItem = {
   slot: 1 | 2 | 3;
@@ -14,6 +18,14 @@ type ReleaseItem = {
   buildDateYmd: number;
   filename: string;
   changelog: string | null;
+};
+
+type UncoveredRelease = {
+  id: string | null;
+  version: string;
+  buildDateYmd: number;
+  filename: string;
+  changelog: string;
 };
 
 type LicenseView = {
@@ -31,7 +43,7 @@ type LicenseView = {
   slots: SlotItem[];
   licenseToken: string | null;
   coveredReleases: ReleaseItem[];
-  latestUncoveredRelease: { version: string; buildDateYmd: number } | null;
+  latestUncoveredRelease: UncoveredRelease | null;
 };
 
 export function CuentaClient({
@@ -250,6 +262,144 @@ export function CuentaClient({
                     : `Renovar 1 ano de actualizaciones ($${renewalPriceUsd} USD)`}
                 </button>
               )}
+            </div>
+          </section>
+
+          {lic?.latestUncoveredRelease ? (
+            <section
+              style={{
+                border: "1px solid #f59e0b",
+                borderRadius: 10,
+                padding: "1.1rem",
+                background: "#fffbeb",
+              }}
+            >
+              <h3 style={{ marginTop: 0, marginBottom: "0.35rem" }}>
+                Nueva version disponible: v{lic.latestUncoveredRelease.version}
+              </h3>
+              <p className="muted" style={{ margin: "0 0 0.75rem" }}>
+                Tu ano de actualizaciones vencio, pero tus versiones anteriores
+                siguen funcionando de por vida. Renueva 1 ano para desbloquear
+                esta version y las que publiquemos durante el nuevo periodo.
+              </p>
+              {changelogToBullets(lic.latestUncoveredRelease.changelog).length >
+              0 ? (
+                <>
+                  <p style={{ margin: "0 0 0.4rem", fontWeight: 600 }}>
+                    Novedades de v{lic.latestUncoveredRelease.version}:
+                  </p>
+                  <ul style={{ margin: "0 0 0.9rem", paddingLeft: "1.2rem" }}>
+                    {changelogToBullets(
+                      lic.latestUncoveredRelease.changelog,
+                    ).map((line) => (
+                      <li key={line} style={{ marginBottom: 6 }}>
+                        {line}
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              ) : null}
+              <button
+                className="btn"
+                type="button"
+                disabled={busy}
+                onClick={() => startCheckout("updates_1y")}
+              >
+                Renovar 1 ano (${renewalPriceUsd} USD) y desbloquear v
+                {lic.latestUncoveredRelease.version}
+              </button>
+            </section>
+          ) : null}
+
+          <section
+            style={{
+              border: "1px solid var(--rule)",
+              borderRadius: 10,
+              padding: "1.1rem",
+              background: "#f8fafc",
+            }}
+          >
+            <h3 style={{ marginTop: 0, marginBottom: "0.35rem" }}>
+              Que hay de nuevo en Legion SuperPanel (Historial de Versiones)
+            </h3>
+            <p className="muted" style={{ margin: "0 0 0.9rem" }}>
+              Cada version cubierta por tu plan, con sus novedades y descarga
+              directa.
+            </p>
+            <div style={{ display: "grid", gap: "0.85rem" }}>
+              {(lic?.coveredReleases || []).map((rel, idx) => {
+                const bullets = changelogToBullets(rel.changelog);
+                return (
+                  <article
+                    key={rel.id || `${rel.version}-${rel.buildDateYmd}`}
+                    style={{
+                      border: "1px solid var(--rule)",
+                      borderRadius: 8,
+                      padding: "0.85rem 1rem",
+                      background: "#fff",
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: "flex",
+                        flexWrap: "wrap",
+                        gap: "0.5rem",
+                        alignItems: "center",
+                        marginBottom: "0.45rem",
+                      }}
+                    >
+                      <strong style={{ fontSize: "1.05rem" }}>
+                        v{rel.version}
+                      </strong>
+                      {idx === 0 ? (
+                        <span
+                          style={{
+                            fontSize: "0.72rem",
+                            fontWeight: 700,
+                            letterSpacing: "0.04em",
+                            textTransform: "uppercase",
+                            background: "#042f2e",
+                            color: "#a7f3d0",
+                            padding: "0.2rem 0.45rem",
+                            borderRadius: 4,
+                          }}
+                        >
+                          Ultima version
+                        </span>
+                      ) : null}
+                      <span className="muted" style={{ fontSize: "0.88rem" }}>
+                        {formatBuildDateYmd(rel.buildDateYmd)}
+                      </span>
+                    </div>
+                    {bullets.length > 0 ? (
+                      <ul
+                        style={{
+                          margin: "0 0 0.75rem",
+                          paddingLeft: "1.15rem",
+                        }}
+                      >
+                        {bullets.map((line) => (
+                          <li key={line} style={{ marginBottom: 5 }}>
+                            {line}
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p className="muted" style={{ margin: "0 0 0.75rem" }}>
+                        Sin notas publicadas para esta version.
+                      </p>
+                    )}
+                    <button
+                      className="btn secondary"
+                      type="button"
+                      disabled={busy}
+                      onClick={() => downloadIndicator(rel.id, true)}
+                    >
+                      Descargar v{rel.version}
+                    </button>
+                  </article>
+                );
+              })}
             </div>
           </section>
 
