@@ -10,3 +10,7 @@ npm-debug.log*
 *.tsbuildinfo
 next-env.d.ts
 .env.local
+source/mql4/
+storage/
+
+

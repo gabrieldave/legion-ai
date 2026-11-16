@@ -1,5 +1,8 @@
 import { and, eq } from "drizzle-orm";
-import { PRODUCT_SERVICE_ID } from "@/lib/access";
+import {
+  PRODUCT_SERVICE_ID,
+  UPDATES_RENEWAL_SERVICE_ID,
+} from "@/lib/access";
 import { fail, handle, ok } from "@/lib/api";
 import { getSessionUser } from "@/lib/auth/session";
 import { getDb, schema } from "@/lib/db";
@@ -7,19 +10,39 @@ import {
   isVerifiedProductCheckout,
   retrieveCheckoutSession,
 } from "@/lib/payments";
+import {
+  enforceIpRateLimit,
+  isSameOriginRequest,
+  readBoundedJson,
+} from "@/lib/security";
 import { fulfillOrder } from "@/lib/users";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 export const POST = handle(async (req: Request) => {
+  if (!isSameOriginRequest(req)) return fail("Origen no autorizado", 403);
+
+  const rl = await enforceIpRateLimit({
+    req,
+    bucket: "payments_confirm",
+    maxHits: 20,
+    windowSec: 900,
+    route: "/api/payments/confirm",
+  });
+  if (!rl.ok) {
+    return fail("Demasiadas consultas de verificacion.", 429, {
+      "Retry-After": String(rl.retryAfterSec),
+    });
+  }
+
   const session = await getSessionUser();
   if (!session) return fail("No autenticado", 401);
 
-  const body = (await req.json().catch(() => null)) as {
-    sessionId?: string;
-  } | null;
-  const sessionId = body?.sessionId?.trim() ?? "";
+  const parsed = await readBoundedJson<{ sessionId?: string }>(req, 8_192);
+  if (!parsed.ok) return fail(parsed.error, parsed.status);
+
+  const sessionId = parsed.data.sessionId?.trim() ?? "";
   if (!sessionId) return fail("sessionId requerido", 400);
 
   const db = getDb();
@@ -30,8 +53,11 @@ export const POST = handle(async (req: Request) => {
     ),
   });
   if (!order) return fail("Orden no encontrada", 404);
-  if (order.serviceId !== PRODUCT_SERVICE_ID) {
-    return fail("Orden inválida", 409);
+  if (
+    order.serviceId !== PRODUCT_SERVICE_ID &&
+    order.serviceId !== UPDATES_RENEWAL_SERVICE_ID
+  ) {
+    return fail("Orden invalida", 409);
   }
   if (order.status === "paid") {
     return ok({ purchased: true });
@@ -44,13 +70,14 @@ export const POST = handle(async (req: Request) => {
       sessionId,
       orderId: order.id,
       userId: order.userId,
+      serviceId: order.serviceId,
       amountCents: order.amountCents,
     })
   ) {
     return ok({
       purchased: false,
       pending: true,
-      message: "Pago en verificación. Si ya pagaste, recarga en unos segundos.",
+      message: "Pago en verificacion. Si ya pagaste, recarga en unos segundos.",
     });
   }
 
@@ -65,3 +92,5 @@ export const POST = handle(async (req: Request) => {
 
   return ok({ purchased: result.unlocked, ...result });
 });
+
+

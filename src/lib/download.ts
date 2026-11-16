@@ -1,57 +1,189 @@
-import { createHash } from "crypto";
 import { createReadStream } from "fs";
 import { access, constants, stat } from "fs/promises";
 import path from "path";
-import { and, eq, gt, isNull } from "drizzle-orm";
-import { PRODUCT_FILENAME } from "@/lib/access";
-import { getDb, schema } from "@/lib/db";
+import { and, desc, eq, gt, isNull, lte } from "drizzle-orm";
+import {
+  INITIAL_RELEASE_VERSION,
+  PRODUCT_FILENAME,
+  RELEASES_STORAGE_DIR,
+} from "@/lib/access";
 import {
   newToken,
   signDownloadToken,
   verifyDownloadToken,
 } from "@/lib/auth/token";
+import { getDb, schema } from "@/lib/db";
+import { ensureLicenseForUser } from "@/lib/licenses";
+import { hashClientHint } from "@/lib/security";
 
-const RATE_WINDOW_MS = 10 * 60 * 1000;
-const MAX_TOKENS_PER_WINDOW = 5;
+const TOKEN_WINDOW_MS = 10 * 60 * 1000;
+const MAX_TOKENS_PER_10M = 5;
+const DAY_WINDOW_MS = 24 * 60 * 60 * 1000;
 
-function productPath(): string {
+function defaultProductPath(): string {
   const configured = process.env.PRODUCT_FILE_PATH?.trim();
   if (configured) return configured;
   return path.join(process.cwd(), "private", "product", PRODUCT_FILENAME);
 }
 
-export function hashClientHint(value: string | null | undefined): string | null {
-  if (!value) return null;
-  return createHash("sha256").update(value).digest("hex").slice(0, 32);
+function assertSafeAllowedPath(candidatePath: string): string {
+  const resolved = path.resolve(candidatePath);
+  const allowedRoots = [
+    path.resolve(process.cwd(), "private", "product"),
+    path.resolve(RELEASES_STORAGE_DIR),
+  ];
+  if (process.env.PRODUCT_FILE_PATH?.trim()) {
+    allowedRoots.push(path.dirname(path.resolve(process.env.PRODUCT_FILE_PATH.trim())));
+  }
+  const ok = allowedRoots.some(
+    (root) => resolved === root || resolved.startsWith(root + path.sep),
+  );
+  if (!ok) {
+    throw new Error("Ruta fuera de directorios autorizados");
+  }
+  return resolved;
 }
 
-export async function assertProductReadable(): Promise<{
-  path: string;
-  size: number;
-}> {
-  const filePath = productPath();
-  const resolved = path.resolve(filePath);
-  if (!process.env.PRODUCT_FILE_PATH) {
-    const root = path.resolve(process.cwd(), "private", "product");
-    if (!resolved.startsWith(root + path.sep) && resolved !== root) {
-      throw new Error("Ruta de producto inválida");
+export async function resolveEntitledReleaseFile(input: {
+  userId: string;
+  isAdmin: boolean;
+  purchasedAt: Date | null;
+  requestedReleaseId?: string | null;
+}): Promise<
+  | {
+      ok: true;
+      releaseId: string | null;
+      version: string;
+      filename: string;
+      path: string;
+      size: number;
     }
+  | { ok: false; status: number; reason: string; message: string }
+> {
+  const db = getDb();
+  const lic = await ensureLicenseForUser({
+    userId: input.userId,
+    purchasedAt: input.purchasedAt,
+    isAdmin: input.isAdmin,
+  });
+
+  if (!lic || lic.status !== "active") {
+    return {
+      ok: false,
+      status: 403,
+      reason: "license_inactive",
+      message: "Tu licencia de descarga se encuentra suspendida o revocada.",
+    };
   }
-  await access(resolved, constants.R_OK);
-  const info = await stat(resolved);
+
+  // Cuota diaria anti-abuso por licencia
+  const dayAgo = new Date(Date.now() - DAY_WINDOW_MS);
+  const dailyDownloads = await db
+    .select({ id: schema.downloadAudit.id })
+    .from(schema.downloadAudit)
+    .where(
+      and(
+        eq(schema.downloadAudit.userId, input.userId),
+        eq(schema.downloadAudit.outcome, "ok"),
+        gt(schema.downloadAudit.createdAt, dayAgo),
+      ),
+    );
+
+  if (!input.isAdmin && dailyDownloads.length >= lic.maxDownloadsPerDay) {
+    return {
+      ok: false,
+      status: 429,
+      reason: "daily_quota_exceeded",
+      message: `Alcanzaste el limite de ${lic.maxDownloadsPerDay} descargas en 24 horas.`,
+    };
+  }
+
+  // Buscar version especifica o la ultima cubierta dentro de su ano de actualizaciones
+  let chosenRelease = null as typeof schema.indicatorReleases.$inferSelect | null;
+  if (input.requestedReleaseId) {
+    const found = await db.query.indicatorReleases.findFirst({
+      where: and(
+        eq(schema.indicatorReleases.id, input.requestedReleaseId),
+        eq(schema.indicatorReleases.isPublished, 1),
+      ),
+    });
+    if (!found) {
+      return {
+        ok: false,
+        status: 404,
+        reason: "release_not_found",
+        message: "Version solicitada no disponible.",
+      };
+    }
+    if (!input.isAdmin && found.buildDateYmd > lic.updatesUntilYmd) {
+      return {
+        ok: false,
+        status: 403,
+        reason: "updates_expired_for_release",
+        message:
+          "Esta version fue publicada despues de tu ano de actualizaciones incluido. Descarga tu version cubierta o renueva 1 ano.",
+      };
+    }
+    chosenRelease = found;
+  } else {
+    const covered = await db
+      .select()
+      .from(schema.indicatorReleases)
+      .where(
+        input.isAdmin
+          ? eq(schema.indicatorReleases.isPublished, 1)
+          : and(
+              eq(schema.indicatorReleases.isPublished, 1),
+              lte(schema.indicatorReleases.buildDateYmd, lic.updatesUntilYmd),
+            ),
+      )
+      .orderBy(
+        desc(schema.indicatorReleases.buildDateYmd),
+        desc(schema.indicatorReleases.createdAt),
+      )
+      .limit(1);
+
+    chosenRelease = covered[0] || null;
+  }
+
+  const rawPath = chosenRelease ? chosenRelease.filePath : defaultProductPath();
+  const safeFilename = chosenRelease
+    ? path.basename(chosenRelease.filename)
+    : PRODUCT_FILENAME;
+  const versionLabel = chosenRelease
+    ? chosenRelease.version
+    : INITIAL_RELEASE_VERSION;
+
+  const resolvedPath = assertSafeAllowedPath(rawPath);
+  await access(resolvedPath, constants.R_OK);
+  const info = await stat(resolvedPath);
   if (!info.isFile() || info.size < 1000) {
-    throw new Error("Producto ausente");
+    throw new Error("Archivo binario .ex4 ausente en almacenamiento privado");
   }
-  return { path: resolved, size: info.size };
+
+  return {
+    ok: true,
+    releaseId: chosenRelease?.id || null,
+    version: versionLabel,
+    filename: safeFilename,
+    path: resolvedPath,
+    size: info.size,
+  };
 }
 
 export async function mintDownloadToken(input: {
   userId: string;
+  isAdmin: boolean;
+  purchasedAt: Date | null;
+  releaseId?: string | null;
   ip?: string | null;
   userAgent?: string | null;
-}): Promise<{ token: string; expiresInSec: number }> {
+}): Promise<
+  | { ok: true; token: string; expiresInSec: number; filename: string; version: string }
+  | { ok: false; status: number; error: string }
+> {
   const db = getDb();
-  const since = new Date(Date.now() - RATE_WINDOW_MS);
+  const since = new Date(Date.now() - TOKEN_WINDOW_MS);
   const recent = await db
     .select({ id: schema.downloadTokens.id })
     .from(schema.downloadTokens)
@@ -61,8 +193,22 @@ export async function mintDownloadToken(input: {
         gt(schema.downloadTokens.createdAt, since),
       ),
     );
-  if (recent.length >= MAX_TOKENS_PER_WINDOW) {
-    throw new Error("RATE_LIMIT");
+  if (recent.length >= MAX_TOKENS_PER_10M) {
+    return {
+      ok: false,
+      status: 429,
+      error: "Demasiados enlaces solicitados. Espera unos minutos.",
+    };
+  }
+
+  const check = await resolveEntitledReleaseFile({
+    userId: input.userId,
+    isAdmin: input.isAdmin,
+    purchasedAt: input.purchasedAt,
+    requestedReleaseId: input.releaseId,
+  });
+  if (!check.ok) {
+    return { ok: false, status: check.status, error: check.message };
   }
 
   const jti = newToken();
@@ -70,24 +216,31 @@ export async function mintDownloadToken(input: {
   await db.insert(schema.downloadTokens).values({
     jti,
     userId: input.userId,
+    releaseId: check.releaseId,
     expiresAt,
     ipHash: hashClientHint(input.ip),
     userAgentHash: hashClientHint(input.userAgent),
   });
 
   return {
+    ok: true,
     token: signDownloadToken(input.userId, jti),
     expiresInSec: 60,
+    filename: check.filename,
+    version: check.version,
   };
 }
 
 export async function consumeDownloadToken(input: {
   token: string;
   userId: string;
+  isAdmin: boolean;
+  purchasedAt: Date | null;
   ip?: string | null;
   userAgent?: string | null;
 }): Promise<
-  { ok: true; path: string; size: number } | { ok: false; reason: string }
+  | { ok: true; path: string; size: number; filename: string; version: string }
+  | { ok: false; reason: string }
 > {
   const payload = verifyDownloadToken(input.token);
   if (!payload || payload.uid !== input.userId) {
@@ -118,14 +271,36 @@ export async function consumeDownloadToken(input: {
   if (!updated) return { ok: false, reason: "token_race" };
 
   try {
-    const file = await assertProductReadable();
+    const file = await resolveEntitledReleaseFile({
+      userId: input.userId,
+      isAdmin: input.isAdmin,
+      purchasedAt: input.purchasedAt,
+      requestedReleaseId: row.releaseId,
+    });
+    if (!file.ok) {
+      await db.insert(schema.downloadAudit).values({
+        userId: input.userId,
+        outcome: file.reason,
+        ipHash: hashClientHint(input.ip),
+        userAgentHash: hashClientHint(input.userAgent),
+      });
+      return { ok: false, reason: file.reason };
+    }
+
     await db.insert(schema.downloadAudit).values({
       userId: input.userId,
+      releaseVersion: file.version,
       outcome: "ok",
       ipHash: hashClientHint(input.ip),
       userAgentHash: hashClientHint(input.userAgent),
     });
-    return { ok: true, path: file.path, size: file.size };
+    return {
+      ok: true,
+      path: file.path,
+      size: file.size,
+      filename: file.filename,
+      version: file.version,
+    };
   } catch {
     await db.insert(schema.downloadAudit).values({
       userId: input.userId,
@@ -140,3 +315,5 @@ export async function consumeDownloadToken(input: {
 export function openProductStream(filePath: string) {
   return createReadStream(filePath);
 }
+
+
