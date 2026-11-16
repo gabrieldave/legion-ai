@@ -126,26 +126,30 @@ export function buildWindowsManualHtml(input: {
   </div>
 
   <div class="card">
-    <h2>ESPAÑOL — 3 Clics en Windows</h2>
+    <h2>ESPAÑOL — Instalacion Windows</h2>
     <ol>
       <li>Abre tu <b>MetaTrader 4</b> y arriba a la izquierda haz clic en <b>Archivo → Abrir carpeta de datos</b>.</li>
-      <li>Arrastra la carpeta <b><code>MQL4</code></b> de este archivo ZIP hacia esa ventana (si Windows pregunta combinar o reemplazar archivos, haz clic en <b>Sí</b>; esto guarda automaticamente el indicador en <code>MQL4\Indicators</code> y tu licencia en <code>MQL4\Files\${LICENSE_FILENAME}</code>).</li>
-      <li>Regresa a MetaTrader 4, en el panel izquierdo <b>Navegador → Indicadores</b> haz clic derecho → <b>Actualizar</b> y arrastra <b>Legion_SuperPanel</b> a tu grafico.</li>
+      <li>Arrastra la carpeta <b><code>MQL4</code></b> de este ZIP hacia esa ventana (si Windows pregunta combinar/reemplazar, haz clic en <b>Sí</b>). Asi queda el <code>.ex4</code> en <code>MQL4\\Indicators</code>.</li>
+      <li>En <b>Navegador → Indicadores</b> haz clic derecho → <b>Actualizar</b> y arrastra <b>Legion_SuperPanel</b> al grafico.</li>
     </ol>
     ${
       input.licenseToken
-        ? `<p class="muted"><b>Respaldo por codigo:</b> Si prefieres, tambien puedes pegar este codigo en la primera casilla <code>Codigo_Licencia</code> del indicador:</p><pre id="tok">${escapeHtml(input.licenseToken)}</pre><button onclick="navigator.clipboard.writeText(document.getElementById('tok').textContent)">Copiar Codigo_Licencia</button>`
+        ? `<div class="warn" style="background:#10281f;border-color:#34d399;color:#bbf7d0"><b>Opcion A (Mas facil, sin buscar carpeta Files):</b> Al abrir el indicador ve a la pestana <b>Parametros de entrada (Inputs)</b>, pega <code>Codigo_Licencia</code> (<code>LGN1-...</code>) y pulsa <b>Aceptar</b>. Al validarse, el indicador guarda solo <code>MQL4\\Files\\${LICENSE_FILENAME}</code> y activa el resto de graficos automaticamente.</div>
+<pre id="tok">${escapeHtml(input.licenseToken)}</pre>
+<button onclick="navigator.clipboard.writeText(document.getElementById('tok').textContent)">Copiar Codigo_Licencia</button>
+<p class="muted"><b>Opcion B:</b> si preferiste copiar el archivo <code>${LICENSE_FILENAME}</code> a <code>MQL4\\Files</code> (viene en este ZIP), tambien se autodetecta.</p>`
         : ""
     }
   </div>
 
   <div class="card">
-    <h2>ENGLISH — 3-Click Windows Setup</h2>
+    <h2>ENGLISH — Windows Setup</h2>
     <ol>
-      <li>Open <b>MetaTrader 4</b> and click <b>File → Open Data Folder</b> in the top-left menu.</li>
+      <li>Open <b>MetaTrader 4</b> → <b>File → Open Data Folder</b>.</li>
       <li>Drag the <b><code>MQL4</code></b> folder from this ZIP into that Explorer window (confirm merge/replace if prompted).</li>
-      <li>In MetaTrader 4's <b>Navigator → Indicators</b> panel, right-click → <b>Refresh</b> and attach <b>Legion_SuperPanel</b> to any chart.</li>
+      <li>In <b>Navigator → Indicators</b>, right-click → <b>Refresh</b> and attach <b>Legion_SuperPanel</b>.</li>
     </ol>
+    <p class="muted"><b>Option A (easiest):</b> open the indicator Inputs tab, paste <code>Codigo_Licencia</code> (<code>LGN1-...</code>), click OK — it auto-writes <code>MQL4\\Files\\${LICENSE_FILENAME}</code>.</p>
   </div>
 </body>
 </html>`;
@@ -177,41 +181,44 @@ export function buildMacManualHtml(input: {
   </div>
 
   <div class="card">
-    <h2>ESPAÑOL — 3 Pasos en Mac (Finder)</h2>
-    <ol>
-      <li>
-        Abre <b>Finder</b>, presiona <b><code>Cmd ⌘ + Shift ⇧ + G</code></b> (menu <i>Ir → Ir a la carpeta...</i>) y usa <b>un boton por archivo</b> para no soltar nada fuera de su carpeta:
-        <p style="margin:0.75rem 0 0.35rem"><b>1A. Indicador (.ex4)</b> — pega con Cmd+Shift+G y suelta ahi mismo el archivo <code>.ex4</code>:</p>
-        <pre id="macpath-indicators">${escapeHtml(MAC_WINE_INDICATORS_PATH)}</pre>
-        <button onclick="navigator.clipboard.writeText(document.getElementById('macpath-indicators').textContent)">Copiar ruta Mac para Indicador (.ex4)</button>
-        <p style="margin:1rem 0 0.35rem"><b>1B. Licencia (.lic)</b> — pega con Cmd+Shift+G y suelta ahi mismo tu <code>${LICENSE_FILENAME}</code>:</p>
-        <pre id="macpath-files">${escapeHtml(MAC_WINE_FILES_PATH)}</pre>
-        <button onclick="navigator.clipboard.writeText(document.getElementById('macpath-files').textContent)">Copiar ruta Mac para Licencia (.lic)</button>
-      </li>
-      <li>
-        Los archivos del ZIP van asi (cada uno a su carpeta, nunca sueltes nada en la carpeta padre <code>MQL4</code>):
-        <ul>
-          <li><b><code>${escapeHtml(input.ex4Filename)}</code></b> (de <code>MQL4/Indicators/</code> del ZIP) → carpeta <b><code>Indicators</code></b> abierta con el boton 1A.</li>
-          <li><b><code>${LICENSE_FILENAME}</code></b> (de <code>MQL4/Files/</code> del ZIP) → carpeta <b><code>Files</code></b> abierta con el boton 1B.</li>
-        </ul>
-        <div class="warn"><b>OJO EN MAC:</b> No arrastres la carpeta <code>MQL4</code> completa dando "Reemplazar" en Finder porque macOS borraria tus otros indicadores. Usa los 2 botones de arriba y suelta cada archivo <b>dentro</b> de su carpeta.</div>
-      </li>
-      <li>Ve a tu ventana de <b>MetaTrader 4</b>, en el panel izquierdo <b>Navegador → Indicadores</b> haz clic derecho → <b>Actualizar</b> y arrastra <b>Legion_SuperPanel</b> al grafico. ¡Listo!</li>
-    </ol>
-    <p class="muted"><i>Nota: Si instalaste MT4 con el instalador personalizado de tu broker (por ejemplo XM o IC Markets) y esas rutas no existen, abre <code>~/Library/Application Support/</code> con <code>Cmd + Shift + G</code>, entra a la carpeta de tu broker/MT4 y abre <code>drive_c/Program Files (x86)/.../MQL4/Indicators</code> y <code>.../MQL4/Files</code>.</i></p>
+    <h2>ESPAÑOL — Mac (Finder + Wine)</h2>
     ${
       input.licenseToken
-        ? `<p class="muted"><b>Alternativa aun mas rapida:</b> Si solo copiaste el <code>.ex4</code> a <code>Indicators</code>, pega este codigo una sola vez en la casilla <code>Codigo_Licencia</code> al abrir el indicador (se guardara solo en <code>Files</code>):</p><pre id="tokmac">${escapeHtml(input.licenseToken)}</pre><button onclick="navigator.clipboard.writeText(document.getElementById('tokmac').textContent)">Copiar Codigo_Licencia</button>`
+        ? `<div class="warn" style="background:#10281f;border-color:#34d399;color:#bbf7d0"><b>Opcion A (Mas facil, sin buscar carpeta Files):</b> Copia solo el <code>.ex4</code> a <code>Indicators</code> (boton de abajo). Abre el indicador → pestana <b>Parametros de entrada (Inputs)</b> → pega <code>Codigo_Licencia</code> (<code>LGN1-...</code>) → <b>Aceptar</b>. Al validarse escribe solo <code>MQL4/Files/${LICENSE_FILENAME}</code> y activa el resto de graficos.</div>
+<pre id="tokmac">${escapeHtml(input.licenseToken)}</pre>
+<button onclick="navigator.clipboard.writeText(document.getElementById('tokmac').textContent)">Copiar Codigo_Licencia</button>`
         : ""
     }
+    <h3 style="margin-top:1.25rem">Opcion B — Archivo .lic en Mac Wine (2 rutas separadas)</h3>
+    <ol>
+      <li>
+        Abre <b>Finder</b>, pulsa <b><code>Cmd ⌘ + Shift ⇧ + G</code></b> y usa <b>un boton por carpeta</b> (nunca sueltes nada en la raiz <code>MQL4</code>):
+        <p style="margin:0.75rem 0 0.35rem"><b>.ex4 → Indicators</b> — pega con Cmd+Shift+G y suelta ahi el <code>.ex4</code>:</p>
+        <pre id="macpath-indicators">${escapeHtml(MAC_WINE_INDICATORS_PATH)}</pre>
+        <button onclick="navigator.clipboard.writeText(document.getElementById('macpath-indicators').textContent)">Copiar ruta Indicators (Mac)</button>
+        <p style="margin:1rem 0 0.35rem"><b>.lic → Files</b> — pega con Cmd+Shift+G y suelta ahi tu <code>${LICENSE_FILENAME}</code>:</p>
+        <pre id="macpath-files">${escapeHtml(MAC_WINE_FILES_PATH)}</pre>
+        <button onclick="navigator.clipboard.writeText(document.getElementById('macpath-files').textContent)">Copiar ruta Files (Mac)</button>
+      </li>
+      <li>
+        Archivos del ZIP:
+        <ul>
+          <li><b><code>${escapeHtml(input.ex4Filename)}</code></b> → <code>Indicators</code></li>
+          <li><b><code>${LICENSE_FILENAME}</code></b> → <code>Files</code></li>
+        </ul>
+        <div class="warn"><b>OJO EN MAC:</b> No arrastres la carpeta <code>MQL4</code> completa con "Reemplazar" en Finder.</div>
+      </li>
+      <li>En MT4: <b>Navegador → Indicadores</b> → clic derecho → <b>Actualizar</b> → arrastra <b>Legion_SuperPanel</b> al grafico.</li>
+    </ol>
+    <p class="muted"><i>Nota: Si tu broker usa otra carpeta Wine, abre <code>~/Library/Application Support/</code> con Cmd+Shift+G y busca <code>.../MQL4/Indicators</code> y <code>.../MQL4/Files</code>.</i></p>
   </div>
 
   <div class="card">
-    <h2>ENGLISH — 3-Step macOS Setup (Finder + Wine)</h2>
+    <h2>ENGLISH — macOS Setup (Finder + Wine)</h2>
     <ol>
-      <li>Use the two buttons above: <b>Copiar ruta Mac para Indicador (.ex4)</b> and <b>Copiar ruta Mac para Licencia (.lic)</b>. In <b>Finder</b> press <b><code>Cmd ⌘ + Shift ⇧ + G</code></b>, paste each path, and drop the matching file <b>inside that folder</b>.</li>
-      <li>Drop <b><code>${escapeHtml(input.ex4Filename)}</code></b> into <b><code>Indicators</code></b>, and drop <b><code>${LICENSE_FILENAME}</code></b> into <b><code>Files</code></b> (do <b>not</b> click "Replace" on the parent <code>MQL4</code> folder in Finder).</li>
-      <li>In <b>MetaTrader 4</b>, right-click <b>Indicators → Refresh</b> in the Navigator panel and attach <b>Legion_SuperPanel</b> to your chart.</li>
+      <li><b>Option A (easiest):</b> put only the <code>.ex4</code> in <code>Indicators</code>, open Inputs, paste <code>Codigo_Licencia</code>, click OK — it auto-writes <code>Files/${LICENSE_FILENAME}</code>.</li>
+      <li><b>Option B:</b> use the two buttons above (<b>Copiar ruta Indicators (Mac)</b> and <b>Copiar ruta Files (Mac)</b>) and drop each file inside its folder. Never click Replace on the parent <code>MQL4</code> folder.</li>
+      <li>In MT4, right-click <b>Indicators → Refresh</b> and attach <b>Legion_SuperPanel</b>.</li>
     </ol>
   </div>
 </body>

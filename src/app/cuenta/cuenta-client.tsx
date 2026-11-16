@@ -350,36 +350,55 @@ export function CuentaClient({
                   paddingTop: "1rem",
                   borderTop: "1px solid var(--rule)",
                   display: "grid",
-                  gap: "0.65rem",
+                  gap: "0.85rem",
                 }}
               >
-                <div style={{ display: "flex", gap: "0.65rem", flexWrap: "wrap" }}>
-                  <a className="btn" href="/api/license/file">
-                    Descargar Legion_SuperPanel.lic
-                  </a>
-                  <button
-                    className="btn secondary"
-                    type="button"
-                    onClick={copyLicenseCode}
-                  >
-                    Copiar Codigo_Licencia
-                  </button>
-                </div>
-                <input
-                  type="text"
-                  readOnly
-                  value={lic.licenseToken}
-                  onFocus={(e) => e.currentTarget.select()}
+                <div
                   style={{
-                    width: "100%",
-                    padding: "0.55rem",
-                    fontFamily: "monospace",
-                    fontSize: "0.82rem",
-                    borderRadius: 6,
-                    border: "1px solid var(--rule)",
-                    background: "#fff",
+                    display: "grid",
+                    gap: "0.55rem",
+                    background: "#ecfdf5",
+                    border: "1px solid #6ee7b7",
+                    borderRadius: 8,
+                    padding: "0.85rem",
+                    fontSize: "0.88rem",
                   }}
-                />
+                >
+                  <div>
+                    <b>Opcion A (Mas facil, sin buscar carpeta Files):</b> Abre
+                    el indicador en MT4 → pestana <b>Parametros de entrada
+                    (Inputs)</b> → pega <code>Codigo_Licencia</code> (
+                    <code>LGN1-...</code>) → clic en <b>Aceptar</b>. Al
+                    validarse, el indicador guarda automaticamente{" "}
+                    <code>Legion_SuperPanel.lic</code> en{" "}
+                    <code>MQL4/Files</code> y activa el resto de graficos solo.
+                  </div>
+                  <div style={{ display: "flex", gap: "0.65rem", flexWrap: "wrap" }}>
+                    <button
+                      className="btn"
+                      type="button"
+                      onClick={copyLicenseCode}
+                    >
+                      Copiar Codigo_Licencia
+                    </button>
+                  </div>
+                  <input
+                    type="text"
+                    readOnly
+                    value={lic.licenseToken}
+                    onFocus={(e) => e.currentTarget.select()}
+                    style={{
+                      width: "100%",
+                      padding: "0.55rem",
+                      fontFamily: "monospace",
+                      fontSize: "0.82rem",
+                      borderRadius: 6,
+                      border: "1px solid var(--rule)",
+                      background: "#fff",
+                    }}
+                  />
+                </div>
+
                 <div
                   style={{
                     display: "grid",
@@ -392,10 +411,19 @@ export function CuentaClient({
                   }}
                 >
                   <div>
-                    <b>En Windows:</b> Abre MT4 → <i>Archivo → Abrir carpeta de datos</i> y arrastra adentro la carpeta <code>MQL4</code> del paquete ZIP (también incluye <code>MANUAL_WINDOWS.html</code>).
+                    <b>Opcion B (Archivo .lic):</b> descarga el archivo y
+                    colocarlo en <code>MQL4/Files</code> (Windows:{" "}
+                    <i>Archivo → Abrir carpeta de datos</i> y arrastra la
+                    carpeta <code>MQL4</code> del ZIP; Mac: usa los 2 botones
+                    de abajo, nunca sueltes nada en la raiz <code>MQL4</code>).
                   </div>
                   <div>
-                    <b>En Mac (Wine):</b> Abre <b>Finder</b>, usa <code>Cmd ⌘ + Shift ⇧ + G</code> y copia <b>una ruta por archivo</b> (no sueltes nada en la carpeta padre <code>MQL4</code>; el ZIP incluye <code>MANUAL_MAC.html</code>):
+                    <a className="btn secondary" href="/api/license/file">
+                      Descargar Legion_SuperPanel.lic
+                    </a>
+                  </div>
+                  <div>
+                    <b>En Mac (Wine) — rutas directas:</b>
                     <div style={{ marginTop: 8, display: "grid", gap: "0.65rem" }}>
                       <div style={{ display: "grid", gap: "0.35rem" }}>
                         <code style={{ fontSize: "0.78rem", wordBreak: "break-all" }}>
@@ -404,7 +432,11 @@ export function CuentaClient({
                         <button
                           type="button"
                           className="btn secondary"
-                          style={{ padding: "0.3rem 0.6rem", fontSize: "0.78rem", justifySelf: "start" }}
+                          style={{
+                            padding: "0.3rem 0.6rem",
+                            fontSize: "0.78rem",
+                            justifySelf: "start",
+                          }}
                           onClick={async () => {
                             await navigator.clipboard.writeText(
                               "~/Library/Application Support/net.metaquotes.wine.metatrader4/drive_c/Program Files (x86)/MetaTrader 4/MQL4/Indicators",
@@ -414,7 +446,7 @@ export function CuentaClient({
                             );
                           }}
                         >
-                          Copiar ruta Mac para Indicador (.ex4)
+                          Copiar ruta Indicators (Mac)
                         </button>
                       </div>
                       <div style={{ display: "grid", gap: "0.35rem" }}>
@@ -424,7 +456,11 @@ export function CuentaClient({
                         <button
                           type="button"
                           className="btn secondary"
-                          style={{ padding: "0.3rem 0.6rem", fontSize: "0.78rem", justifySelf: "start" }}
+                          style={{
+                            padding: "0.3rem 0.6rem",
+                            fontSize: "0.78rem",
+                            justifySelf: "start",
+                          }}
                           onClick={async () => {
                             await navigator.clipboard.writeText(
                               "~/Library/Application Support/net.metaquotes.wine.metatrader4/drive_c/Program Files (x86)/MetaTrader 4/MQL4/Files",
@@ -434,7 +470,7 @@ export function CuentaClient({
                             );
                           }}
                         >
-                          Copiar ruta Mac para Licencia (.lic)
+                          Copiar ruta Files (Mac)
                         </button>
                       </div>
                     </div>
