@@ -76,6 +76,11 @@ export function AdminClient({
   const [busyId, setBusyId] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
+  const [grantEmail, setGrantEmail] = useState("");
+  const [grantName, setGrantName] = useState("");
+  const [grantEmailType, setGrantEmailType] = useState<
+    "migration" | "welcome" | "none"
+  >("migration");
 
   async function runLicenseAction(id: string, action: string) {
     setBusyId(id);
@@ -89,7 +94,7 @@ export function AdminClient({
       });
       const json = (await res.json()) as {
         ok?: boolean;
-        data?: { token?: string };
+        data?: { token?: string; emailSent?: boolean };
         error?: string;
       };
       if (!res.ok || !json.ok) {
@@ -101,9 +106,63 @@ export function AdminClient({
         setFeedback("Clave LGN1 descifrada y copiada al portapapeles.");
         return;
       }
+      if (
+        action === "send_migration_email" ||
+        action === "send_welcome_email"
+      ) {
+        setFeedback("Correo enviado por Resend correctamente.");
+        return;
+      }
       window.location.reload();
     } catch {
       setErr("Error de red");
+    } finally {
+      setBusyId(null);
+    }
+  }
+
+  async function grantClient(e: React.FormEvent) {
+    e.preventDefault();
+    setBusyId("grant");
+    setFeedback(null);
+    setErr(null);
+    try {
+      const res = await fetch("/api/admin/grant", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: grantEmail,
+          name: grantName || undefined,
+          emailType: grantEmailType,
+        }),
+      });
+      const json = (await res.json()) as {
+        ok?: boolean;
+        data?: { emailSent?: boolean; emailError?: string; shortId?: number };
+        error?: string;
+      };
+      if (!res.ok || !json.ok) {
+        setErr(json.error || "No se pudo activar el cliente");
+        return;
+      }
+      if (grantEmailType === "none") {
+        setFeedback(
+          `Cliente activado (#${json.data?.shortId ?? "—"}) sin correo.`,
+        );
+      } else if (json.data?.emailSent) {
+        setFeedback(
+          `Cliente activado (#${json.data?.shortId ?? "—"}) y correo enviado por Resend.`,
+        );
+      } else {
+        setFeedback(
+          `Cliente activado (#${json.data?.shortId ?? "—"}), pero el correo no salio: ${json.data?.emailError || "error desconocido"}`,
+        );
+      }
+      setGrantEmail("");
+      setGrantName("");
+      window.setTimeout(() => window.location.reload(), 900);
+    } catch {
+      setErr("Error de red al dar de alta");
     } finally {
       setBusyId(null);
     }
@@ -187,6 +246,24 @@ export function AdminClient({
               style={{ width: "100%", marginTop: 4 }}
             />
           </label>
+          <label
+            style={{
+              fontSize: "0.86rem",
+              fontWeight: 600,
+              display: "flex",
+              gap: "0.45rem",
+              alignItems: "center",
+              gridColumn: "1 / -1",
+            }}
+          >
+            <input
+              type="checkbox"
+              name="notifyActiveBuyers"
+              value="1"
+              defaultChecked
+            />
+            Avisar por correo a todos los clientes activos con plan vigente
+          </label>
           <button
             className="btn"
             type="submit"
@@ -222,6 +299,75 @@ export function AdminClient({
             </tbody>
           </table>
         ) : null}
+      </section>
+
+      <section className="card">
+        <h2 style={{ marginTop: 0, fontSize: "1.15rem" }}>
+          Dar de Alta Cliente / Enviar Acceso por Correo (1 Clic)
+        </h2>
+        <form
+          onSubmit={grantClient}
+          style={{
+            display: "grid",
+            gap: "0.75rem",
+            maxWidth: 720,
+          }}
+        >
+          <label style={{ fontSize: "0.86rem", fontWeight: 600 }}>
+            Correo Google del cliente
+            <input
+              type="email"
+              required
+              placeholder="cliente@gmail.com"
+              value={grantEmail}
+              onChange={(e) => setGrantEmail(e.target.value)}
+              style={{ width: "100%", padding: "0.55rem", marginTop: 4 }}
+            />
+          </label>
+          <label style={{ fontSize: "0.86rem", fontWeight: 600 }}>
+            Nombre del cliente (opcional)
+            <input
+              type="text"
+              placeholder="Nombre"
+              value={grantName}
+              onChange={(e) => setGrantName(e.target.value)}
+              style={{ width: "100%", padding: "0.55rem", marginTop: 4 }}
+            />
+          </label>
+          <label style={{ fontSize: "0.86rem", fontWeight: 600 }}>
+            Correo a enviar
+            <select
+              value={grantEmailType}
+              onChange={(e) =>
+                setGrantEmailType(
+                  e.target.value as "migration" | "welcome" | "none",
+                )
+              }
+              style={{ width: "100%", padding: "0.55rem", marginTop: 4 }}
+            >
+              <option value="migration">
+                Enviar correo: Nueva Actualizacion + Licencias Automaticas
+                (Recomendado para clientes actuales)
+              </option>
+              <option value="welcome">
+                Enviar correo: Bienvenida por Compra Nueva
+              </option>
+              <option value="none">
+                No enviar correo (solo activar acceso en /cuenta)
+              </option>
+            </select>
+          </label>
+          <button
+            className="btn"
+            type="submit"
+            disabled={busyId === "grant"}
+            style={{ justifySelf: "start" }}
+          >
+            {busyId === "grant"
+              ? "Activando..."
+              : "Activar Cliente y Enviar Correo"}
+          </button>
+        </form>
       </section>
 
       <section className="card">
@@ -315,6 +461,17 @@ export function AdminClient({
                     onClick={() => runLicenseAction(l.id, "extend_1y")}
                   >
                     +1 Ano
+                  </button>
+                  <button
+                    type="button"
+                    className="btn secondary"
+                    style={{ padding: "0.3rem 0.55rem", fontSize: "0.78rem" }}
+                    disabled={busyId === l.id || !l.email}
+                    onClick={() =>
+                      runLicenseAction(l.id, "send_migration_email")
+                    }
+                  >
+                    Enviar Correo Update
                   </button>
                   <button
                     type="button"

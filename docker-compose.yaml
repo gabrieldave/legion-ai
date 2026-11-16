@@ -38,6 +38,8 @@ services:
       UPDATES_RENEWAL_PRICE_USD: ${UPDATES_RENEWAL_PRICE_USD:-99}
       PRODUCT_FILE_PATH: ${PRODUCT_FILE_PATH:-/app/private/product/Legion_SuperPanel_v3_15_MT4.ex4}
       RELEASES_STORAGE_DIR: ${RELEASES_STORAGE_DIR:-/app/storage/releases}
+      RESEND_API_KEY: ${RESEND_API_KEY:-}
+      RESEND_FROM: ${RESEND_FROM:-Legion AI <legion@iareal.net>}
     volumes:
       - ./storage:/app/storage
     read_only: true

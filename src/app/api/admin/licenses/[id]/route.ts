@@ -1,10 +1,14 @@
 import { eq } from "drizzle-orm";
-import { isAdminEmail } from "@/lib/access";
+import { INITIAL_RELEASE_VERSION, isAdminEmail } from "@/lib/access";
 import { fail, handle, ok } from "@/lib/api";
 import { getSessionUser } from "@/lib/auth/session";
 import { getDb, schema } from "@/lib/db";
 import { dateToYmdUtc } from "@/lib/license-crypto";
 import { remintLicenseToken } from "@/lib/licenses";
+import {
+  sendMigrationUpdateEmail,
+  sendPurchaseWelcomeEmail,
+} from "@/lib/mailer";
 import {
   decryptSecretAES256GCM,
   isSameOriginRequest,
@@ -23,7 +27,9 @@ type AdminAction =
   | "revoke"
   | "reset_cooldown"
   | "clear_slots"
-  | "extend_1y";
+  | "extend_1y"
+  | "send_migration_email"
+  | "send_welcome_email";
 
 export const POST = handle(async (req: Request) => {
   if (!isSameOriginRequest(req)) return fail("Origen no autorizado", 403);
@@ -144,6 +150,49 @@ export const POST = handle(async (req: Request) => {
       .where(eq(schema.licenses.id, lic.id));
     await remintLicenseToken(lic.id).catch(() => null);
     return ok({ updatesUntil: nextDate.toISOString() });
+  }
+
+  if (action === "send_migration_email" || action === "send_welcome_email") {
+    const owner = await getUserById(lic.userId);
+    if (!owner?.email) {
+      return fail("La licencia no tiene correo de cliente", 404);
+    }
+    const mail =
+      action === "send_migration_email"
+        ? await sendMigrationUpdateEmail({
+            to: owner.email,
+            name: owner.name,
+            version: INITIAL_RELEASE_VERSION,
+          })
+        : await sendPurchaseWelcomeEmail({
+            to: owner.email,
+            name: owner.name,
+            updatesUntilText: lic.updatesUntil.toLocaleDateString("es-MX", {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+              timeZone: "UTC",
+            }),
+          });
+    await logSecurityEvent({
+      eventType:
+        action === "send_migration_email"
+          ? "admin_send_migration_email"
+          : "admin_send_welcome_email",
+      route: "/api/admin/licenses/[id]",
+      req,
+      userId: admin.id,
+      detail: JSON.stringify({
+        licenseId: lic.id,
+        email: owner.email,
+        emailSent: mail.sent,
+        emailError: mail.error || null,
+      }),
+    });
+    if (!mail.sent) {
+      return fail(mail.error || "No se pudo enviar el correo", 502);
+    }
+    return ok({ emailSent: true });
   }
 
   return fail("Accion administrativa desconocida", 400);

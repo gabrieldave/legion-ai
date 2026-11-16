@@ -9,6 +9,7 @@ import {
   ensureLicenseForUser,
   extendUpdatesOneYearForUser,
 } from "@/lib/licenses";
+import { sendPurchaseWelcomeEmail } from "@/lib/mailer";
 
 export async function findOrCreateUserByEmail(
   email: string,
@@ -83,6 +84,7 @@ export async function fulfillOrder(input: {
   }
 
   const paidAt = new Date();
+  const firstPaidTransition = true;
   await db.transaction(async (tx) => {
     await tx
       .update(schema.orders)
@@ -102,6 +104,7 @@ export async function fulfillOrder(input: {
       .where(eq(schema.users.id, input.userId));
   });
 
+  let updatesUntil: Date | null = null;
   if (order.serviceId === UPDATES_RENEWAL_SERVICE_ID) {
     await extendUpdatesOneYearForUser(input.userId, order.id);
   } else {
@@ -116,6 +119,31 @@ export async function fulfillOrder(input: {
       });
     } else if (existingLic.status !== "active") {
       await extendUpdatesOneYearForUser(input.userId, order.id);
+    }
+  }
+
+  const licAfter = await db.query.licenses.findFirst({
+    where: eq(schema.licenses.userId, input.userId),
+  });
+  updatesUntil = licAfter?.updatesUntil ?? null;
+
+  if (
+    firstPaidTransition &&
+    order.serviceId === PRODUCT_SERVICE_ID &&
+    updatesUntil
+  ) {
+    const buyer = await getUserById(input.userId);
+    if (buyer?.email) {
+      await sendPurchaseWelcomeEmail({
+        to: buyer.email,
+        name: buyer.name,
+        updatesUntilText: updatesUntil.toLocaleDateString("es-MX", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+          timeZone: "UTC",
+        }),
+      }).catch(() => null);
     }
   }
 
