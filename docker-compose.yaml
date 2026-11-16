@@ -1,5 +1,5 @@
-# Coolify (build pack Docker Compose). Puerto host 3043 = siguiente libre tras 3042 (crashatlas).
-# Dominio público vía Cloudflare Tunnel: legionai.iareal.net
+# Coolify (Docker Compose). Puerto host 3043 → contenedor 3000.
+# Dominio: legionai.iareal.net
 services:
   app:
     build:
@@ -7,26 +7,41 @@ services:
       dockerfile: Dockerfile
     restart: unless-stopped
     ports:
-      - "127.0.0.1:3043:8080"
+      - "127.0.0.1:3043:3000"
+    env_file:
+      - .env
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+      HOSTNAME: "0.0.0.0"
+      NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-https://legionai.iareal.net}
+      DATABASE_URL: ${DATABASE_URL}
+      ADMIN_SESSION_SECRET: ${ADMIN_SESSION_SECRET}
+      ADMIN_ALLOWED_EMAILS: ${ADMIN_ALLOWED_EMAILS:-david.del.rio.colin@gmail.com}
+      AUTH_GOOGLE_ID: ${AUTH_GOOGLE_ID}
+      AUTH_GOOGLE_SECRET: ${AUTH_GOOGLE_SECRET}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
+      PAYMENT_GATEWAY_URL: ${PAYMENT_GATEWAY_URL:-https://n8n.vibesystems.tech/webhook/payment}
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:-}
+      PRODUCT_FILE_PATH: ${PRODUCT_FILE_PATH:-/app/private/product/Legion_SuperPanel_v3_15_MT4.ex4}
     read_only: true
     tmpfs:
-      - /tmp:rw,noexec,nosuid,size=32m
-      - /dev/shm:rw,noexec,nosuid,size=8m
-      - /var/cache/nginx:rw,noexec,nosuid,size=16m,uid=101,gid=101
-      - /var/run:rw,noexec,nosuid,size=8m
+      - /tmp:rw,noexec,nosuid,size=64m
+      - /dev/shm:rw,noexec,nosuid,size=16m
     security_opt:
       - no-new-privileges:true
     cap_drop:
       - ALL
     healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8080/api/health"]
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:3000/api/health"]
       interval: 30s
       timeout: 5s
       retries: 3
-      start_period: 10s
+      start_period: 25s
     deploy:
       resources:
         limits:
-          memory: 128M
-          cpus: "0.25"
-          pids: 64
+          memory: 512M
+          cpus: "0.75"
+          pids: 128

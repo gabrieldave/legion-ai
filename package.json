@@ -1,0 +1,30 @@
+{
+  "name": "legion-ai",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Legion SuperPanel — landing, Google OAuth, Stripe $350 y descarga segura",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit",
+    "db:push": "drizzle-kit push",
+    "audit:prod": "npm audit --omit=dev --audit-level=high"
+  },
+  "dependencies": {
+    "drizzle-orm": "0.44.5",
+    "next": "15.5.19",
+    "postgres": "3.4.7",
+    "react": "19.0.0",
+    "react-dom": "19.0.0",
+    "zod": "3.25.76"
+  },
+  "devDependencies": {
+    "@types/node": "22.10.5",
+    "@types/react": "19.0.7",
+    "@types/react-dom": "19.0.3",
+    "drizzle-kit": "0.31.4",
+    "typescript": "5.7.3"
+  }
+}

@@ -1,39 +1,43 @@
-# Legion AI — landing estática bilingüe (es/en) endurecida
-# Multi-stage · nginx alpine pinneado · no-root · imagen <300MB
+# Legion AI — Next.js standalone endurecido
+# Multi-stage · node:22-alpine · no-root · <300MB · producto fuera de public/
 
-FROM alpine:3.24 AS assets
-ARG SOURCE_COMMIT=unknown
-WORKDIR /src
-COPY public/ ./public/
-COPY nginx/ ./nginx/
-RUN for f in index.es.html index.en.html i18n.js scanner.js favicon.svg icons/icon-192.png img/scanner/vela-zoom.jpg; do \
-      test -f "public/$f" || { echo "falta public/$f"; exit 1; }; \
-    done \
- && test "$(wc -c < public/index.es.html)" -gt 10000 \
- && test "$(wc -c < public/index.en.html)" -gt 10000 \
- && grep -q '<html lang="es">' public/index.es.html \
- && grep -q '<html lang="en">' public/index.en.html \
- && ! grep -q 'data:image/jpeg;base64' public/index.es.html public/index.en.html \
- && sed -i "s/__GIT_COMMIT__/${SOURCE_COMMIT}/" nginx/default.conf \
- && find public -type f \( -name '*.html' -o -name '*.js' -o -name '*.svg' -o -name '*.xml' -o -name '*.txt' \) \
-      -exec gzip -9 -k {} \;
+FROM node:22-alpine AS deps
+WORKDIR /app
+ENV NODE_ENV=development
+COPY package.json package-lock.json ./
+RUN npm ci --include=dev --no-audit --no-fund
 
-FROM nginx:1.30.6-alpine AS runner
-RUN rm -f /etc/nginx/conf.d/default.conf \
- && mkdir -p /etc/nginx/snippets \
- && chown -R nginx:nginx /var/cache/nginx
+FROM deps AS builder
+WORKDIR /app
+COPY . .
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV NODE_ENV=production
+ENV DATABASE_URL=postgresql://build:build@127.0.0.1:5432/build
+ENV ADMIN_SESSION_SECRET=build-time-placeholder-secret-32chars
+RUN npm run build \
+ && npm audit --omit=dev --audit-level=high
 
-COPY --from=assets /src/nginx/nginx.conf /etc/nginx/nginx.conf
-COPY --from=assets /src/nginx/security-headers.conf /etc/nginx/snippets/security-headers.conf
-COPY --from=assets /src/nginx/default.conf /etc/nginx/conf.d/default.conf
-COPY --from=assets --chown=nginx:nginx /src/public/ /usr/share/nginx/html/
+FROM node:22-alpine AS runner
+WORKDIR /app
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV PORT=3000
+ENV HOSTNAME=0.0.0.0
 
-USER nginx
-EXPOSE 8080
+RUN addgroup -g 1001 -S nodejs \
+ && adduser -u 1001 -S nextjs -G nodejs \
+ && mkdir -p /app/private/product \
+ && chown -R nextjs:nodejs /app
 
-HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-  CMD wget -qO- http://127.0.0.1:8080/api/health || exit 1
+COPY --from=builder --chown=nextjs:nodejs /app/public ./public
+COPY --from=builder --chown=nextjs:nodejs /app/private/product ./private/product
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
-# Sin docker-entrypoint.sh: intenta escribir configuración y el FS es read_only.
-ENTRYPOINT []
-CMD ["nginx", "-g", "daemon off;"]
+USER nextjs
+EXPOSE 3000
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=25s --retries=3 \
+  CMD wget -qO- http://127.0.0.1:3000/api/health || exit 1
+
+CMD ["node", "server.js"]

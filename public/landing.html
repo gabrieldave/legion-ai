@@ -1,0 +1,1539 @@
+<!DOCTYPE html>
+
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<script>document.documentElement.classList.add("js")</script>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>Legion SuperPanel para MetaTrader 4 | Todo tu análisis en un solo panel</title>
+<meta content="Legion SuperPanel reune 17 módulos de análisis para MT4 (RSI, ADX, FlowPulse, sesiones, Order Blocks, FVG, CRT y mas) en una barra lateral que se pliega con una tecla. Solo lee el mercado: nunca abre ni cierra operaciones." name="description"/>
+<meta content="#E8ECF0" name="theme-color"/>
+<meta content="light" name="color-scheme"/>
+<meta content="website" property="og:type"/>
+<meta content="Legion SuperPanel para MetaTrader 4" property="og:title"/>
+<meta content="17 módulos de análisis en una barra lateral para MT4. Español e inglés. Sin DLL. Solo lectura." property="og:description"/>
+<link href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230B0F17'/%3E%3Crect x='19' y='5' width='8' height='22' rx='1.5' fill='%23E9A23B'/%3E%3Cpath d='M6 21h3V11H6zM11 24h3V8h-3z' fill='%231FA971'/%3E%3C/svg%3E" rel="icon"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&amp;display=swap" rel="stylesheet"/>
+<style>
+/* ---------- Tokens ---------- */
+:root{
+  --paper:#E8ECF0;      /* papel de gráfico, frio */
+  --paper-2:#DDE3E9;
+  --ink:#101A2B;        /* tinta azul marino */
+  --slate:#4F5E70;
+  --rule:#C2CCD7;
+  --amber:#E9A23B;      /* acento de marca: el aviso del panel */
+  --amber-ink:#8A5A0B;
+  /* colores reales del panel v3.15 */
+  --p-bg:#0B0F17;
+  --p-card:#111827;
+  --p-border:#293548;
+  --p-text:#D6DEE8;
+  --p-dim:#8695A8;
+  --buy:#1FA971;
+  --sell:#E0464C;
+  --font:"Archivo",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --panel-font:"Segoe UI",system-ui,-apple-system,Roboto,sans-serif;
+  --measure:68ch;
+  --gutter:clamp(1.25rem,4vw,3rem);
+}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-padding-top:5rem}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--font);
+  font-size:1.0625rem;line-height:1.55;font-stretch:100%;
+  font-feature-settings:"tnum" 1;text-rendering:optimizeLegibility}
+img,svg{display:block;max-width:100%}
+a{color:inherit;text-decoration-thickness:1px;text-underline-offset:.2em}
+a:hover{text-decoration-thickness:2px}
+:focus-visible{outline:2px solid var(--amber);outline-offset:3px;border-radius:3px}
+.wrap{width:min(1240px,100% - 2*var(--gutter));margin-inline:auto}
+.skip{position:absolute;left:-999px;top:0;background:var(--ink);color:#fff;padding:.6rem 1rem;z-index:10}
+.skip:focus{left:1rem;top:1rem}
+h1,h2,h3{margin:0;line-height:1.08;text-wrap:balance}
+h1{font-size:clamp(2.5rem,5.6vw,4.6rem);font-weight:780;font-stretch:118%;letter-spacing:-.025em}
+h2{font-size:clamp(1.9rem,3.4vw,2.75rem);font-weight:740;font-stretch:112%;letter-spacing:-.018em}
+h3{font-size:1.3125rem;font-weight:680;font-stretch:104%;letter-spacing:-.005em;line-height:1.2}
+p{margin:0}
+.lede{font-size:clamp(1.125rem,1.6vw,1.3125rem);color:var(--slate);max-width:52ch;text-wrap:pretty}
+
+/* ---------- Botones ---------- */
+.btn{display:inline-flex;align-items:center;gap:.55rem;font:inherit;font-weight:640;font-stretch:104%;
+  padding:.8rem 1.25rem;border-radius:8px;border:1.5px solid var(--ink);text-decoration:none;cursor:pointer;
+  transition:background-color .15s ease,color .15s ease,transform .1s ease}
+.btn:active{transform:translateY(1px)}
+.btn-solid{background:var(--ink);color:var(--paper)}
+.btn-solid:hover{background:#1C2A42}
+.btn-line{background:transparent;color:var(--ink)}
+.btn-line:hover{background:var(--paper-2)}
+
+/* ---------- Cabecera ---------- */
+.top{position:sticky;top:0;z-index:5;background:rgba(232,236,240,.9);background:color-mix(in srgb,var(--paper) 88%,transparent);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.top .wrap{display:flex;align-items:center;gap:1.5rem;min-height:4.25rem}
+.brand{display:flex;align-items:center;gap:.6rem;text-decoration:none;font-weight:800;font-stretch:125%;letter-spacing:.06em;font-size:1.05rem}
+.brand i{width:10px;height:24px;background:var(--amber);border-radius:2px;display:block}
+.nav{margin-left:auto;display:flex;gap:1.6rem;align-items:center}
+.nav a{text-decoration:none;color:var(--slate);font-weight:540}
+.nav a:hover{color:var(--ink)}
+.nav .btn{padding:.55rem 1rem;color:var(--paper)}
+.lang{font:650 .9rem var(--font);font-stretch:110%;letter-spacing:.04em;padding:.45rem .7rem;border-radius:7px;
+  border:1.5px solid var(--rule);background:transparent;color:var(--ink);cursor:pointer;transition:border-color .15s ease,background-color .15s ease}
+.lang:hover{border-color:var(--ink);background:var(--paper-2)}
+html[lang="en"]{--step:"Step"}
+@media (max-width:820px){.nav{gap:.75rem}}
+.nav .btn{white-space:nowrap}
+@media (max-width:420px){.nav .btn{padding:.5rem .75rem;font-size:.92rem}.brand{font-size:.95rem}.top .wrap{gap:.75rem}}
+@media (max-width:820px){.nav a:not(.btn){display:none}}
+
+/* ---------- Hero ---------- */
+.hero{padding-block:clamp(2.5rem,6vw,5rem) clamp(3rem,6vw,5.5rem)}
+.hero .wrap{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(2rem,4vw,4rem);align-items:center}
+.hero-copy{display:grid;gap:1.5rem}
+.hero-cta{display:flex;flex-wrap:wrap;gap:.75rem}
+.facts{display:flex;flex-wrap:wrap;gap:.5rem 1.25rem;margin:0;padding:0;list-style:none;color:var(--slate);font-size:.95rem}
+.facts li{display:flex;align-items:center;gap:.45rem}
+.facts li::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--buy)}
+@media (max-width:980px){.hero .wrap{grid-template-columns:1fr}}
+
+/* ---------- Ventana MT4 (demo) ---------- */
+.demo{display:grid;gap:.75rem}
+.win{position:relative;background:var(--p-bg);border-radius:10px;overflow:hidden;
+  box-shadow:0 1px 0 rgba(255,255,255,.04) inset,0 30px 60px -28px rgba(16,26,43,.55),0 0 0 1px #1B2434;
+  height:clamp(460px,52vw,600px);color:var(--p-text);font-family:var(--panel-font)}
+.win-bar{height:28px;display:flex;align-items:center;gap:.5rem;padding:0 .75rem;background:#0E131D;
+  border-bottom:1px solid #1B2434;font-size:12px;color:var(--p-dim)}
+.win-bar b{color:var(--p-text);font-weight:600}
+.dots{display:flex;gap:5px;margin-right:.5rem}
+.dots span{width:9px;height:9px;border-radius:50%;background:#253042}
+.chart{position:absolute;inset:28px 0 0 0}
+.chart svg{width:100%;height:100%}
+.if-touch{display:none}
+@media (hover:none){.if-keys{display:none}.if-touch{display:inline}}
+.demo-note{font-size:.9rem;color:var(--slate);display:flex;flex-wrap:wrap;gap:.35rem .9rem;align-items:center}
+kbd{font-family:var(--font);font-size:.82em;font-weight:650;display:inline-grid;place-items:center;min-width:1.75em;height:1.75em;padding:0 .4em;
+  border-radius:5px;background:#fff;border:1px solid var(--rule);border-bottom-width:2.5px;color:var(--ink);line-height:1}
+
+/* panel acoplado a la derecha, como en MT4 */
+.panel{--pw:310px;position:absolute;top:36px;right:8px;bottom:8px;width:var(--pw);display:flex;flex-direction:column;
+  background:var(--p-bg);border:1px solid var(--p-border);border-radius:6px;font-size:11.5px;line-height:1.35;
+  transition:transform .32s cubic-bezier(.2,.8,.2,1),opacity .2s ease;z-index:2}
+.win.is-folded .panel{transform:translateX(calc(100% + 16px));opacity:0}
+.strip{position:absolute;top:36px;right:8px;bottom:8px;width:34px;border:1px solid var(--p-border);border-radius:6px;
+  background:var(--p-card);color:var(--p-text);font:600 12px var(--panel-font);cursor:pointer;display:none;
+  writing-mode:vertical-rl;letter-spacing:.12em;align-items:center;justify-content:center;gap:8px}
+.win.is-folded .strip{display:flex}
+.p-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;padding:10px 12px 8px;border-bottom:1px solid var(--p-border)}
+.p-title{font-weight:700;letter-spacing:.14em;font-size:13px;color:#fff}
+.p-sub{color:var(--p-dim);font-size:10.5px;margin-top:2px}
+.p-btns{display:flex;gap:4px;align-items:center}
+.p-btns button,.p-btns span{font:600 11px var(--panel-font);min-width:22px;height:20px;border-radius:3px;
+  border:1px solid var(--p-border);background:var(--p-card);color:var(--p-text);display:grid;place-items:center}
+.p-btns button{cursor:pointer}
+.p-btns button:hover{background:#1A2333}
+.verdict{margin:8px 12px 0;padding:6px 8px;border-radius:4px;background:rgba(31,169,113,.14);color:#5DD3A2;font-weight:700;display:flex;justify-content:space-between}
+.p-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;padding:8px 12px}
+.p-tabs button{font:600 10px var(--panel-font);letter-spacing:.04em;padding:5px 4px;border-radius:3px;cursor:pointer;
+  background:var(--p-card);color:var(--p-dim);border:1px solid var(--p-border);text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.p-tabs button[aria-selected="true"]{background:#1D2A40;color:#fff;border-color:#3B4D69}
+.p-tabs button:hover{color:var(--p-text)}
+.p-tabs small{color:var(--amber);font-size:9px;margin-right:4px}
+.p-body{flex:1;overflow:auto;padding:0 12px 8px;scrollbar-width:thin;scrollbar-color:#2B374B transparent}
+.p-body [role="tabpanel"]{display:grid;gap:7px}
+.p-body [hidden]{display:none}
+.card{background:var(--p-card);border:1px solid var(--p-border);border-radius:4px;padding:7px 9px}
+.card h4{margin:0 0 6px;font-size:10px;letter-spacing:.08em;color:var(--p-dim);font-weight:700;padding-bottom:5px;border-bottom:1px solid var(--p-border)}
+.row{display:flex;justify-content:space-between;gap:8px;padding:1.5px 0}
+.row span:first-child{color:var(--p-dim)}
+.up{color:#4CCB93}.dn{color:#F06A6F}.am{color:var(--amber)}.wh{color:#fff;font-weight:600}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:3px;text-align:center}
+.grid4 div{background:#0D1320;border-radius:3px;padding:4px 0}
+.grid4 em{display:block;font-style:normal;color:var(--p-dim);font-size:9.5px}
+.bar{height:6px;border-radius:3px;background:#1A2232;overflow:hidden;margin-top:3px}
+.bar i{display:block;height:100%;border-radius:3px}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:3px;margin-bottom:6px}
+.seg span{text-align:center;padding:4px;border-radius:3px;border:1px solid var(--p-border);color:var(--p-dim);font-weight:600;font-size:10px}
+.seg span.on{background:#1D2A40;color:#fff;border-color:#3B4D69}
+.vp{display:grid;gap:2px}
+.vp div{display:grid;grid-template-columns:52px 1fr;gap:6px;align-items:center;font-size:10px;color:var(--p-dim)}
+.vp i{display:block;height:7px;border-radius:2px;background:#33507A}
+.vp .poc i{background:var(--amber)}
+.vp .poc{color:#fff}
+.p-foot{border-top:1px solid var(--p-border);padding:6px 12px;color:var(--p-dim);font-size:10px;display:flex;justify-content:space-between;gap:8px}
+.p-foot span{text-wrap:balance}
+.bidtag{margin-left:auto}
+.bidtag b{font-variant-numeric:tabular-nums}
+@media (max-width:560px){.panel{--pw:min(250px,72%)}.p-tabs{grid-template-columns:repeat(2,1fr)}}
+
+/* ---------- Secciones ---------- */
+section{padding-block:clamp(3.5rem,8vw,6.5rem)}
+.sec-head{display:grid;gap:.9rem;max-width:var(--measure);margin-bottom:clamp(2rem,4vw,3rem)}
+.sec-head p{color:var(--slate);text-wrap:pretty}
+
+/* pestañas: la tecla es el indice real */
+.tabs-list{list-style:none;margin:0;padding:0;border-top:1.5px solid var(--ink)}
+.tabs-list li{display:grid;grid-template-columns:4.5rem minmax(0,15rem) minmax(0,1fr);gap:1.25rem 2rem;padding:1.6rem 0;border-bottom:1px solid var(--rule);align-items:start}
+.keycap{font:750 1.35rem var(--font);font-stretch:110%;width:3.25rem;height:3.25rem;display:grid;place-items:center;border-radius:9px;
+  background:#fff;border:1px solid var(--rule);border-bottom-width:4px;color:var(--ink);cursor:pointer;transition:transform .1s ease,border-bottom-width .1s ease}
+.keycap:hover{border-color:#9AA8B8}
+.keycap:active{transform:translateY(2px);border-bottom-width:2px}
+.tabs-list h3 small{display:block;font-size:.85rem;font-weight:520;color:var(--slate);margin-top:.35rem;font-stretch:100%}
+.mods{display:grid;gap:.6rem;max-width:var(--measure)}
+.mods p{color:var(--slate)}
+.mods b{color:var(--ink);font-weight:650}
+@media (max-width:760px){.tabs-list li{grid-template-columns:3.75rem 1fr}.tabs-list .mods{grid-column:1 / -1}}
+
+/* extras: banda oscura */
+.band{background:var(--ink);color:#E6EBF1}
+.band .sec-head p{color:#A7B4C4}
+.extras{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 clamp(2rem,5vw,5rem)}
+.extras div{padding:1.5rem 0;border-top:1px solid #2A3850;display:grid;gap:.5rem}
+.extras p{color:#A7B4C4;max-width:52ch}
+.extras h3{display:flex;align-items:baseline;gap:.75rem}
+.extras h3 kbd{background:#1B2840;color:#E6EBF1;border-color:#33456A;font-size:.7em}
+@media (max-width:760px){.extras{grid-template-columns:1fr}}
+
+/* teclado */
+.keys{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(2rem,5vw,5rem)}
+.keys h3{margin-bottom:1rem}
+.keys dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:.7rem 1rem;align-items:center}
+.keys dt{display:flex;gap:.3rem;align-items:center;color:var(--slate)}
+.keys dd{margin:0;color:var(--slate)}
+@media (max-width:760px){.keys{grid-template-columns:1fr}}
+
+/* instalación: es una secuencia real */
+.steps{counter-reset:s;list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1.5rem}
+.steps li{counter-increment:s;display:grid;gap:.6rem;align-content:start;padding-top:1.1rem;border-top:3px solid var(--ink)}
+.steps li::before{content:var(--step,"Paso") " " counter(s);font-weight:700;font-stretch:110%;color:var(--amber-ink);font-size:.95rem}
+.steps p{color:var(--slate);font-size:1rem}
+.steps code{font-family:var(--font);font-weight:620;color:var(--ink);background:var(--paper-2);padding:.05em .35em;border-radius:4px;overflow-wrap:anywhere}
+@media (max-width:980px){.steps{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:560px){.steps{grid-template-columns:1fr}}
+
+.reqs{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(2rem,5vw,5rem);margin-top:clamp(3rem,6vw,4.5rem)}
+.reqs ul{margin:0;padding-left:1.1rem;display:grid;gap:.5rem;color:var(--slate)}
+.reqs ul b{color:var(--ink)}
+.note{border-left:4px solid var(--amber);padding:.25rem 0 .25rem 1.25rem;display:grid;gap:.6rem}
+.note p{color:var(--slate)}
+@media (max-width:760px){.reqs{grid-template-columns:1fr}}
+
+/* preguntas */
+.faq{max-width:860px;border-top:1.5px solid var(--ink)}
+.faq details{border-bottom:1px solid var(--rule)}
+.faq summary{cursor:pointer;list-style:none;padding:1.2rem 2.5rem 1.2rem 0;font-weight:650;font-size:1.125rem;position:relative}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"";position:absolute;right:.4rem;top:50%;width:12px;height:12px;margin-top:-8px;
+  border-right:2px solid var(--ink);border-bottom:2px solid var(--ink);transform:rotate(45deg);transition:transform .2s ease}
+.faq details[open] summary::after{transform:rotate(225deg);margin-top:-2px}
+.faq details p{padding:0 0 1.3rem;color:var(--slate);max-width:var(--measure)}
+
+/* contacto */
+.cta{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2rem;align-items:end;padding:clamp(2rem,5vw,3.5rem);
+  background:#fff;border:1px solid var(--rule);border-radius:14px}
+.cta p{color:var(--slate);margin-top:.8rem;max-width:56ch}
+@media (max-width:760px){.cta{grid-template-columns:1fr}}
+
+footer{padding-block:2.5rem 3rem;border-top:1px solid var(--rule);color:var(--slate);font-size:.92rem}
+footer .wrap{display:grid;gap:.8rem}
+footer p{max-width:90ch}
+
+
+/* ---------- Bilingue por bloques ---------- */
+html[lang="en"] .i-es{display:none !important}
+html:not([lang="en"]) .i-en{display:none !important}
+
+/* ---------- Guia de modulos ---------- */
+.guide{padding-top:0}
+.filters{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:2rem}
+.chip{font:600 .95rem var(--font);padding:.5rem .9rem;border-radius:999px;border:1.5px solid var(--rule);background:#fff;color:var(--slate);cursor:pointer;
+  transition:background-color .15s ease,color .15s ease,border-color .15s ease}
+.chip b{color:var(--amber-ink);font-weight:750;margin-right:.15rem}
+.chip:hover{border-color:#9AA8B8;color:var(--ink)}
+.chip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.chip[aria-pressed="true"] b{color:var(--amber)}
+.library{display:grid;grid-template-columns:15rem minmax(0,1fr);gap:clamp(2rem,4vw,4rem);align-items:start}
+.mod-index{position:sticky;top:5.75rem;max-height:calc(100vh - 7rem);overflow:auto;border-left:1px solid var(--rule)}
+.mod-index ol{list-style:none;margin:0;padding:0}
+.mod-index a{display:block;padding:.38rem 0 .38rem 1rem;margin-left:-1px;border-left:2px solid transparent;text-decoration:none;color:var(--slate);font-size:.95rem;
+  transition:color .15s ease,border-color .15s ease}
+.mod-index a:hover{color:var(--ink)}
+.mod-index a[aria-current="true"]{color:var(--ink);border-left-color:var(--amber);font-weight:620}
+.mod-index li[hidden]{display:none}
+.mods-list{display:grid}
+.mod{padding:2rem 0;border-top:1px solid var(--rule);display:grid;gap:.9rem;max-width:var(--measure);scroll-margin-top:5.5rem}
+.mod:first-child{border-top:1.5px solid var(--ink)}
+.mod[hidden]{display:none}
+.mod header{display:flex;align-items:center;gap:.8rem}
+.mod header kbd{font-size:.85rem;min-width:2em;height:2em}
+.mod h3 .sub{font-weight:500;color:var(--slate);font-size:.9em}
+.mod p{color:var(--slate)}
+.mod ul{margin:0;padding-left:1.15rem;display:grid;gap:.45rem;color:var(--slate)}
+.mod ul li::marker{color:var(--amber-ink)}
+.cfg{font-size:.92rem;border-left:3px solid var(--amber);padding-left:.8rem;color:var(--ink) !important}
+@media (max-width:980px){.library{grid-template-columns:1fr}.mod-index{display:none}}
+
+/* ---------- Confluencia ---------- */
+.conf{background:#fff;border-block:1px solid var(--rule)}
+.conf-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(2rem,5vw,5rem);align-items:start}
+.weights{margin:0;display:grid;gap:.7rem}
+.weights figcaption{font-weight:680;font-size:1.3125rem;font-stretch:104%;margin-bottom:.5rem}
+.w{display:grid;grid-template-columns:minmax(9rem,13rem) minmax(0,1fr) 2.75rem;gap:.9rem;align-items:center;font-size:.98rem}
+.w > span{color:var(--slate)}
+.w i{display:block;height:12px;border-radius:3px;background:var(--ink);width:calc(var(--w) * 3.333%);transform-origin:left}
+.w.alt i{background:repeating-linear-gradient(90deg,var(--amber) 0 6px,transparent 6px 9px)}
+.w b{font-weight:700;text-align:right;font-variant-numeric:tabular-nums}
+.fig-note{color:var(--slate);font-size:.92rem;margin-top:.5rem !important;max-width:52ch}
+.ladder h3{margin-bottom:1rem}
+.ladder dl{margin:0;display:grid}
+.ladder dl > div{display:grid;grid-template-columns:9.5rem 1fr;gap:1rem;padding:.75rem 0;border-top:1px solid var(--rule);align-items:baseline}
+.ladder dd{margin:0;color:var(--slate)}
+.ladder dd em{font-style:normal;color:#8A97A8;font-size:.9em}
+.tag{display:inline-block;font:700 .78rem var(--panel-font);letter-spacing:.06em;padding:.3rem .55rem;border-radius:4px;background:var(--p-card);color:var(--p-dim);border:1px solid var(--p-border)}
+.t-soft{color:#5DD3A2;background:rgba(31,169,113,.08);border-color:rgba(31,169,113,.35)}
+.t-buy{color:#fff;background:var(--buy);border-color:var(--buy)}
+.t-warn{color:#3D2A05;background:var(--amber);border-color:var(--amber)}
+.t-hold{color:#CFE0FF;background:#1D3A66;border-color:#2B4F86}
+.t-wait{color:#C5D0DD}
+@media (max-width:860px){.conf-grid{grid-template-columns:1fr}.ladder dl > div{grid-template-columns:1fr;gap:.35rem}}
+
+/* ---------- Estrategias ---------- */
+.strat{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:1.25rem clamp(2rem,5vw,4.5rem);padding:2.25rem 0;border-top:1px solid var(--rule)}
+.strat:first-of-type{border-top:1.5px solid var(--ink)}
+.strat-head{display:grid;gap:.6rem;align-content:start}
+.strat-head p{color:var(--slate)}
+.cond{counter-reset:c;list-style:none;margin:0;padding:0;display:grid;gap:.75rem}
+.cond li{counter-increment:c;position:relative;padding-left:2.4rem;color:var(--slate)}
+.cond li::before{content:counter(c);position:absolute;left:0;top:.05rem;font:700 .85rem var(--font);width:1.6rem;height:1.6rem;border-radius:50%;
+  display:grid;place-items:center;background:var(--paper-2);color:var(--ink)}
+.cond b{color:var(--ink)}
+.out{grid-column:2;color:var(--slate);background:#fff;border:1px solid var(--rule);border-radius:10px;padding:.9rem 1.1rem}
+.out b{color:var(--ink)}
+.vlt{margin-top:2.5rem;padding:1.75rem;border-radius:12px;background:var(--ink);color:#E6EBF1;display:grid;gap:.75rem}
+.vlt p{color:#A7B4C4;max-width:var(--measure)}
+.vlt b{color:#fff}
+@media (max-width:860px){.strat{grid-template-columns:1fr}.out{grid-column:1}}
+
+/* ---------- Alertas ---------- */
+.alert-table{width:100%;border-collapse:collapse;font-size:1rem}
+.alert-table th,.alert-table td{text-align:left;padding:.85rem 1rem .85rem 0;border-bottom:1px solid var(--rule);vertical-align:top}
+.alert-table thead th{font-size:.9rem;color:var(--slate);font-weight:600;border-bottom:1.5px solid var(--ink)}
+.alert-table tbody th{font-weight:640;white-space:nowrap}
+.alert-table td{color:var(--slate)}
+.alert-table .on,.alert-table .off{font-weight:620;font-size:.92rem}
+.alert-table .on{color:#127A52}
+.alert-table .off{color:#8A97A8}
+@media (max-width:640px){.alert-table thead{display:none}.alert-table tr{display:grid;padding:.8rem 0;border-bottom:1px solid var(--rule)}
+  .alert-table th,.alert-table td{border:0;padding:.15rem 0}}
+
+/* ---------- Animacion (solo transform y opacity) ---------- */
+:root{--ease-out:cubic-bezier(.2,.75,.15,1);--ease-io:cubic-bezier(.65,0,.25,1);interpolate-size:allow-keywords}
+
+/* barra de progreso de lectura, ligada al scroll (sin JS) */
+.progress{display:none}
+@supports (animation-timeline:scroll()){
+  .progress{display:block;position:fixed;inset:0 0 auto 0;height:2px;background:var(--amber);z-index:6;
+    transform-origin:left;transform:scaleX(0);animation:grow linear both;animation-timeline:scroll(root)}
+  @keyframes grow{to{transform:scaleX(1)}}
+}
+
+/* cabecera: sombra cuando ya bajaste */
+.top{transition:box-shadow .3s ease}
+.top.is-scrolled{box-shadow:0 10px 24px -18px rgba(16,26,43,.45)}
+
+/* aparicion al bajar: escalonada dentro de cada grupo */
+.js [data-reveal]{opacity:0;transform:translateY(22px)}
+.js [data-reveal].in{opacity:1;transform:none;
+  transition:opacity .75s var(--ease-out),transform .75s var(--ease-out);transition-delay:calc(var(--i,0) * 80ms)}
+
+/* portada: la ventana entra, la cortina descubre las velas y el panel se acopla como en MT4 */
+.js .win[data-reveal]{transform:translateY(28px) scale(.985)}
+.js .win[data-reveal].in{transform:none}
+.js .win.in .chart::after{content:"";position:absolute;inset:0;background:var(--p-bg);transform-origin:right;
+  animation:wipe 1.15s .45s var(--ease-io) forwards}
+@keyframes wipe{to{transform:scaleX(0)}}
+.js .win.in .panel{animation:dock .8s .75s var(--ease-out) backwards}
+@keyframes dock{from{opacity:0;transform:translateX(36px)}}
+.verdict{position:relative}
+.verdict::after{content:"";position:absolute;inset:0;border-radius:4px;border:1px solid var(--buy);opacity:0;pointer-events:none}
+.js .win.in .verdict::after{animation:ring 1.4s 1.7s ease-out}
+@keyframes ring{from{opacity:.9;transform:scale(1)}to{opacity:0;transform:scale(1.05,1.6)}}
+
+/* lineas que se dibujan de izquierda a derecha */
+.js .tabs-list li,.js .extras div,.js .steps li{position:relative}
+.js .tabs-list li{border-bottom-color:transparent}
+.js .extras div{border-top-color:transparent}
+.js .steps li{border-top-color:transparent}
+.js .tabs-list li::after,.js .extras div::before,.js .steps li::after{content:"";position:absolute;left:0;right:0;
+  transform-origin:left;transform:scaleX(0);transition:transform 1s var(--ease-io);transition-delay:calc(var(--i,0) * 80ms + 150ms)}
+.js .tabs-list li::after{bottom:-1px;height:1px;background:var(--rule)}
+.js .extras div::before{top:-1px;height:1px;background:#2A3850}
+.js .steps li::after{top:-3px;height:3px;background:var(--ink)}
+.js .tabs-list li.in::after,.js .extras div.in::before,.js .steps li.in::after{transform:scaleX(1)}
+
+/* barras de peso que crecen al aparecer */
+.js .w[data-reveal] i{transform:scaleX(0);transition:transform .9s var(--ease-out);transition-delay:calc(var(--i,0) * 80ms + 200ms)}
+.js .w.in i{transform:scaleX(1)}
+
+/* la tecla se "pulsa" cuando su fila aparece */
+.js .tabs-list li.in .keycap{animation:press .45s calc(var(--i,0) * 80ms + 350ms) ease-in-out}
+@keyframes press{40%{transform:translateY(3px)}}
+
+/* pestanas del panel: el contenido cambia con un fundido corto */
+.p-body [role="tabpanel"]:not([hidden]){animation:tabIn .25s var(--ease-out)}
+@keyframes tabIn{from{opacity:0;transform:translateY(5px)}}
+
+/* preguntas: abren y cierran con altura animada donde el navegador lo permite */
+@supports selector(::details-content){
+  .faq details::details-content{block-size:0;overflow:hidden;
+    transition:block-size .35s var(--ease-out),content-visibility .35s allow-discrete}
+  .faq details[open]::details-content{block-size:auto}
+}
+
+/* botones: respuesta al puntero */
+.btn{transition:background-color .15s ease,color .15s ease,transform .2s var(--ease-out),box-shadow .2s ease}
+@media (hover:hover){.btn-solid:hover{transform:translateY(-1px);box-shadow:0 8px 18px -10px rgba(16,26,43,.6)}}
+
+@media (prefers-reduced-motion:reduce){
+  .js [data-reveal],.js .win[data-reveal]{opacity:1 !important;transform:none !important}
+  .js .tabs-list li::after,.js .extras div::before,.js .steps li::after{transform:scaleX(1)}
+  .js .win.in .chart::after{display:none}
+  .progress{display:none}
+  .js .w[data-reveal] i{transform:none}
+
+  *,*::before,*::after{transition-duration:.01ms !important;animation-duration:.01ms !important;scroll-behavior:auto !important}
+}
+</style>
+</head>
+<body>
+<div aria-hidden="true" class="progress"></div>
+<a class="skip" data-i18n="t1" href="#contenido">Saltar al contenido</a>
+<header class="top">
+<div class="wrap">
+<a aria-label="Legion, inicio" class="brand" data-i18n-aria="a1" href="#"><i aria-hidden="true"></i>LEGION</a>
+<nav aria-label="Principal" class="nav" data-i18n-aria="a2">
+<a data-i18n="t2" href="#guia">Módulos</a>
+<a href="#estrategias"><span class="i-es">Estrategias</span><span class="i-en">Strategies</span></a>
+<a data-i18n="t3" href="#teclas">Teclas</a>
+<a data-i18n="t4" href="#instalar">Instalación</a>
+<a data-i18n="t5" href="#preguntas">Preguntas</a>
+<button class="lang" id="lang" type="button" lang="en" aria-label="Switch to English">EN</button>
+<a class="btn btn-solid" data-i18n="t6" href="/cuenta">Comprar — $350 USD</a>
+</nav>
+</div>
+</header>
+<main id="contenido">
+<section aria-labelledby="titulo" class="hero">
+<div class="wrap">
+<div class="hero-copy">
+<h1 data-i18n="t7" id="titulo">Todo tu análisis de MT4 en un solo panel</h1>
+<p class="lede" data-i18n="t8">Legion SuperPanel junta 17 módulos en una barra lateral: RSI, ADX, FlowPulse, sesiones, Order Blocks, FVG, CRT, tu cuenta y tu riesgo. Se pliega con una tecla y solo lee el mercado: nunca abre ni cierra operaciones.</p>
+<div class="hero-cta">
+<a class="btn btn-solid" data-i18n="t9" href="/cuenta">Comprar — $350 USD</a>
+<a class="btn btn-line" data-i18n="t10" href="#guia">Ver los 17 módulos</a>
+</div>
+<ul aria-label="Datos clave" class="facts" data-i18n-aria="a3">
+<li data-i18n="t11">MetaTrader 4, build 600 o superior</li>
+<li data-i18n="t12">Español e inglés</li>
+<li data-i18n="t13">Sin DLL ni indicadores externos</li>
+</ul>
+</div>
+<div class="demo">
+<div aria-label="Demostración interactiva del panel sobre un gráfico EURUSD H1 con datos de ejemplo" class="win" data-i18n-aria="a4" id="win" role="region">
+<div class="win-bar"><span aria-hidden="true" class="dots"><span></span><span></span><span></span></span><b>EURUSD,H1</b><span>Legion SuperPanel v3.15</span><span class="bidtag">BID <b id="bid">1.0858</b></span></div>
+<div aria-hidden="true" class="chart"><svg id="chart" preserveaspectratio="none"></svg></div>
+<button aria-label="Desplegar el panel (tecla P)" class="strip" data-i18n-aria="a5" id="strip" type="button">&lt;&lt; LEGION</button>
+<aside aria-label="Legion SuperPanel" class="panel" data-i18n-aria="a6" id="panel">
+<div class="p-head">
+<div>
+<div class="p-title">LEGION</div>
+<div class="p-sub">PANEL DE MERCADO / EURUSD | H1</div>
+</div>
+<div class="p-btns">
+<span aria-hidden="true">R</span><span aria-hidden="true">-</span>
+<button aria-controls="panel" aria-label="Plegar el panel (tecla P)" data-i18n-aria="a7" id="fold" type="button">&gt;&gt;</button>
+</div>
+</div>
+<div aria-live="polite" class="verdict"><span>CONFLUENCIA: COMPRA</span><span id="conf">68%</span></div>
+<div aria-label="Pestañas del panel" class="p-tabs" data-i18n-aria="a8" role="tablist">
+<button aria-controls="tp1" aria-selected="true" id="t1" role="tab"><small>1</small>RESUMEN</button>
+<button aria-controls="tp2" aria-selected="false" id="t2" role="tab" tabindex="-1"><small>2</small>HERRAMIENTAS</button>
+<button aria-controls="tp3" aria-selected="false" id="t3" role="tab" tabindex="-1"><small>3</small>PERFIL VOL.</button>
+<button aria-controls="tp4" aria-selected="false" id="t4" role="tab" tabindex="-1"><small>4</small>QUIEBRE</button>
+<button aria-controls="tp5" aria-selected="false" id="t5" role="tab" tabindex="-1"><small>5</small>CAIDAS</button>
+<button aria-controls="tp6" aria-selected="false" id="t6" role="tab" tabindex="-1"><small>6</small>CRT</button>
+</div>
+<div class="p-body">
+<!-- 1 RESUMEN -->
+<div aria-labelledby="t1" id="tp1" role="tabpanel" tabindex="0">
+<div class="card"><h4>CUENTA Y POSICION</h4>
+<div class="row"><span>Balance</span><span class="wh">10,000.00</span></div>
+<div class="row"><span>Equidad</span><span class="wh" id="eq">10,184.20</span></div>
+<div class="row"><span>Flotante</span><span class="up" id="fl">+184.20</span></div>
+<div class="row"><span>Nivel de margen</span><span>1,842%</span></div>
+<div class="row"><span>Stop out</span><span class="am">0.9921</span></div>
+</div>
+<div class="card"><h4>RSI</h4>
+<div class="grid4">
+<div><em>M15</em><span class="up" id="rsi1">61</span></div>
+<div><em>H1</em><span class="up" id="rsi2">58</span></div>
+<div><em>H4</em><span class="up">63</span></div>
+<div><em>D1</em><span>52</span></div>
+</div>
+</div>
+<div class="card"><h4>ADX PISTOLA</h4>
+<div class="row"><span>H1</span><span class="up">FLECHA COMPRA</span></div>
+<div class="row"><span>H4</span><span class="up">EN COMPRA</span></div>
+<div class="row"><span>D1</span><span>SIN FUERZA</span></div>
+</div>
+<div class="card"><h4>ESTRUCTURA MTF  |  IMPULSOS ATR</h4>
+<div class="grid4"><div><em>W1</em><span class="up">ALC</span></div><div><em>D1</em><span class="up">ALC</span></div><div><em>H4</em><span class="up">ALC</span></div><div><em>H1</em><span class="dn">BAJ</span></div></div>
+<div class="row" style="margin-top:5px"><span>Entrada</span><span class="am">ESPERAR CHoCH</span></div>
+</div>
+<div class="card"><h4>FUERZA DEL PAR  |  HEIKIN ASHI</h4>
+<div class="row"><span>EUR</span><span class="wh">6.8</span></div>
+<div class="bar"><i style="width:68%;background:var(--buy)"></i></div>
+<div class="row" style="margin-top:4px"><span>USD</span><span class="wh">3.2</span></div>
+<div class="bar"><i style="width:32%;background:var(--sell)"></i></div>
+</div>
+<div class="card"><h4>FLOWPULSE</h4>
+<div class="row"><span>M5</span><span class="up">B 64%  Flow +2</span></div>
+<div class="row"><span>M15</span><span class="up">B 59%  Flow +1</span></div>
+<div class="row"><span>H1</span><span>B 51%  Flow 0</span></div>
+</div>
+<div class="card"><h4>OB + FVG  |  ZONAS ACTIVAS</h4>
+<div class="row"><span>OB H4 alcista</span><span class="up">DENTRO 42%</span></div>
+<div class="row"><span>IMB D1</span><span>a 18 pips</span></div>
+</div>
+</div>
+<!-- 2 HERRAMIENTAS -->
+<div aria-labelledby="t2" hidden="" id="tp2" role="tabpanel" tabindex="0">
+<div class="card"><h4>VOLUMEN RELATIVO</h4>
+<div class="row"><span>Vela actual</span><span class="am">1.8x  ALTO</span></div>
+<div class="row"><span>Vela cerrada</span><span>1.1x  normal</span></div>
+</div>
+<div class="card"><h4>SESIONES + NIVELES PSY</h4>
+<div class="row"><span>Tokio</span><span>cerrada</span></div>
+<div class="row"><span>Londres</span><span class="up">abierta</span></div>
+<div class="row"><span>Nueva York</span><span>abre en 2h 10m</span></div>
+<div class="row"><span>Psy</span><span>1.0900 / 1.0850</span></div>
+</div>
+<div class="card"><h4>PLANTILLAS DE VELAS</h4>
+<div class="seg"><span class="on">OSCURA</span><span>CLARA</span></div>
+</div>
+<div class="card"><h4>RECTANGULOS CON PRECIO</h4>
+<div class="row"><span>Con etiqueta</span><span class="wh">3 de 3</span></div>
+<div class="row"><span>50%</span><span>ON</span></div>
+</div>
+</div>
+<!-- 3 PERFIL VOL. -->
+<div aria-labelledby="t3" hidden="" id="tp3" role="tabpanel" tabindex="0">
+<div class="card"><h4>PERFIL VOL.  |  VELA H4</h4>
+<div class="vp">
+<div><span>1.0874</span><i style="width:22%"></i></div>
+<div><span>1.0869</span><i style="width:41%"></i></div>
+<div><span>1.0864</span><i style="width:63%"></i></div>
+<div class="poc"><span>1.0859</span><i style="width:100%"></i></div>
+<div><span>1.0854</span><i style="width:78%"></i></div>
+<div><span>1.0849</span><i style="width:46%"></i></div>
+<div><span>1.0844</span><i style="width:27%"></i></div>
+<div><span>1.0839</span><i style="width:12%"></i></div>
+</div>
+</div>
+<div class="card"><h4>NIVELES</h4>
+<div class="row"><span>POC</span><span class="am">1.0859</span></div>
+<div class="row"><span>VAH</span><span>1.0869</span></div>
+<div class="row"><span>VAL</span><span>1.0849</span></div>
+</div>
+</div>
+<!-- 4 QUIEBRE -->
+<div aria-labelledby="t4" hidden="" id="tp4" role="tabpanel" tabindex="0">
+<div class="seg"><span class="on">SIMULADOR</span><span>LOTAJE SEGURO</span></div>
+<div class="card"><h4>MEDIDOR DE QUIEBRE</h4>
+<div class="row"><span>Posicion</span><span class="wh">COMPRA 1.00</span></div>
+<div class="row"><span>Balance</span><span>10,000.00</span></div>
+<div class="row"><span>Margin call</span><span class="am">0.9988</span></div>
+<div class="row"><span>Stop out</span><span class="dn">0.9921</span></div>
+<div class="row"><span>Distancia</span><span>-8.6%  |  9.4 dias ATR</span></div>
+</div>
+</div>
+<!-- 5 CAIDAS -->
+<div aria-labelledby="t5" hidden="" id="tp5" role="tabpanel" tabindex="0">
+<div class="card"><h4>CAIDAS HISTORICAS</h4>
+<div class="row"><span>Peor caida</span><span class="dn">-24.1%</span></div>
+<div class="row"><span>Caida de diseno</span><span class="am">-15.0%</span></div>
+<div class="row"><span>Caidas registradas</span><span>9</span></div>
+<div class="row"><span>Ultimo minimo hace</span><span>3 meses</span></div>
+</div>
+<div class="card"><h4>LOTAJE SEGURO  |  SEGUN LAS CAIDAS</h4>
+<div class="row"><span>Lote que aguanta</span><span class="wh">0.62</span></div>
+<div class="row"><span>Tu posicion</span><span class="up">OK: resiste</span></div>
+</div>
+</div>
+<!-- 6 CRT -->
+<div aria-labelledby="t6" hidden="" id="tp6" role="tabpanel" tabindex="0">
+<div class="card"><h4>LEGION CRT  |  ESCANER 3 VELAS  |  9 TF</h4>
+<div class="row"><span>H4</span><span class="up">LISTO  R:R 2.4</span></div>
+<div class="row"><span>H1</span><span class="am">BARRIENDO CRL</span></div>
+<div class="row"><span>D1</span><span>TP YA HECHO</span></div>
+<div class="row"><span>M15</span><span>SIN CRT</span></div>
+</div>
+</div>
+</div>
+<div class="p-foot" title="1-6 cambian de pestana. P plegar, M minimizar, Z/X zoom, C cursor en cruz, R rectangulo con 2 clics, S + clic perfil de volumen. On/off: E sesiones, Y niveles psy, O Order Blocks, F FVG, T estructura, H caidas, V perfil de volumen, K niveles CRT. Esc cancela.">
+<span>1-6 pestanas | P plegar | M min | C cursor | R rect | O/F/T/K dibujos  [?]</span>
+</div>
+</aside>
+</div>
+<p class="demo-note"><span class="if-keys" data-i18n="t14">Pruébalo: <kbd>1</kbd>–<kbd>6</kbd> cambian de pestaña y <kbd>P</kbd> pliega el panel.</span><span class="if-touch" data-i18n="t15">Toca las pestañas, o el botón &gt;&gt; para plegar el panel.</span><span data-i18n="t16">Datos de ejemplo, no de mercado.</span></p>
+</div>
+</div>
+</section>
+<section aria-labelledby="h-pestanas" id="pestanas">
+<div class="wrap">
+<div class="sec-head">
+<h2 data-i18n="t17" id="h-pestanas">Seis pestañas, una tecla para cada una</h2>
+<p data-i18n="t23">Todos los módulos calculan siempre. La pestaña solo decide qué se ve, así que cambiar de vista no reinicia nada ni pierde alertas.</p>
+</div>
+<ol class="tabs-list">
+<li>
+<button aria-label="Ver la pestaña Resumen en el panel" class="keycap" data-i18n-aria="a9" data-tab="0" type="button">1</button>
+<h3 data-i18n="t27">Resumen<small>7 módulos y la franja OB + FVG</small></h3>
+<div class="mods">
+<p data-i18n="t33"><b>Cuenta y posición:</b> balance, equidad, flotante, nivel de margen, apalancamiento usado y precio de stop out.</p>
+<p data-i18n="t34"><b>Confluencia:</b> un puntaje que cuenta cuántos módulos están a favor y cuántos en contra.</p>
+<p data-i18n="t35"><b>RSI, ADX pistola, Fuerza del par con Heikin Ashi MTF y FlowPulse</b> en varias temporalidades a la vez, con la estructura MTF por impulsos ATR.</p>
+<p data-i18n="t36"><b>Smart OB y FVG Radar:</b> te dice si el BID está dentro de un Order Block o un imbalance de 4H, diario, semanal o mensual, y cuánto ha penetrado.</p>
+</div>
+</li>
+<li>
+<button aria-label="Ver la pestaña Herramientas en el panel" class="keycap" data-i18n-aria="a10" data-tab="1" type="button">2</button>
+<h3 data-i18n="t28">Herramientas<small>4 módulos</small></h3>
+<div class="mods">
+<p data-i18n="t37"><b>Volumen relativo:</b> volumen de ticks contra el promedio o contra la misma hora de días anteriores.</p>
+<p data-i18n="t38"><b>Sesiones y niveles psicológicos:</b> cajas de Tokio, Londres y Nueva York, y niveles 00/50 en el gráfico.</p>
+<p data-i18n="t39"><b>Plantillas de velas</b> para cambiar fondo y velas con un clic, y <b>rectángulos con precio</b> en sus bordes.</p>
+</div>
+</li>
+<li>
+<button aria-label="Ver la pestaña Perfil de volumen en el panel" class="keycap" data-i18n-aria="a11" data-tab="2" type="button">3</button>
+<h3 data-i18n="t29">Perfil vol.<small>1 módulo</small></h3>
+<div class="mods"><p data-i18n="t40">Perfil de volumen de cualquier vela con POC, VAH y VAL. Pulsas <kbd>S</kbd> y luego haces clic en la vela que quieres abrir.</p></div>
+</li>
+<li>
+<button aria-label="Ver la pestaña Quiebre en el panel" class="keycap" data-i18n-aria="a12" data-tab="3" type="button">4</button>
+<h3 data-i18n="t30">Quiebre<small>Simulador y lotaje seguro</small></h3>
+<div class="mods"><p data-i18n="t41">Simula una compra o venta con el lote y el balance que elijas, y dibuja su margin call y su stop out. También dice cuántos días típicos de movimiento (ATR D1) te separan del quiebre.</p></div>
+</li>
+<li>
+<button aria-label="Ver la pestaña Caídas en el panel" class="keycap" data-i18n-aria="a13" data-tab="4" type="button">5</button>
+<h3 data-i18n="t31">Caídas<small>Caídas históricas</small></h3>
+<div class="mods"><p data-i18n="t42">Mide las caídas reales del activo en su historial y calcula el lote con el que tu cuenta resistiría la peor de ellas. Es una referencia, no una recomendación.</p></div>
+</li>
+<li>
+<button aria-label="Ver la pestaña CRT en el panel" class="keycap" data-i18n-aria="a14" data-tab="5" type="button">6</button>
+<h3 data-i18n="t32">CRT<small>Escáner de 3 velas en 9 temporalidades</small></h3>
+<div class="mods"><p data-i18n="t43">Busca el patrón CRT: vela de rango, barrido de un extremo con cierre dentro y confirmación en la temporalidad inferior. Solo marca LISTO cuando se cumple todo.</p></div>
+</li>
+</ol>
+</div>
+</section>
+<section id="guia" class="guide" aria-labelledby="h-guia">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2 id="h-guia"><span class="i-es">Guía completa de los 17 módulos</span><span class="i-en">Complete guide to the 17 modules</span></h2>
+      <p class="i-es">Qué mide cada módulo, cómo se lee en pantalla y qué ajustes trae por defecto. Los valores salen del código de la versión 3.15 y todos se pueden cambiar en los parámetros.</p>
+      <p class="i-en">What each module measures, how to read it on screen and what it ships with. The values come straight from the version 3.15 code, and every one of them can be changed in the inputs.</p>
+    </div>
+
+    <div class="filters" role="group" aria-label="Filtrar por pestaña / Filter by tab">
+      <button type="button" class="chip" data-filter="all" aria-pressed="true"><span class="i-es">Todos</span><span class="i-en">All</span></button>
+      <button type="button" class="chip" data-filter="1" aria-pressed="false"><b>1</b> <span class="i-es">Resumen</span><span class="i-en">Summary</span></button>
+      <button type="button" class="chip" data-filter="2" aria-pressed="false"><b>2</b> <span class="i-es">Herramientas</span><span class="i-en">Tools</span></button>
+      <button type="button" class="chip" data-filter="3" aria-pressed="false"><b>3</b> <span class="i-es">Perfil vol.</span><span class="i-en">Volume profile</span></button>
+      <button type="button" class="chip" data-filter="4" aria-pressed="false"><b>4</b> <span class="i-es">Quiebre</span><span class="i-en">Wipeout</span></button>
+      <button type="button" class="chip" data-filter="5" aria-pressed="false"><b>5</b> <span class="i-es">Caídas</span><span class="i-en">Drops</span></button>
+      <button type="button" class="chip" data-filter="6" aria-pressed="false"><b>6</b> CRT</button>
+    </div>
+
+    <div class="library">
+      <nav class="mod-index" aria-label="Indice de modulos / Module index">
+        <ol>
+          <li data-tab="1"><a href="#m-cta"><span class="i-es">Cuenta y posición</span><span class="i-en">Account and position</span></a></li>
+          <li data-tab="1"><a href="#m-ia"><span class="i-es">Confluencia</span><span class="i-en">Confluence</span></a></li>
+          <li data-tab="1"><a href="#m-rsi">RSI Dash</a></li>
+          <li data-tab="1"><a href="#m-adx"><span class="i-es">ADX pistola</span><span class="i-en">ADX gun</span></a></li>
+          <li data-tab="1"><a href="#m-fpb"><span class="i-es">Fuerza del par</span><span class="i-en">Pair strength</span></a></li>
+          <li data-tab="1"><a href="#m-fps">FlowPulse</a></li>
+          <li data-tab="1"><a href="#m-imp"><span class="i-es">Estructura MTF</span><span class="i-en">MTF structure</span></a></li>
+          <li data-tab="1"><a href="#m-obx">Smart OB</a></li>
+          <li data-tab="1"><a href="#m-fvg">FVG Radar</a></li>
+          <li data-tab="2"><a href="#m-vol"><span class="i-es">Volumen relativo</span><span class="i-en">Relative volume</span></a></li>
+          <li data-tab="2"><a href="#m-ses"><span class="i-es">Sesiones y Psy</span><span class="i-en">Sessions and Psy</span></a></li>
+          <li data-tab="2"><a href="#m-plt"><span class="i-es">Plantillas</span><span class="i-en">Templates</span></a></li>
+          <li data-tab="2"><a href="#m-rct"><span class="i-es">Rectángulos</span><span class="i-en">Rectangles</span></a></li>
+          <li data-tab="3"><a href="#m-vzm"><span class="i-es">Perfil de volumen</span><span class="i-en">Volume profile</span></a></li>
+          <li data-tab="4"><a href="#m-mq"><span class="i-es">Medidor de quiebre</span><span class="i-en">Wipeout meter</span></a></li>
+          <li data-tab="5"><a href="#m-cai"><span class="i-es">Caídas históricas</span><span class="i-en">Historical drops</span></a></li>
+          <li data-tab="6"><a href="#m-crt"><span class="i-es">Escáner CRT</span><span class="i-en">CRT scanner</span></a></li>
+        </ol>
+      </nav>
+
+      <div class="mods-list">
+
+        <article class="mod" id="m-cta" data-tab="1">
+          <header><kbd>1</kbd><h3><span class="i-es">Cuenta y posición</span><span class="i-en">Account and position</span></h3></header>
+          <p class="i-es">Tu cuenta en vivo sin abrir la terminal: balance, equidad, flotante, nivel de margen, tamaño de tu posición en dólares y en pesos, apalancamiento que estás usando y el precio exacto donde el broker te cerraría por stop out.</p>
+          <p class="i-en">Your live account without opening the terminal: balance, equity, floating P/L, margin level, your position size in dollars and pesos, the leverage you are using, and the exact price where the broker would close you at stop out.</p>
+          <ul class="i-es">
+            <li>Equidad, flotante y "QUEMA EN" brillan en verde si van a favor y en rojo si van en contra.</li>
+            <li>Dibuja en el gráfico la línea del precio de stop out, con su valor.</li>
+            <li>Sigue visible aunque minimices el panel con <kbd>M</kbd>.</li>
+          </ul>
+          <ul class="i-en">
+            <li>Equity, floating P/L and "WIPED OUT AT" glow green when in your favor and red when against you.</li>
+            <li>Draws the stop out price line on the chart, with its value.</li>
+            <li>Stays visible even when you minimize the panel with <kbd>M</kbd>.</li>
+          </ul>
+          <p class="cfg"><span class="i-es">Por defecto: tipo de cambio USD/MXN del broker (o uno manual) y línea de quiebre activada.</span><span class="i-en">Defaults: the broker's USD/MXN rate (or a manual one) and the wipeout line turned on.</span></p>
+        </article>
+
+        <article class="mod" id="m-ia" data-tab="1">
+          <header><kbd>1</kbd><h3><span class="i-es">Confluencia</span><span class="i-en">Confluence</span></h3></header>
+          <p class="i-es">Junta las lecturas de los demás módulos en un puntaje de −100 a +100 y lo traduce a un veredicto en palabras. Más abajo explicamos el cálculo completo.</p>
+          <p class="i-en">Combines the readings of the other modules into a score from −100 to +100 and turns it into a verdict in plain words. The full calculation is explained further down.</p>
+          <ul class="i-es">
+            <li>Mosaicos de lectura: votos a favor y en contra, volumen, patrón de velas de la última vela cerrada y zonas activas.</li>
+            <li>Zonas activas: dice si el BID está DENTRO de un Order Block o un imbalance de 4H, diario, semanal o mensual, con su rango y el % de penetración. Si no hay ninguna, muestra la más cercana y su distancia.</li>
+            <li>Patrones que reconoce: envolvente, estrella de la mañana y de la tarde, martillo, estrella fugaz, pin bar, inside bar y doji, solo en velas cerradas.</li>
+          </ul>
+          <ul class="i-en">
+            <li>Reading tiles: votes for and against, volume, the candle pattern of the last closed candle and active zones.</li>
+            <li>Active zones: tells you whether the BID is INSIDE a 4H, daily, weekly or monthly Order Block or imbalance, with its range and how deep it has gone. If there is none, it shows the nearest one and its distance.</li>
+            <li>Patterns it recognizes: engulfing, morning and evening star, hammer, shooting star, pin bar, inside bar and doji, on closed candles only.</li>
+          </ul>
+          <p class="cfg"><span class="i-es">Por defecto: sesgo desde 25 puntos, fuerte desde 60, voto mínimo de 20 por módulo. Alerta de veredicto apagada.</span><span class="i-en">Defaults: bias from 25 points, strong from 60, a minimum of 20 for a module to vote. Verdict alert off.</span></p>
+        </article>
+
+        <article class="mod" id="m-rsi" data-tab="1">
+          <header><kbd>1</kbd><h3>RSI Dash</h3></header>
+          <p class="i-es">Una cuadrícula de RSI(14): seis temporalidades (M1, M5, M15, H1, H4, D1) por las últimas 10 velas. De un vistazo ves si el impulso está alineado en todas o solo en algunas.</p>
+          <p class="i-en">An RSI(14) grid: six timeframes (M1, M5, M15, H1, H4, D1) across the last 10 candles. At a glance you see whether momentum lines up everywhere or only in some places.</p>
+          <ul class="i-es">
+            <li>Verde fuerte con RSI de 60 o más, rojo fuerte con 40 o menos, gris cerca de 50 (±2).</li>
+            <li>Marca sobrecompra en 70 y sobreventa en 30.</li>
+            <li>Junto a cada fila: valor RSI, cambio y racha. Abajo, un resumen de sesgo, fuerza, momentum y cierre.</li>
+            <li>Puede avisarte cuando todas las filas cierran en color fuerte del mismo lado.</li>
+          </ul>
+          <ul class="i-en">
+            <li>Strong green with RSI at 60 or above, strong red at 40 or below, gray near 50 (±2).</li>
+            <li>Flags overbought at 70 and oversold at 30.</li>
+            <li>Next to each row: RSI value, change and streak. Below, a summary of bias, strength, momentum and close.</li>
+            <li>Can alert you when every row closes in a strong color on the same side.</li>
+          </ul>
+          <p class="cfg"><span class="i-es">Peso en la confluencia: 30. Refresco de la vela actual: cada segundo.</span><span class="i-en">Confluence weight: 30. Current candle refresh: every second.</span></p>
+        </article>
+
+        <article class="mod" id="m-adx" data-tab="1">
+          <header><kbd>1</kbd><h3><span class="i-es">ADX pistola</span><span class="i-en">ADX gun</span></h3></header>
+          <p class="i-es">Un tablero de ADX con cinco periodos (7, 21, 42, 89 y 144) en nueve temporalidades, de M1 a mensual. Se llama "pistola" porque arma la entrada como un arma: la empuñadura son las cinco filas de M1 y el cañón son las filas 7 y 21 de M5. Cuando todo apunta al mismo lado, dispara una flecha.</p>
+          <p class="i-en">An ADX board with five periods (7, 21, 42, 89 and 144) across nine timeframes, from M1 to monthly. It is called a "gun" because it builds the entry like one: the grip is the five M1 rows and the barrel is the 7 and 21 rows of M5. When everything points the same way, it fires an arrow.</p>
+          <ul class="i-es">
+            <li>Estados en palabras: NO ENTRES, ESPERANDO, ATENTO, ENTRA COMPRA / VENTA, MANTENER y SALIR.</li>
+            <li>Flecha de entrada en la vela cerrada, marca de salida cuando cambia la dirección y una línea de TP en cada flecha. Opcional: estadística de las flechas pasadas con TP de 1.5 ATR y SL de 1 ATR.</li>
+            <li>La fuerza se decide por la pendiente del ADX, no solo por su nivel.</li>
+          </ul>
+          <ul class="i-en">
+            <li>States in words: DO NOT ENTER, WAITING, WATCH, ENTER BUY / SELL, HOLD and EXIT.</li>
+            <li>An entry arrow on the closed candle, an exit mark when the direction changes and a TP line on every arrow. Optional: stats for past arrows with a 1.5 ATR TP and a 1 ATR SL.</li>
+            <li>Strength is judged by the ADX slope, not just its level.</li>
+          </ul>
+          <p class="cfg"><span class="i-es">Peso en la confluencia: 30. Es el disparador de los estados CONFIRMADA y SIN RESPALDO.</span><span class="i-en">Confluence weight: 30. It is the trigger for the CONFIRMED and UNSUPPORTED states.</span></p>
+        </article>
+
+        <article class="mod" id="m-fpb" data-tab="1">
+          <header><kbd>1</kbd><h3><span class="i-es">Fuerza del par y Heikin Ashi MTF</span><span class="i-en">Pair strength and MTF Heikin Ashi</span></h3></header>
+          <p class="i-es">Separa el par en sus dos monedas y da a cada una una fuerza de 0 a 10 según dónde está el precio dentro de su rango. La barra fina usa la vela diaria actual y la gruesa las últimas 20 velas de tu gráfico.</p>
+          <p class="i-en">Splits the pair into its two currencies and gives each a strength from 0 to 10 based on where price sits inside its range. The thin bar uses the current daily candle and the thick bar the last 20 candles of your chart.</p>
+          <ul class="i-es">
+            <li>Debajo, una cuadrícula con el color de la vela Heikin Ashi en cada temporalidad.</li>
+            <li>Las velas Heikin Ashi también se pueden encender en el gráfico con la tecla <kbd>A</kbd>.</li>
+          </ul>
+          <ul class="i-en">
+            <li>Below it, a grid with the Heikin Ashi candle color on each timeframe.</li>
+            <li>Heikin Ashi candles can also be switched on in the chart with the <kbd>A</kbd> key.</li>
+          </ul>
+          <p class="cfg"><span class="i-es">Peso en la confluencia: 15.</span><span class="i-en">Confluence weight: 15.</span></p>
+        </article>
+
+        <article class="mod" id="m-fps" data-tab="1">
+          <header><kbd>1</kbd><h3>FlowPulse <span class="sub"><span class="i-es">y la Señal LEGION</span><span class="i-en">and the LEGION signal</span></span></h3></header>
+          <p class="i-es">Mide el "flujo" en muchas ventanas de tiempo a la vez: 8 a 1 días, 18 a 1 horas y 45 a 1 minutos. Para cada ventana calcula en qué parte de su rango está el precio y lo convierte en un valor de −100 a +100 con flecha de dirección.</p>
+          <p class="i-en">Measures "flow" across many time windows at once: 8 to 1 days, 18 to 1 hours and 45 to 1 minutes. For each window it works out where price sits inside its range and turns it into a value from −100 to +100 with a direction arrow.</p>
+          <ul class="i-es">
+            <li>Ventanas tipo reloj: el bloque de 2H es la vela de 2 horas real, no las últimas N velas.</li>
+            <li>Dibuja la Señal LEGION (un punto en la vela) cuando se cumplen a la vez todas las confluencias activas. Las explicamos en Estrategias.</li>
+            <li>También incluye el medidor de velotas M5 y el Contraataque, explicados en Estrategias.</li>
+          </ul>
+          <ul class="i-en">
+            <li>Clock-style windows: the 2H block is the real 2-hour candle, not the last N candles.</li>
+            <li>Draws the LEGION signal (a dot on the candle) when every active confluence is met at once. See Strategies.</li>
+            <li>It also includes the M5 big-candle meter and the Counterattack, both explained in Strategies.</li>
+          </ul>
+          <p class="cfg"><span class="i-es">Peso en la confluencia: 25. Neutral hasta ±5. Se evalúa tick a tick.</span><span class="i-en">Confluence weight: 25. Neutral up to ±5. Evaluated on every tick.</span></p>
+        </article>
+
+        <article class="mod" id="m-imp" data-tab="1">
+          <header><kbd>1</kbd><h3><span class="i-es">Estructura MTF e impulsos ATR</span><span class="i-en">MTF structure and ATR impulses</span></h3></header>
+          <p class="i-es">Lee la tendencia por estructura externa de mensual a M1. Un swing solo se confirma cuando el precio retrocede 3 ATR, así se filtra el ruido. Dibuja impulsos, correcciones y el tramo actual con niveles de Fibonacci.</p>
+          <p class="i-en">Reads trend from external structure, monthly down to M1. A swing is only confirmed after a 3 ATR pullback, which filters out noise. It draws impulses, corrections and the current leg with Fibonacci levels.</p>
+          <ul class="i-es">
+            <li>Alineación: W1, D1 y H4 del mismo lado. El mensual se muestra pero no es obligatorio.</li>
+            <li>Entrada: un CHoCH o BOS a favor dentro de la zona Fibo de la temporalidad mayor. Mientras tanto dice ESPERAR y por qué.</li>
+            <li>De M30 hacia abajo usa la técnica de pantalla; de H1 hacia arriba, Fibonacci.</li>
+            <li>Ruptura por cierre de vela, no por mecha. Dibujos ocultos al iniciar; la tecla <kbd>T</kbd> los muestra.</li>
+          </ul>
+          <ul class="i-en">
+            <li>Alignment: W1, D1 and H4 on the same side. Monthly is shown but not required.</li>
+            <li>Entry: a CHoCH or BOS in your favor inside the higher-timeframe Fibo zone. Until then it says WAIT and why.</li>
+            <li>M30 and below use the screen technique; H1 and above use Fibonacci.</li>
+            <li>Breaks are confirmed by candle close, not by wick. Drawings start hidden; the <kbd>T</kbd> key shows them.</li>
+          </ul>
+          <p class="cfg"><span class="i-es">Peso en la confluencia: 25. Una entrada de este módulo también puede dar COMPRA o VENTA CONFIRMADA.</span><span class="i-en">Confluence weight: 25. An entry from this module can also produce BUY or SELL CONFIRMED.</span></p>
+        </article>
+
+        <article class="mod" id="m-obx" data-tab="1">
+          <header><kbd>1</kbd><h3>Smart OB <span class="sub"><span class="i-es">multitemporal con radar</span><span class="i-en">multi-timeframe, with radar</span></span></h3></header>
+          <p class="i-es">Busca Order Blocks reales, no cualquier vela opuesta. Un OB es la última vela contraria antes de una carrera de 3 o más velas que rompe estructura o deja un FVG. Si no hay FVG, no hay OB.</p>
+          <p class="i-en">Finds real Order Blocks, not just any opposite candle. An OB is the last opposite candle before a run of 3 or more candles that breaks structure or leaves an FVG. No FVG, no OB.</p>
+          <ul class="i-es">
+            <li>Acepta impulsos cortos de 1 o 2 velas solo si dejan un FVG grande (0.8 ATR o más).</li>
+            <li>Radar de H1, H4, D1, W1 y mensual con tres estados: DENTRO (el LED parpadea), CERCA (a media ATR de H1) y LIBRE.</li>
+            <li>Las zonas mitigadas se borran solas. Cada OB lleva su precio de entrada en una etiqueta.</li>
+            <li>Tecla <kbd>O</kbd> para mostrar u ocultar, y <kbd>Ctrl</kbd> + <kbd>1</kbd>&ndash;<kbd>5</kbd> para cada temporalidad.</li>
+          </ul>
+          <ul class="i-en">
+            <li>Short 1 or 2 candle impulses are accepted only if they leave a large FVG (0.8 ATR or more).</li>
+            <li>Radar for H1, H4, D1, W1 and monthly with three states: INSIDE (the LED blinks), NEAR (within half an H1 ATR) and FREE.</li>
+            <li>Mitigated zones are removed automatically. Each OB carries its entry price on a label.</li>
+            <li><kbd>O</kbd> shows or hides them, and <kbd>Ctrl</kbd> + <kbd>1</kbd>&ndash;<kbd>5</kbd> toggles each timeframe.</li>
+          </ul>
+          <p class="cfg"><span class="i-es">Alertas al entrar en un OB: ventana, sonido o push, apagadas por defecto.</span><span class="i-en">Alerts when price enters an OB: popup, sound or push, off by default.</span></p>
+        </article>
+
+        <article class="mod" id="m-fvg" data-tab="1">
+          <header><kbd>1</kbd><h3>FVG Radar</h3></header>
+          <p class="i-es">Detecta imbalances (Fair Value Gaps) de 3 velas en H1, H4, D1, W1, mensual y la temporalidad de tu gráfico. La vela del medio tiene que cerrar en la dirección del hueco.</p>
+          <p class="i-en">Detects 3-candle imbalances (Fair Value Gaps) on H1, H4, D1, W1, monthly and your chart's timeframe. The middle candle has to close in the gap's direction.</p>
+          <ul class="i-es">
+            <li>Se recorta a medida que se llena, así ves solo la parte pendiente. Se mitiga con cuerpos de vela.</li>
+            <li>Caja con el precio de entrada: arriba en los alcistas y abajo en los bajistas.</li>
+            <li>Radar con estados CERCA y DENTRO, y aviso dentro del panel en lugar de ventanas emergentes.</li>
+            <li>Tecla <kbd>F</kbd> para mostrar u ocultar, y <kbd>Shift</kbd> + <kbd>1</kbd>&ndash;<kbd>5</kbd> por temporalidad.</li>
+          </ul>
+          <ul class="i-en">
+            <li>It trims itself as it fills, so you only see the pending part. Bodies mitigate it.</li>
+            <li>A box with the entry price: above bullish gaps and below bearish ones.</li>
+            <li>Radar with NEAR and INSIDE states, and a notice inside the panel instead of popups.</li>
+            <li><kbd>F</kbd> shows or hides them, and <kbd>Shift</kbd> + <kbd>1</kbd>&ndash;<kbd>5</kbd> toggles each timeframe.</li>
+          </ul>
+          <p class="cfg"><span class="i-es">Por defecto: hasta 30 FVG por temporalidad, revisando 500 velas.</span><span class="i-en">Defaults: up to 30 FVGs per timeframe, scanning 500 candles.</span></p>
+        </article>
+
+        <article class="mod" id="m-vol" data-tab="2">
+          <header><kbd>2</kbd><h3><span class="i-es">Volumen relativo</span><span class="i-en">Relative volume</span></h3></header>
+          <p class="i-es">Compara el volumen de ticks de cada vela con el de la misma hora de los últimos 10 días, que es más justo que un promedio simple porque cada sesión tiene su ritmo. Si no hay historial suficiente usa el promedio de 20 velas.</p>
+          <p class="i-en">Compares each candle's tick volume with the same hour over the last 10 days, which is fairer than a plain average because every session has its own pace. Without enough history it falls back to a 20-candle average.</p>
+          <ul class="i-es">
+            <li>Clases: NORMAL, ALTO, EXTREMO (2.5 veces o más) y ABSORCIÓN (mucho volumen con cuerpo pequeño, 35% del rango o menos).</li>
+            <li>Proyecta el volumen de la vela que se está formando.</li>
+            <li>Histograma debajo de las velas con la línea de referencia.</li>
+          </ul>
+          <ul class="i-en">
+            <li>Classes: NORMAL, HIGH, EXTREME (2.5 times or more) and ABSORPTION (heavy volume with a small body, 35% of range or less).</li>
+            <li>Projects the volume of the candle that is still forming.</li>
+            <li>A histogram under the candles with the baseline.</li>
+          </ul>
+          <p class="cfg"><span class="i-es">Alertas activas para volumen extremo y absorción, al cierre de la vela. Ajusta la confianza de la confluencia en ±10.</span><span class="i-en">Alerts on for extreme volume and absorption, at candle close. Adjusts confluence confidence by ±10.</span></p>
+        </article>
+
+        <article class="mod" id="m-ses" data-tab="2">
+          <header><kbd>2</kbd><h3><span class="i-es">Sesiones y niveles psicológicos</span><span class="i-en">Sessions and psychological levels</span></h3></header>
+          <p class="i-es">Cajas de Tokio (09:00 a 16:00), Londres (08:00 a 17:00) y Nueva York (hasta las 17:00), cada una en su hora local y con el cambio de horario aplicado. Nueva York empieza cuando termina Londres, sin traslape.</p>
+          <p class="i-en">Boxes for Tokyo (09:00 to 16:00), London (08:00 to 17:00) and New York (until 17:00), each in its own local time with daylight saving applied. New York starts when London ends, with no overlap.</p>
+          <ul class="i-es">
+            <li>Te avisa si la hora del servidor de tu broker no coincide con la configurada.</li>
+            <li>Niveles psicológicos 00 y 50, y opcionalmente cada 10.</li>
+            <li>Teclas <kbd>E</kbd> para las sesiones y <kbd>Y</kbd> para los niveles.</li>
+          </ul>
+          <ul class="i-en">
+            <li>Warns you if your broker's server time does not match the configured one.</li>
+            <li>Psychological levels at 00 and 50, and optionally every 10.</li>
+            <li><kbd>E</kbd> toggles the sessions and <kbd>Y</kbd> the levels.</li>
+          </ul>
+          <p class="cfg"><span class="i-es">Por defecto: 365 días de historial y hasta 500 cajas.</span><span class="i-en">Defaults: 365 days of history and up to 500 boxes.</span></p>
+        </article>
+
+        <article class="mod" id="m-plt" data-tab="2">
+          <header><kbd>2</kbd><h3><span class="i-es">Plantillas de velas</span><span class="i-en">Candle templates</span></h3></header>
+          <p class="i-es">Cambia el fondo, las velas, la cuadrícula y la línea Ask del gráfico con un clic, incluido un tema personal con tus colores. No toca tus indicadores ni tus objetos.</p>
+          <p class="i-en">Changes the chart background, candles, grid and Ask line in one click, including a personal theme with your own colors. It does not touch your indicators or objects.</p>
+        </article>
+
+        <article class="mod" id="m-rct" data-tab="2">
+          <header><kbd>2</kbd><h3><span class="i-es">Rectángulos con precio</span><span class="i-en">Rectangles with price</span></h3></header>
+          <p class="i-es">Pone el precio en los bordes de los rectángulos que dibujas (también con la tecla <kbd>R</kbd>, en dos clics), con el 50% opcional. Los extiende hasta la vela actual mientras el precio no los cruce y solo muestra los del símbolo abierto.</p>
+          <p class="i-en">Puts the price on the edges of the rectangles you draw (also with the <kbd>R</kbd> key, in two clicks), with an optional 50% line. It extends them to the current candle until price crosses them, and only shows the ones for the open symbol.</p>
+        </article>
+
+        <article class="mod" id="m-vzm" data-tab="3">
+          <header><kbd>3</kbd><h3><span class="i-es">Perfil de volumen</span><span class="i-en">Volume profile</span></h3></header>
+          <p class="i-es">El perfil de una vela "madre" (semanal, diaria o 4H) armado con datos de M1: dónde se negoció más dentro de esa vela. Viene apagado: lo enciendes con <kbd>V</kbd> y sigue la vela semanal en vivo; con <kbd>S</kbd> y un clic eliges cualquier otra.</p>
+          <p class="i-en">The profile of a "mother" candle (weekly, daily or 4H) built from M1 data: where most trading happened inside that candle. It starts off: turn it on with <kbd>V</kbd> and it follows the live weekly candle; press <kbd>S</kbd> and click to pick any other.</p>
+          <ul class="i-es">
+            <li>POC (precio con más actividad), VAH y VAL con un área de valor del 70%, en 50 niveles de precio.</li>
+            <li>Perfil por tiempo o por volumen, y desglose con mini velas de la temporalidad inferior.</li>
+            <li>Puedes sumar hasta 5 velas madre hacia atrás.</li>
+          </ul>
+          <ul class="i-en">
+            <li>POC (the busiest price), VAH and VAL with a 70% value area, across 50 price levels.</li>
+            <li>Profile by time or by volume, plus a breakdown with mini candles from the lower timeframe.</li>
+            <li>You can add up to 5 mother candles going back.</li>
+          </ul>
+          <p class="cfg"><span class="i-es">Peso del cierre de la vela madre en la confluencia: 10.</span><span class="i-en">Weight of the mother candle close in the confluence: 10.</span></p>
+        </article>
+
+        <article class="mod" id="m-mq" data-tab="4">
+          <header><kbd>4</kbd><h3><span class="i-es">Medidor de quiebre (simulador)</span><span class="i-en">Wipeout meter (simulator)</span></h3></header>
+          <p class="i-es">Antes de abrir, simula una compra o venta con el lote y el balance que quieras, o con tu cuenta real, y te dibuja dónde llegaría el margin call y dónde el stop out con los niveles de tu broker.</p>
+          <p class="i-en">Before you open a trade, simulate a buy or sell with any lot and balance, or with your real account, and it draws where margin call and stop out would land using your broker's levels.</p>
+          <ul class="i-es">
+            <li>La distancia al quiebre en % y en días típicos de movimiento (ATR D1 de 14).</li>
+            <li>El lote que te quemaría con un movimiento en contra del 5%, y un escenario de caída del 30%.</li>
+            <li>TP simulado a 1 ATR diario, zonas sombreadas de riesgo y de TP, y valores en tu moneda local.</li>
+          </ul>
+          <ul class="i-en">
+            <li>Distance to wipeout in % and in typical days of movement (D1 ATR 14).</li>
+            <li>The lot size that a 5% adverse move would wipe out, and a 30% drop scenario.</li>
+            <li>A simulated TP at 1 daily ATR, shaded risk and TP zones, and values in your local currency.</li>
+          </ul>
+          <p class="cfg"><span class="i-es">Las líneas solo se ven con la pestaña QUIEBRE abierta. Nunca envía órdenes.</span><span class="i-en">Its lines only show with the WIPEOUT tab open. It never sends orders.</span></p>
+        </article>
+
+        <article class="mod" id="m-cai" data-tab="5">
+          <header><kbd>5</kbd><h3><span class="i-es">Caídas históricas y lotaje seguro</span><span class="i-en">Historical drops and max-drop lot size</span></h3></header>
+          <p class="i-es">Recorre el historial del activo y detecta cada caída del 20% o más, confirmada por un rebote del 10%. Te dice cuánto cayó, cuánto tardó y cuánto tardó en recuperarse, y te deja navegar evento por evento.</p>
+          <p class="i-en">Walks the asset's history and detects every drop of 20% or more, confirmed by a 10% rebound. It tells you how deep it went, how long it took and how long it took to recover, and lets you step through event by event.</p>
+          <ul class="i-es">
+            <li>Lotaje seguro: el lote máximo con el que tu cuenta habría resistido la peor caída, incluido el swap del tiempo atrapado.</li>
+            <li>Revisa tus posiciones reales y una compra nueva contra esas caídas: OK, en el límite o QUIEBRE.</li>
+            <li>Alerta cuando la caída actual pasa del −20, −30, −40 o −50%.</li>
+          </ul>
+          <ul class="i-en">
+            <li>Max-drop lot size: the largest lot your account would have survived the worst drop with, swap for the time stuck included.</li>
+            <li>Checks your real positions and a new buy against those drops: OK, at the limit or WIPEOUT.</li>
+            <li>Alerts when the current drop passes −20, −30, −40 or −50%.</li>
+          </ul>
+          <p class="cfg"><span class="i-es">Es una referencia del pasado, no una probabilidad. La tecla <kbd>H</kbd> muestra u oculta sus dibujos.</span><span class="i-en">It is a reference from the past, not a probability. The <kbd>H</kbd> key shows or hides its drawings.</span></p>
+        </article>
+
+        <article class="mod" id="m-crt" data-tab="6">
+          <header><kbd>6</kbd><h3><span class="i-es">Escáner CRT de 3 velas</span><span class="i-en">3-candle CRT scanner</span></h3></header>
+          <p class="i-es">Busca el patrón Candle Range Theory en nueve temporalidades a la vez (M5 a mensual) y te dice en cuál está listo. Cómo se forma, paso a paso, está en Estrategias.</p>
+          <p class="i-en">Looks for the Candle Range Theory pattern on nine timeframes at once (M5 to monthly) and tells you which one is ready. How it forms, step by step, is covered in Strategies.</p>
+          <ul class="i-es">
+            <li>Cada temporalidad confirma en la de abajo: M5 en M1, M15 y M30 en M5, H1 en M15, H4 en H1, D1 en H4, W1 en D1 y mensual en W1.</li>
+            <li>Estados por fila: dentro, ATENTO, BARRIENDO, PROVISIONAL, LISTO, INVALIDADO, TP YA HECHO o descartado por doble barrido.</li>
+            <li>Flechas de LISTO desde M15 y niveles CRH, CRL y 50% con la tecla <kbd>K</kbd>.</li>
+          </ul>
+          <ul class="i-en">
+            <li>Each timeframe confirms on the one below: M5 on M1, M15 and M30 on M5, H1 on M15, H4 on H1, D1 on H4, W1 on D1 and monthly on W1.</li>
+            <li>Row states: inside, WATCH, SWEEPING, PROVISIONAL, READY, INVALIDATED, TP ALREADY HIT or discarded for a double sweep.</li>
+            <li>READY arrows from M15 up, and CRH, CRL and 50% levels with the <kbd>K</kbd> key.</li>
+          </ul>
+          <p class="cfg"><span class="i-es">Por defecto: R:R mínimo 1.5, SL 10 puntos más allá del barrido, filtros de hora y spread opcionales.</span><span class="i-en">Defaults: minimum R:R 1.5, SL 10 points beyond the sweep, optional hour and spread filters.</span></p>
+        </article>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="confluencia" class="conf" aria-labelledby="h-conf">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2 id="h-conf"><span class="i-es">Cómo se calcula la confluencia</span><span class="i-en">How confluence is calculated</span></h2>
+      <p class="i-es">Cada módulo vota a favor de la compra o de la venta con un peso. La suma da un puntaje de −100 a +100. Un módulo solo vota si su lectura pasa de 20 puntos, así una señal débil no inclina la balanza.</p>
+      <p class="i-en">Each module votes for buy or sell with a weight. The total gives a score from −100 to +100. A module only votes if its reading is above 20 points, so a weak reading does not tip the scale.</p>
+    </div>
+    <div class="conf-grid">
+      <figure class="weights">
+        <figcaption><span class="i-es">Peso de cada módulo (valores por defecto)</span><span class="i-en">Weight of each module (defaults)</span></figcaption>
+        <div class="w"><span>RSI Dash</span><i style="--w:30"></i><b>30</b></div>
+        <div class="w"><span><span class="i-es">ADX pistola</span><span class="i-en">ADX gun</span></span><i style="--w:30"></i><b>30</b></div>
+        <div class="w"><span>FlowPulse</span><i style="--w:25"></i><b>25</b></div>
+        <div class="w"><span><span class="i-es">Estructura (W1 D1 H4)</span><span class="i-en">Structure (W1 D1 H4)</span></span><i style="--w:25"></i><b>25</b></div>
+        <div class="w"><span><span class="i-es">Fuerza del par</span><span class="i-en">Pair strength</span></span><i style="--w:15"></i><b>15</b></div>
+        <div class="w"><span><span class="i-es">Vela madre (perfil)</span><span class="i-en">Mother candle (profile)</span></span><i style="--w:10"></i><b>10</b></div>
+        <div class="w alt"><span><span class="i-es">Volumen alto o bajo</span><span class="i-en">High or low volume</span></span><i style="--w:10"></i><b>±10</b></div>
+        <p class="fig-note i-es">El volumen no vota: sube o baja la confianza. Cada peso se cambia en los parámetros, y con 0 el módulo no cuenta.</p>
+        <p class="fig-note i-en">Volume does not vote: it raises or lowers confidence. Every weight can be changed in the inputs, and 0 leaves the module out.</p>
+      </figure>
+      <div class="ladder">
+        <h3><span class="i-es">Del puntaje al veredicto</span><span class="i-en">From score to verdict</span></h3>
+        <dl>
+          <div><dt><span class="tag t-wait"><span class="i-es">ESPERAR</span><span class="i-en">WAIT</span></span></dt><dd class="i-es">Puntaje entre −25 y +25: no hay sesgo claro.</dd><dd class="i-en">Score between −25 and +25: no clear bias.</dd></div>
+          <div><dt><span class="tag t-soft"><span class="i-es">SESGO</span><span class="i-en">BIAS</span></span></dt><dd class="i-es">Desde ±25: el mercado se inclina a un lado, todavía sin fuerza.</dd><dd class="i-en">From ±25: the market leans one way, without strength yet.</dd></div>
+          <div><dt><span class="tag t-buy"><span class="i-es">FUERTE</span><span class="i-en">STRONG</span></span></dt><dd class="i-es">Desde ±60 y ningún módulo en contra.</dd><dd class="i-en">From ±60 with no module against it.</dd></div>
+          <div><dt><span class="tag t-buy t-blink"><span class="i-es">CONFIRMADA</span><span class="i-en">CONFIRMED</span></span></dt><dd class="i-es">El ADX pistola dispara una entrada (o la estructura da CHoCH en zona) y el puntaje va del mismo lado. Parpadea.</dd><dd class="i-en">The ADX gun fires an entry (or structure prints a CHoCH in the zone) and the score agrees. It blinks.</dd></div>
+          <div><dt><span class="tag t-warn"><span class="i-es">SIN RESPALDO</span><span class="i-en">UNSUPPORTED</span></span></dt><dd class="i-es">Hay disparo de entrada pero el puntaje no lo acompaña.</dd><dd class="i-en">There is an entry trigger but the score does not back it.</dd></div>
+          <div><dt><span class="tag t-hold"><span class="i-es">MANTENER</span><span class="i-en">HOLD</span></span></dt><dd class="i-es">La operación de la última flecha sigue viva hasta su marca de salida.</dd><dd class="i-en">The trade from the last arrow is still alive until its exit mark.</dd></div>
+          <div><dt><span class="tag t-warn"><span class="i-es">VIGILAR / SALIR</span><span class="i-en">WATCH / EXIT</span></span></dt><dd class="i-es">El puntaje se volteó contra la operación abierta, o el ADX marcó la salida.</dd><dd class="i-en">The score flipped against the open trade, or the ADX marked the exit.</dd></div>
+        </dl>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="estrategias" class="strats" aria-labelledby="h-strat">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2 id="h-strat"><span class="i-es">Estrategias que el panel arma por ti</span><span class="i-en">Strategies the panel builds for you</span></h2>
+      <p class="i-es">Cinco formas de usar las lecturas, con las condiciones exactas que revisa el indicador. Son herramientas de análisis: tú decides si entras, y ninguna garantiza resultados.</p>
+      <p class="i-en">Five ways to use the readings, with the exact conditions the indicator checks. They are analysis tools: you decide whether to enter, and none of them guarantees results.</p>
+    </div>
+
+    <article class="strat">
+      <div class="strat-head">
+        <h3><span class="i-es">Señal LEGION: seguir un impulso alineado</span><span class="i-en">LEGION signal: follow an aligned impulse</span></h3>
+        <p class="i-es">Para entrar a favor cuando todo empuja al mismo lado. Aparece como un punto en la vela.</p>
+        <p class="i-en">For entering with the move when everything pushes the same way. It shows as a dot on the candle.</p>
+      </div>
+      <ol class="cond i-es">
+        <li><b>Flow:</b> las ventanas de 4H, 2H, 1H, 45M, 30M, 15M, 10M, 5M y 1M en +90 o más (compra) o −90 o menos (venta).</li>
+        <li><b>Fuerza del par:</b> la moneda fuerte en 8 o más y la débil al menos 6 puntos por debajo.</li>
+        <li><b>RSI:</b> M1, M5 y M15 del mismo lado en sus últimas 3 velas.</li>
+        <li><b>ADX:</b> la pistola formada a favor.</li>
+        <li><b>Estructura:</b> el grupo M30 a M1 alineado.</li>
+        <li><b>Heikin Ashi:</b> M1, M5, M15 y M30 del mismo color.</li>
+        <li><b>Filtro de velota:</b> si acaba de salir una vela de 2 ATR o más en M5, espera a que sus 3 velas siguientes respeten el 50%.</li>
+      </ol>
+      <ol class="cond i-en">
+        <li><b>Flow:</b> the 4H, 2H, 1H, 45M, 30M, 15M, 10M, 5M and 1M windows at +90 or more (buy) or −90 or less (sell).</li>
+        <li><b>Pair strength:</b> the strong currency at 8 or more and the weak one at least 6 points below.</li>
+        <li><b>RSI:</b> M1, M5 and M15 on the same side over their last 3 candles.</li>
+        <li><b>ADX:</b> the gun formed in your favor.</li>
+        <li><b>Structure:</b> the M30 to M1 group aligned.</li>
+        <li><b>Heikin Ashi:</b> M1, M5, M15 and M30 the same color.</li>
+        <li><b>Big-candle filter:</b> if an M5 candle of 2 ATR or more just printed, it waits for its next 3 candles to hold the 50%.</li>
+      </ol>
+      <p class="out i-es"><b>Salida:</b> dibuja un TP por puntos (3,500 en oro y 10,000 en Bitcoin por defecto; en otros símbolos lo defines tú) y lo marca con &#10003; cuando se alcanza. Puedes apagar cualquiera de las condiciones para hacerla más o menos exigente.</p>
+      <p class="out i-en"><b>Exit:</b> draws a TP in points (3,500 on gold and 10,000 on Bitcoin by default; you set it for other symbols) and marks it with &#10003; when it is hit. You can turn any condition off to make it more or less strict.</p>
+    </article>
+
+    <article class="strat">
+      <div class="strat-head">
+        <h3><span class="i-es">Zona institucional: OB o FVG más cambio de estructura</span><span class="i-en">Institutional zone: OB or FVG plus a structure shift</span></h3>
+        <p class="i-es">Para entrar en un retroceso, en una zona donde el precio ya reaccionó antes.</p>
+        <p class="i-en">For entering on a pullback, at a zone where price has reacted before.</p>
+      </div>
+      <ol class="cond i-es">
+        <li>La estructura W1, D1 y H4 alineada te da la dirección.</li>
+        <li>Espera a que el precio llegue a la zona Fibo de la temporalidad mayor. El radar OB y FVG te dice si además está DENTRO de un Order Block o un imbalance.</li>
+        <li>Entra cuando aparece un CHoCH o BOS a favor dentro de esa zona. La confluencia lo marca como CONFIRMADA si el puntaje acompaña.</li>
+      </ol>
+      <ol class="cond i-en">
+        <li>W1, D1 and H4 structure aligned gives you the direction.</li>
+        <li>Wait for price to reach the higher-timeframe Fibo zone. The OB and FVG radar tells you whether it is also INSIDE an Order Block or imbalance.</li>
+        <li>Enter when a CHoCH or BOS in your favor prints inside that zone. Confluence marks it CONFIRMED if the score agrees.</li>
+      </ol>
+      <p class="out i-es"><b>Referencia:</b> el precio de entrada de cada OB y FVG viene en su etiqueta, y las zonas se borran cuando quedan mitigadas.</p>
+      <p class="out i-en"><b>Reference:</b> each OB and FVG shows its entry price on its label, and zones disappear once they are mitigated.</p>
+    </article>
+
+    <article class="strat">
+      <div class="strat-head">
+        <h3><span class="i-es">CRT: barrido de liquidez en 3 velas</span><span class="i-en">CRT: a liquidity sweep in 3 candles</span></h3>
+        <p class="i-es">Para operar el regreso al rango después de que el precio barre un extremo.</p>
+        <p class="i-en">For trading the return into the range after price sweeps one extreme.</p>
+      </div>
+      <ol class="cond i-es">
+        <li><b>Vela A:</b> marca el rango, con su máximo (CRH) y su mínimo (CRL).</li>
+        <li><b>Vela B:</b> barre uno de los dos extremos y cierra otra vez dentro de A. Si barre los dos, se descarta.</li>
+        <li><b>Confirmación:</b> en la temporalidad inferior, dentro de las 2 velas siguientes. El patrón no puede tener más de 3 velas.</li>
+        <li><b>Riesgo:</b> SL 10 puntos más allá del barrido y objetivo en el extremo contrario de A. Solo marca LISTO si el R:R es de 1.5 o más.</li>
+      </ol>
+      <ol class="cond i-en">
+        <li><b>Candle A:</b> sets the range, with its high (CRH) and low (CRL).</li>
+        <li><b>Candle B:</b> sweeps one of the two extremes and closes back inside A. If it sweeps both, it is discarded.</li>
+        <li><b>Confirmation:</b> on the lower timeframe, within the next 2 candles. The setup cannot be older than 3 candles.</li>
+        <li><b>Risk:</b> SL 10 points beyond the sweep and target at the opposite extreme of A. It only shows READY with an R:R of 1.5 or more.</li>
+      </ol>
+      <p class="out i-es"><b>Aviso previo:</b> la fila pasa a ATENTO cuando el precio está a menos del 15% del rango de un extremo.</p>
+      <p class="out i-en"><b>Early notice:</b> the row turns WATCH when price is within 15% of the range from an extreme.</p>
+    </article>
+
+    <article class="strat">
+      <div class="strat-head">
+        <h3><span class="i-es">Contraataque: scalping contra un impulso agotado</span><span class="i-en">Counterattack: scalping against an exhausted impulse</span></h3>
+        <p class="i-es">Agresivo y de corto plazo. Aparece como un rombo naranja y solo se dibuja.</p>
+        <p class="i-en">Aggressive and short-term. It shows as an orange diamond and is drawing only.</p>
+      </div>
+      <ol class="cond i-es">
+        <li>El RSI de M5 o M15 tocó 75 (para vender) o 25 (para comprar) en las últimas 12 velas.</li>
+        <li>El Flow de 1M y 5M ya va en contra del impulso por al menos 50.</li>
+        <li>La fila de periodo 7 del ADX en M1 gira.</li>
+        <li>No llega tarde: si el precio ya devolvió más del 60% del impulso, no se marca.</li>
+      </ol>
+      <ol class="cond i-en">
+        <li>M5 or M15 RSI touched 75 (to sell) or 25 (to buy) in the last 12 candles.</li>
+        <li>The 1M and 5M Flow already runs against the impulse by at least 50.</li>
+        <li>The M1 ADX period-7 row turns.</li>
+        <li>It is never late: if price already gave back more than 60% of the impulse, it is not marked.</li>
+      </ol>
+      <p class="out i-es"><b>Salida:</b> TP en el 38.2% del impulso, SL marcado, y salida anticipada si la Heikin Ashi de M1 vuelve a favor del impulso.</p>
+      <p class="out i-en"><b>Exit:</b> TP at 38.2% of the impulse, a marked SL, and an early exit if the M1 Heikin Ashi turns back with the impulse.</p>
+    </article>
+
+    <article class="strat">
+      <div class="strat-head">
+        <h3><span class="i-es">Antes de cualquier entrada: el tamaño del lote</span><span class="i-en">Before any entry: your lot size</span></h3>
+        <p class="i-es">Para no quemar la cuenta con un lote que el activo ya demostró que puede tumbar.</p>
+        <p class="i-en">So you do not wipe out your account with a lot size the asset has already proven it can knock down.</p>
+      </div>
+      <ol class="cond i-es">
+        <li>Mira en <b>Caídas</b> la peor caída del activo y el lote que la habría resistido.</li>
+        <li>Simula tu entrada en <b>Quiebre</b> y revisa cuántos días de ATR te separan del stop out.</li>
+        <li>Confirma en <b>Cuenta y posición</b> tu nivel de margen y el precio donde te quemarías ya con la operación abierta.</li>
+      </ol>
+      <ol class="cond i-en">
+        <li>Check the asset's worst drop in <b>Drops</b> and the lot size that would have survived it.</li>
+        <li>Simulate your entry in <b>Wipeout</b> and see how many ATR days separate you from stop out.</li>
+        <li>Confirm your margin level in <b>Account and position</b> and the price where you would be wiped out once the trade is open.</li>
+      </ol>
+    </article>
+
+    <div class="vlt">
+      <h3><span class="i-es">Medidor de velotas M5</span><span class="i-en">M5 big-candle meter</span></h3>
+      <p class="i-es">Marca cada vela de M5 de 2 ATR o más (3 ATR es extrema) y la clasifica: <b>IMP</b> si es impulso (cuerpo del 70% o más y cierre en el tercio extremo), <b>BAR</b> si es barrido (mecha del 50% o más) o <b>VEL</b> si es solo grande. Luego vigila si las 3 velas siguientes respetan su 50%: OK, PERDIÓ o FALLA. La Señal LEGION espera esa prueba antes de dispararse.</p>
+      <p class="i-en">Marks every M5 candle of 2 ATR or more (3 ATR is extreme) and classifies it: <b>IMP</b> for momentum (body of 70% or more, closing in the extreme third), <b>BAR</b> for a sweep (wick of 50% or more) or <b>VEL</b> if it is just big. Then it watches whether the next 3 candles hold its 50%: OK, LOST or FAIL. The LEGION signal waits for that test before it fires.</p>
+    </div>
+  </div>
+</section>
+
+<section id="alertas" class="alerts" aria-labelledby="h-alertas" style="padding-top:0">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2 id="h-alertas"><span class="i-es">Alertas que puedes activar</span><span class="i-en">Alerts you can turn on</span></h2>
+      <p class="i-es">Cada módulo tiene sus propias alertas: ventana de MT4, sonido o notificación al celular con tu MetaQuotes ID. Todas llegan en el idioma que elegiste.</p>
+      <p class="i-en">Each module has its own alerts: an MT4 popup, a sound or a phone notification through your MetaQuotes ID. They all arrive in the language you picked.</p>
+    </div>
+    <table class="alert-table">
+      <thead><tr><th scope="col"><span class="i-es">Módulo</span><span class="i-en">Module</span></th><th scope="col"><span class="i-es">Te avisa cuando</span><span class="i-en">It tells you when</span></th><th scope="col"><span class="i-es">Al instalar</span><span class="i-en">Out of the box</span></th></tr></thead>
+      <tbody>
+        <tr><th scope="row">RSI Dash</th><td><span class="i-es">todas las filas cierran en color fuerte del mismo lado</span><span class="i-en">every row closes in a strong color on the same side</span></td><td><span class="off i-es">apagada</span><span class="off i-en">off</span></td></tr>
+        <tr><th scope="row"><span class="i-es">ADX pistola</span><span class="i-en">ADX gun</span></th><td><span class="i-es">sale cada flecha de la pistola (y, si lo activas, cada salida)</span><span class="i-en">every gun arrow prints (and, if you turn it on, every exit)</span></td><td><span class="on i-es">ventana</span><span class="on i-en">popup</span></td></tr>
+        <tr><th scope="row"><span class="i-es">Confluencia</span><span class="i-en">Confluence</span></th><td><span class="i-es">el veredicto cambia a un estado importante</span><span class="i-en">the verdict changes to an important state</span></td><td><span class="off i-es">apagada</span><span class="off i-en">off</span></td></tr>
+        <tr><th scope="row"><span class="i-es">Estructura MTF</span><span class="i-en">MTF structure</span></th><td><span class="i-es">aparece una entrada CHoCH o BOS en zona</span><span class="i-en">a CHoCH or BOS entry prints in the zone</span></td><td><span class="on i-es">ventana</span><span class="on i-en">popup</span></td></tr>
+        <tr><th scope="row"><span class="i-es">Volumen relativo</span><span class="i-en">Relative volume</span></th><td><span class="i-es">cierra una vela con volumen extremo o absorción</span><span class="i-en">a candle closes with extreme volume or absorption</span></td><td><span class="on i-es">activa</span><span class="on i-en">on</span></td></tr>
+        <tr><th scope="row">Smart OB</th><td><span class="i-es">el precio entra en un OB, o pasa de LIBRE a CERCA</span><span class="i-en">price enters an OB, or goes from FREE to NEAR</span></td><td><span class="off i-es">apagada</span><span class="off i-en">off</span></td></tr>
+        <tr><th scope="row">FVG Radar</th><td><span class="i-es">el precio está CERCA o DENTRO, o se forma un FVG nuevo</span><span class="i-en">price is NEAR or INSIDE, or a new FVG forms</span></td><td><span class="on i-es">en el panel</span><span class="on i-en">in the panel</span></td></tr>
+        <tr><th scope="row"><span class="i-es">Caídas</span><span class="i-en">Drops</span></th><td><span class="i-es">la caída actual pasa del −20, −30, −40 o −50%</span><span class="i-en">the current drop passes −20, −30, −40 or −50%</span></td><td><span class="on i-es">activa</span><span class="on i-en">on</span></td></tr>
+        <tr><th scope="row"><span class="i-es">Contraataque</span><span class="i-en">Counterattack</span></th><td><span class="i-es">aparece un rombo nuevo</span><span class="i-en">a new diamond appears</span></td><td><span class="off i-es">apagada</span><span class="off i-en">off</span></td></tr>
+        <tr><th scope="row"><span class="i-es">Ganancias al cierre</span><span class="i-en">Profit at close</span></th><td><span class="i-es">se cierra una operación, con su resultado</span><span class="i-en">a trade closes, with its result</span></td><td><span class="off i-es">apagada</span><span class="off i-en">off</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section aria-labelledby="h-extras" class="band">
+<div class="wrap">
+<div class="sec-head">
+<h2 data-i18n="t18" id="h-extras">Cuatro extras que vienen incluidos</h2>
+<p data-i18n="t24">Se activan o apagan desde los parámetros, igual que los módulos.</p>
+</div>
+<div class="extras">
+<div><h3 data-i18n="t44">BID y ASK en grande</h3><p data-i18n="t48">Precio, cambio de la vela, apertura, máximo, mínimo, rango y la ganancia de tus operaciones abiertas, legibles desde lejos.</p></div>
+<div><h3 data-i18n="t45">Chart Resetter</h3><p data-i18n="t49">Reinicia el gráfico completo, borra objetos o hace un ciclo de temporalidad para recargar indicadores y EA, y siempre pide un segundo clic para confirmar.</p></div>
+<div><h3 data-i18n="t46">Ganancias al cierre <kbd>G</kbd></h3><p data-i18n="t50">Etiqueta cada operación cerrada con su resultado y resume lo ganado hoy, este mes y en todo el historial.</p></div>
+<div><h3 data-i18n="t47">Visor de TP en dinero</h3><p data-i18n="t51">Al arrastrar tu TP o SL ves cuánto dinero ganas o pierdes en ese nivel, en tu moneda y en pesos si lo configuras.</p></div>
+</div>
+</div>
+</section>
+<section aria-labelledby="h-teclas" id="teclas">
+<div class="wrap">
+<div class="sec-head">
+<h2 data-i18n="t19" id="h-teclas">Se maneja con el teclado</h2>
+<p data-i18n="t25">Estas son las teclas por defecto. Cada una se cambia o se desactiva en los parámetros.</p>
+</div>
+<div class="keys">
+<div>
+<h3 data-i18n="t52">Panel y herramientas</h3>
+<dl>
+<dt><kbd>1</kbd>–<kbd>6</kbd></dt><dd data-i18n="t54">Cambian de pestaña (fila de números o teclado numérico)</dd>
+<dt><kbd>P</kbd></dt><dd data-i18n="t55">Pliega el panel a una franja de 34 px</dd>
+<dt><kbd>M</kbd></dt><dd data-i18n="t56">Minimiza: quedan solo Cuenta y Confluencia</dd>
+<dt><kbd>Z</kbd>/<kbd>X</kbd></dt><dd data-i18n="t57">Zoom del gráfico</dd>
+<dt><kbd>,</kbd>/<kbd>.</kbd></dt><dd data-i18n="t58">Bajan o suben de temporalidad</dd>
+<dt><kbd>C</kbd></dt><dd data-i18n="t59">Cursor en cruz: porcentaje, normal o lotaje</dd>
+<dt><kbd>R</kbd></dt><dd data-i18n="t60">Rectángulo con dos clics</dd>
+<dt><kbd>Esc</kbd></dt><dd data-i18n="t61">Cancela el cursor o el rectángulo</dd>
+</dl>
+</div>
+<div>
+<h3 data-i18n="t53">Mostrar u ocultar dibujos</h3>
+<dl>
+<dt><kbd>E</kbd></dt><dd data-i18n="t62">Cajas de sesiones</dd>
+<dt><kbd>Y</kbd></dt><dd data-i18n="t63">Niveles psicológicos</dd>
+<dt><kbd>O</kbd></dt><dd data-i18n="t64">Order Blocks</dd>
+<dt><kbd>F</kbd></dt><dd data-i18n="t65">FVG</dd>
+<dt><kbd>T</kbd></dt><dd data-i18n="t66">Estructura</dd>
+<dt><kbd>H</kbd></dt><dd data-i18n="t67">Caídas históricas</dd>
+<dt><kbd>V</kbd></dt><dd data-i18n="t68">Perfil de volumen</dd>
+<dt><kbd>K</kbd></dt><dd data-i18n="t69">Niveles CRT</dd>
+</dl>
+</div>
+</div>
+</div>
+</section>
+<section aria-labelledby="h-instalar" id="instalar" style="padding-top:0">
+<div class="wrap">
+<div class="sec-head">
+<h2 data-i18n="t20" id="h-instalar">Instalación en cuatro pasos</h2>
+<p data-i18n="t26">Es un solo archivo. No instala programas ni pide permisos de DLL.</p>
+</div>
+<ol class="steps">
+<li><h3 data-i18n="t70">Copia el archivo</h3><p data-i18n="t74">En MT4 abre Archivo &gt; Abrir carpeta de datos y pega <code>Legion_SuperPanel_v3_15_MT4.mq4</code> en <code>MQL4/Indicators</code>.</p></li>
+<li><h3 data-i18n="t71">Compila</h3><p data-i18n="t75">Ábrelo en MetaEditor y pulsa <kbd>F7</kbd>, o reinicia MT4 para que lo compile solo.</p></li>
+<li><h3 data-i18n="t72">Arrástralo al gráfico</h3><p data-i18n="t76">Desde el Navegador, en Indicadores personalizados. Pon una sola copia por gráfico.</p></li>
+<li><h3 data-i18n="t73">Elige el idioma</h3><p data-i18n="t77">En Parámetros, cambia Idioma a Español o English. Todo el panel, las alertas y los avisos cambian con él.</p></li>
+</ol>
+<div class="reqs">
+<div>
+<h3 data-i18n="t78" style="margin-bottom:1rem">Requisitos</h3>
+<ul>
+<li data-i18n="t80"><b>MetaTrader 4</b>, build 600 o superior. No funciona en MT5.</li>
+<li data-i18n="t81"><b>Windows.</b> En Mac funciona con el MT4 de tu broker; si falta la fuente Segoe UI, el panel usa una parecida.</li>
+<li data-i18n="t82"><b>Cualquier broker y símbolo:</b> forex, oro, índices o cripto.</li>
+<li data-i18n="t83">El panel se ajusta solo al tamaño del gráfico, de 0.75x a 1.25x.</li>
+</ul>
+</div>
+<div class="note">
+<h3 data-i18n="t79">Lo que no hace</h3>
+<p data-i18n="t84">Solo lee tu cuenta y el mercado. No abre, modifica ni cierra operaciones, no usa DLL y no hace peticiones a internet. Las alertas al móvil solo salen si las activas, por la notificación propia de MT4.</p>
+<p data-i18n="t85">Es una lectura informativa: no predice el precio ni garantiza resultados.</p>
+</div>
+</div>
+</div>
+</section>
+<section aria-labelledby="h-preguntas" id="preguntas" style="padding-top:0">
+<div class="wrap">
+<div class="sec-head"><h2 data-i18n="t21" id="h-preguntas">Preguntas frecuentes</h2></div>
+<div class="faq">
+<details name="faq"><summary data-i18n="t86">¿Abre operaciones por mí?</summary><p data-i18n="t91">No. Es un indicador, no un robot. Muestra información y dibuja niveles en el gráfico; cada operación la decides y la abres tú.</p></details>
+<details name="faq"><summary data-i18n="t87">¿Ralentiza MetaTrader?</summary><p data-i18n="t92">La versión 3.15 refresca los paneles como máximo cada 100 milisegundos y siempre en vela nueva, así que aguanta ráfagas de ticks en oro o BTC sin tirones. Las señales de FlowPulse se siguen evaluando tick a tick.</p></details>
+<details name="faq"><summary data-i18n="t88">Mi pantalla es pequeña, ¿cabe?</summary><p data-i18n="t93">Sí. El panel se escala solo, se pliega con <kbd>P</kbd> a una franja de 34 px y se minimiza con <kbd>M</kbd> dejando solo Cuenta y Confluencia. Además puedes apagar los módulos que no uses.</p></details>
+<details name="faq"><summary data-i18n="t89">¿Puedo cambiar las teclas y los colores?</summary><p data-i18n="t94">Sí. Cada tecla, color, fuente y módulo es un parámetro. Las pestañas que se quedan sin módulos activos desaparecen solas.</p></details>
+<details name="faq"><summary data-i18n="t90">¿Funciona en MT5 o en Mac?</summary><p data-i18n="t95">Esta versión es solo para MT4 (MQL4). En Mac funciona dentro del MT4 que ofrece tu broker; si no tiene la fuente Segoe UI, el panel usa otra parecida y se ve un poco distinto.</p></details>
+</div>
+</div>
+</section>
+<section aria-labelledby="h-contacto" id="contacto" style="padding-top:0">
+<div class="wrap">
+<div class="cta">
+<div>
+<h2 data-i18n="t22" id="h-contacto">¿Lo quieres en tu MT4?</h2>
+<p data-i18n="t96">Accede con Google, paga $350 USD una sola vez y descarga el .ex4 al instante. Soporte por WhatsApp.</p>
+</div>
+<!-- WhatsApp +52 56 4567 4407; el texto del mensaje cambia con el idioma (ver script) -->
+<div style="display:flex;flex-wrap:wrap;gap:.75rem;justify-content:flex-end">
+<a class="btn btn-solid" href="/cuenta" id="cta-buy">Comprar — $350 USD</a>
+<a class="btn btn-line" data-i18n="t97" href="https://wa.me/525645674407?text=Hola%2C%20quiero%20el%20Legion%20SuperPanel%20para%20MT4." target="_blank" id="cta-link" rel="noopener">WhatsApp</a>
+</div>
+</div>
+</div>
+</section>
+</main>
+<footer>
+<div class="wrap">
+<p data-i18n="t98"><b>Legion SuperPanel</b> es una herramienta de lectura informativa para MetaTrader 4. No es asesoría financiera ni una recomendación de inversión y no garantiza resultados. Operar con apalancamiento puede hacerte perder más de lo que inviertes.</p>
+<p data-i18n="t99">© <span id="year">2026</span> Legion IA. MetaTrader es una marca de MetaQuotes Ltd., sin relación con este producto.</p>
+</div>
+</footer>
+<script>
+(() => {
+  "use strict";
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)");
+  const win = document.getElementById("win");
+  const svg = document.getElementById("chart");
+  const panel = document.getElementById("panel");
+  const strip = document.getElementById("strip");
+  const foldBtn = document.getElementById("fold");
+  const tabs = [...document.querySelectorAll('[role="tab"]')];
+
+  /* ---------- pestanas ---------- */
+  function selectTab(i, focus) {
+    tabs.forEach((t, k) => {
+      const on = k === i;
+      t.setAttribute("aria-selected", String(on));
+      t.tabIndex = on ? 0 : -1;
+      document.getElementById(t.getAttribute("aria-controls")).hidden = !on;
+    });
+    if (focus) tabs[i].focus();
+  }
+  tabs.forEach((t, i) => {
+    t.addEventListener("click", () => selectTab(i));
+    t.addEventListener("keydown", e => {
+      const n = tabs.length;
+      let j = null;
+      if (e.key === "ArrowRight" || e.key === "ArrowDown") j = (i + 1) % n;
+      if (e.key === "ArrowLeft" || e.key === "ArrowUp") j = (i - 1 + n) % n;
+      if (e.key === "Home") j = 0;
+      if (e.key === "End") j = n - 1;
+      if (j !== null) { e.preventDefault(); selectTab(j, true); }
+    });
+  });
+
+  /* ---------- plegar (tecla P) ---------- */
+  function setFold(folded) {
+    win.classList.toggle("is-folded", folded);
+    panel.inert = folded;
+    foldBtn.setAttribute("aria-expanded", String(!folded));
+    render();
+    (folded ? strip : foldBtn).focus({ preventScroll: true });
+  }
+  foldBtn.setAttribute("aria-expanded", "true");
+  foldBtn.addEventListener("click", () => setFold(true));
+  strip.addEventListener("click", () => setFold(false));
+
+  /* teclas del panel: solo mientras la demo esta a la vista */
+  let visible = true;
+  document.addEventListener("keydown", e => {
+    if (!visible || e.ctrlKey || e.metaKey || e.altKey) return;
+    if (e.target.closest && e.target.closest("input,textarea,select,[contenteditable]")) return;
+    if (/^[1-6]$/.test(e.key)) {
+      if (win.classList.contains("is-folded")) setFold(false);
+      selectTab(Number(e.key) - 1);
+    } else if (e.key === "p" || e.key === "P") {
+      setFold(!win.classList.contains("is-folded"));
+    }
+  });
+
+  /* teclas de la seccion de pestanas: abren esa vista en la demo */
+  document.querySelectorAll(".keycap[data-tab]").forEach(b => {
+    b.addEventListener("click", () => {
+      if (win.classList.contains("is-folded")) setFold(false);
+      selectTab(Number(b.dataset.tab));
+      win.scrollIntoView({ behavior: reduce.matches ? "auto" : "smooth", block: "center" });
+    });
+  });
+
+  /* ---------- grafico de velas (datos de ejemplo) ---------- */
+  let seed = 20261115;
+  const rnd = () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+  const candles = [];
+  let p = 1.0812;
+  for (let i = 0; i < 140; i++) {
+    const o = p, drift = i > 80 ? 0.00006 : 0.00001;
+    const c = o + (rnd() - 0.5) * 0.0016 + drift;
+    candles.push({ o, c, h: Math.max(o, c) + rnd() * 0.0007, l: Math.min(o, c) - rnd() * 0.0007 });
+    p = c;
+  }
+  const shift = 1.0858 - candles[candles.length - 1].c;
+  candles.forEach(k => { k.o += shift; k.c += shift; k.h += shift; k.l += shift; });
+  const BUY = "#1FA971", SELL = "#E0464C", GRID = "#18202E", DIM = "#5E6D82";
+
+  function render() {
+    const w = svg.clientWidth, h = svg.clientHeight;
+    if (!w || !h) return;
+    svg.setAttribute("viewBox", `0 0 ${w} ${h}`);
+    const folded = win.classList.contains("is-folded");
+    const reserve = folded ? 50 : panel.getBoundingClientRect().width + 24;
+    const plotW = Math.max(120, w - reserve - 58);
+    const step = w < 520 ? 7 : 9;
+    const n = Math.min(candles.length, Math.floor(plotW / step));
+    const vis = candles.slice(-n);
+    let hi = -Infinity, lo = Infinity;
+    vis.forEach(k => { hi = Math.max(hi, k.h); lo = Math.min(lo, k.l); });
+    const pad = (hi - lo) * 0.12; hi += pad; lo -= pad;
+    const top = 16, bot = h - 18;
+    const y = v => top + (hi - v) / (hi - lo) * (bot - top);
+    let s = "";
+    for (let g = 1; g < 6; g++) {
+      const gy = top + g * (bot - top) / 6;
+      s += `<line x1="0" x2="${w}" y1="${gy}" y2="${gy}" stroke="${GRID}" stroke-dasharray="2 4"/>`;
+    }
+    const bw = Math.max(3, step - 3);
+    vis.forEach((k, i) => {
+      const x = 10 + i * step, cx = x + bw / 2, col = k.c >= k.o ? BUY : SELL;
+      const y1 = y(Math.max(k.o, k.c)), y2 = y(Math.min(k.o, k.c));
+      s += `<line x1="${cx}" x2="${cx}" y1="${y(k.h)}" y2="${y(k.l)}" stroke="${col}"/>` +
+           `<rect x="${x}" y="${y1}" width="${bw}" height="${Math.max(1, y2 - y1)}" fill="${col}"/>`;
+    });
+    const last = vis[vis.length - 1], by = y(last.c), lx = 10 + n * step + 6;
+    s += `<line x1="0" x2="${lx}" y1="${by}" y2="${by}" stroke="${DIM}" stroke-dasharray="3 3"/>` +
+         `<rect x="${lx}" y="${by - 9}" width="50" height="18" rx="2" fill="#2A3A55"/>` +
+         `<text x="${lx + 25}" y="${by + 4}" fill="#E6EBF1" font-size="11" text-anchor="middle" font-family="Segoe UI,system-ui,sans-serif">${last.c.toFixed(4)}</text>`;
+    svg.innerHTML = s;
+  }
+
+  /* tick de ejemplo: solo con la demo visible, la pestana activa y sin movimiento reducido */
+  const bidEl = document.getElementById("bid"), eqEl = document.getElementById("eq"),
+        flEl = document.getElementById("fl"), rsi1 = document.getElementById("rsi1");
+  let ticks = 0, timer = 0;
+  function tick() {
+    const k = candles[candles.length - 1];
+    k.c += (rnd() - 0.47) * 0.00018;
+    k.h = Math.max(k.h, k.c); k.l = Math.min(k.l, k.c);
+    if (++ticks % 14 === 0) {
+      candles.push({ o: k.c, c: k.c, h: k.c, l: k.c });
+      if (candles.length > 220) candles.shift();
+    }
+    bidEl.textContent = k.c.toFixed(4);
+    const fl = (k.c - 1.0790) * 100000 * 0.26;
+    flEl.textContent = (fl >= 0 ? "+" : "") + fl.toFixed(2);
+    flEl.className = fl >= 0 ? "up" : "dn";
+    eqEl.textContent = (10000 + fl).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    rsi1.textContent = String(Math.round(57 + rnd() * 8));
+    render();
+  }
+  function run() {
+    const should = visible && !document.hidden && !reduce.matches;
+    if (should && !timer) timer = setInterval(tick, 900);
+    if (!should && timer) { clearInterval(timer); timer = 0; }
+  }
+  new IntersectionObserver(es => { visible = es[0].isIntersecting; run(); }, { threshold: 0.25 }).observe(win);
+  document.addEventListener("visibilitychange", run);
+  reduce.addEventListener?.("change", run);
+  new ResizeObserver(() => render()).observe(svg);
+
+
+  /* ---------- idioma: espanol o ingles segun la ubicacion ---------- */
+  const EN = {"t1": "Skip to content", "t2": "Modules", "t3": "Keys", "t4": "Install", "t5": "FAQ", "t6": "Buy — $350 USD", "t7": "All your MT4 analysis in one panel", "t8": "Legion SuperPanel brings 17 modules into one sidebar: RSI, ADX, FlowPulse, sessions, Order Blocks, FVG, CRT, your account and your risk. It folds away with one key and only reads the market: it never opens or closes trades.", "t9": "Buy — $350 USD", "t10": "See the 17 modules", "t11": "MetaTrader 4, build 600 or later", "t12": "English and Spanish", "t13": "No DLLs or external indicators", "t14": "Try it: <kbd>1</kbd>&ndash;<kbd>6</kbd> switch tabs and <kbd>P</kbd> folds the panel.", "t15": "Tap the tabs, or the &gt;&gt; button to fold the panel.", "t16": "Sample data, not live market data.", "t17": "Six tabs, one key for each", "t18": "Four extras included", "t19": "Built for the keyboard", "t20": "Install in four steps", "t21": "Frequently asked questions", "t22": "Want it on your MT4?", "t23": "Every module keeps calculating. The tab only decides what you see, so switching views never resets anything or drops an alert.", "t24": "Turn each one on or off in the inputs, just like the modules.", "t25": "These are the default keys. You can change or disable each one in the inputs.", "t26": "It is a single file. Nothing to install and no DLL permissions.", "t27": "Summary<small>7 modules plus the OB + FVG strip</small>", "t28": "Tools<small>4 modules</small>", "t29": "Volume profile<small>1 module</small>", "t30": "Wipeout<small>Simulator and max-drop lot size</small>", "t31": "Drops<small>Historical drops</small>", "t32": "CRT<small>3-candle scanner on 9 timeframes</small>", "t33": "<b>Account and position:</b> balance, equity, floating P/L, margin level, leverage used and stop out price.", "t34": "<b>Confluence:</b> a score that counts how many modules agree and how many disagree.", "t35": "<b>RSI, ADX gun, pair strength with multi-timeframe Heikin Ashi, and FlowPulse</b> across several timeframes at once, plus multi-timeframe structure from ATR impulses.", "t36": "<b>Smart OB and FVG Radar:</b> tells you whether the BID is inside a 4H, daily, weekly or monthly Order Block or imbalance, and how deep it has gone.", "t37": "<b>Relative volume:</b> tick volume against the average, or against the same hour on previous days.", "t38": "<b>Sessions and psychological levels:</b> Tokyo, London and New York boxes, and 00/50 levels on the chart.", "t39": "<b>Candle templates</b> to change background and candles in one click, and <b>rectangles with price</b> labels on their edges.", "t40": "Volume profile of any candle with POC, VAH and VAL. Press <kbd>S</kbd>, then click the candle you want to open.", "t41": "Simulates a buy or sell with the lot size and balance you choose, and draws its margin call and stop out. It also shows how many typical days of movement (ATR D1) stand between you and a wipeout.", "t42": "Measures the asset's real drops in its history and works out the lot size your account would survive the worst one with. It is a reference, not a recommendation.", "t43": "Looks for the CRT pattern: a range candle, a sweep of one extreme that closes back inside, and confirmation on the lower timeframe. It only shows READY when every condition is met.", "t44": "Big BID and ASK", "t45": "Chart Resetter", "t46": "Profit at close <kbd>G</kbd>", "t47": "TP money viewer", "t48": "Price, candle change, open, high, low, range and the profit of your open trades, readable from across the room.", "t49": "Resets the whole chart, clears objects or cycles the timeframe to reload indicators and EAs, and always asks for a second click to confirm.", "t50": "Labels every closed trade with its result and sums up what you made today, this month and across your whole history.", "t51": "Drag your TP or SL and see how much money you make or lose at that level, in your account currency and in your local currency if you set it.", "t52": "Panel and tools", "t53": "Show or hide drawings", "t54": "Switch tabs (number row or numeric keypad)", "t55": "Folds the panel into a 34 px strip", "t56": "Minimizes it: only Account and Confluence stay", "t57": "Chart zoom", "t58": "Move down or up a timeframe", "t59": "Crosshair cursor: percent, normal or lot size", "t60": "Rectangle with two clicks", "t61": "Cancels the cursor or the rectangle", "t62": "Session boxes", "t63": "Psychological levels", "t64": "Order Blocks", "t65": "FVG", "t66": "Structure", "t67": "Historical drops", "t68": "Volume profile", "t69": "CRT levels", "t70": "Copy the file", "t71": "Compile", "t72": "Drag it onto the chart", "t73": "Pick the language", "t74": "In MT4 open File &gt; Open Data Folder and paste <code>Legion_SuperPanel_v3_15_MT4.mq4</code> into <code>MQL4/Indicators</code>.", "t75": "Open it in MetaEditor and press <kbd>F7</kbd>, or restart MT4 so it compiles it for you.", "t76": "From the Navigator, under Custom Indicators. Use one copy per chart.", "t77": "In Inputs, set Idioma to English or Espa&ntilde;ol. The whole panel, its alerts and its messages switch with it.", "t78": "Requirements", "t79": "What it does not do", "t80": "<b>MetaTrader 4</b>, build 600 or later. It does not run on MT5.", "t81": "<b>Windows.</b> On Mac it runs in your broker's MT4; if the Segoe UI font is missing, the panel uses a similar one.", "t82": "<b>Any broker and symbol:</b> forex, gold, indices or crypto.", "t83": "The panel scales itself to the chart size, from 0.75x to 1.25x.", "t84": "It only reads your account and the market. It does not open, modify or close trades, uses no DLLs and makes no internet requests. Phone alerts are sent only if you turn them on, through MT4's own notifications.", "t85": "It is an informational reading: it does not predict price or guarantee results.", "t86": "Does it open trades for me?", "t87": "Does it slow MetaTrader down?", "t88": "My screen is small. Will it fit?", "t89": "Can I change the keys and colors?", "t90": "Does it work on MT5 or on a Mac?", "t91": "No. It is an indicator, not a robot. It shows information and draws levels on the chart; you decide and place every trade.", "t92": "Version 3.15 refreshes its panels at most every 100 milliseconds and always on a new candle, so it handles bursts of ticks on gold or BTC without stutter. FlowPulse signals are still evaluated on every tick.", "t93": "Yes. The panel scales itself, folds into a 34 px strip with <kbd>P</kbd> and minimizes with <kbd>M</kbd>, leaving only Account and Confluence. You can also turn off the modules you do not use.", "t94": "Yes. Every key, color, font and module is an input. Tabs left without active modules disappear on their own.", "t95": "This version is for MT4 (MQL4) only. On a Mac it runs inside the MT4 your broker provides; if that build lacks the Segoe UI font, the panel uses a similar one and looks slightly different.", "t96": "Sign in with Google, pay $350 USD once, and download the .ex4 instantly. Support on WhatsApp.", "t97": "WhatsApp", "t98": "<b>Legion SuperPanel</b> is an informational tool for MetaTrader 4. It is not financial advice or an investment recommendation and it does not guarantee results. Trading with leverage can make you lose more than you invest.", "t99": "&copy; <span id=\"year\">2026</span> Legion IA. MetaTrader is a trademark of MetaQuotes Ltd., not affiliated with this product."};
+  const EN_ARIA = {"a1": "Legion, home", "a2": "Main", "a3": "Key facts", "a4": "Interactive demo of the panel on a EURUSD H1 chart with sample data", "a5": "Unfold the panel (P key)", "a6": "Legion SuperPanel", "a7": "Fold the panel (P key)", "a8": "Panel tabs", "a9": "Show the Summary tab in the panel", "a10": "Show the Tools tab in the panel", "a11": "Show the Volume profile tab in the panel", "a12": "Show the Wipeout tab in the panel", "a13": "Show the Drops tab in the panel", "a14": "Show the CRT tab in the panel"};
+  const EN_PANEL = {"PANEL DE MERCADO / EURUSD | H1": "MARKET DASHBOARD / EURUSD | H1", "CONFLUENCIA: COMPRA": "CONFLUENCE: BUY", "RESUMEN": "SUMMARY", "HERRAMIENTAS": "TOOLS", "PERFIL VOL.": "VOLUME PROF.", "QUIEBRE": "WIPEOUT", "CAIDAS": "DROPS", "CUENTA Y POSICION": "ACCOUNT AND POSITION", "Equidad": "Equity", "Flotante": "Floating", "Nivel de margen": "Margin level", "ADX PISTOLA": "ADX GUN", "FLECHA COMPRA": "BUY ARROW", "EN COMPRA": "IN BUY", "SIN FUERZA": "NO STRENGTH", "ESTRUCTURA MTF  |  IMPULSOS ATR": "MTF STRUCTURE  |  ATR IMPULSES", "ALC": "BULL", "BAJ": "BEAR", "Entrada": "Entry", "ESPERAR CHoCH": "WAIT CHoCH", "FUERZA DEL PAR  |  HEIKIN ASHI": "PAIR STRENGTH  |  HEIKIN ASHI", "OB + FVG  |  ZONAS ACTIVAS": "OB + FVG  |  ACTIVE ZONES", "OB H4 alcista": "OB H4 bullish", "DENTRO 42%": "INSIDE 42%", "a 18 pips": "18 pips away", "VOLUMEN RELATIVO": "RELATIVE VOLUME", "Vela actual": "Current candle", "1.8x  ALTO": "1.8x  HIGH", "Vela cerrada": "Closed candle", "SESIONES + NIVELES PSY": "SESSIONS + PSY LEVELS", "Tokio": "Tokyo", "cerrada": "closed", "Londres": "London", "abierta": "open", "Nueva York": "New York", "abre en 2h 10m": "opens in 2h 10m", "PLANTILLAS DE VELAS": "CANDLE TEMPLATES", "OSCURA": "DARK", "CLARA": "LIGHT", "RECTANGULOS CON PRECIO": "RECTANGLES WITH PRICE", "Con etiqueta": "Labeled", "3 de 3": "3 of 3", "PERFIL VOL.  |  VELA H4": "VOLUME PROF.  |  H4 CANDLE", "NIVELES": "LEVELS", "SIMULADOR": "SIMULATOR", "LOTAJE SEGURO": "MAX-DROP LOT", "MEDIDOR DE QUIEBRE": "WIPEOUT METER", "Posicion": "Position", "COMPRA 1.00": "BUY 1.00", "Distancia": "Distance", "-8.6%  |  9.4 dias ATR": "-8.6%  |  9.4 ATR days", "CAIDAS HISTORICAS": "HISTORICAL DROPS", "Peor caida": "Worst drop", "Caida de diseno": "Design drop", "Caidas registradas": "Recorded drops", "Ultimo minimo hace": "Last low", "3 meses": "3 months ago", "LOTAJE SEGURO  |  SEGUN LAS CAIDAS": "MAX-DROP LOT  |  FROM PAST DROPS", "Lote que aguanta": "Lot that survives", "Tu posicion": "Your position", "OK: resiste": "OK: survives", "LEGION CRT  |  ESCANER 3 VELAS  |  9 TF": "LEGION CRT  |  3-CANDLE SCANNER  |  9 TF", "LISTO  R:R 2.4": "READY  R:R 2.4", "BARRIENDO CRL": "SWEEPING CRL", "TP YA HECHO": "TP ALREADY HIT", "SIN CRT": "NO CRT", "1-6 pestanas | P plegar | M min | C cursor | R rect | O/F/T/K dibujos  [?]": "1-6 tabs | P fold | M min | C cursor | R rect | O/F/T/K drawings  [?]", "&lt;&lt; LEGION": "<< LEGION"};
+  const EN_FOOT_TITLE = "1-6 switch tabs. P fold, M minimize, Z/X zoom, C crosshair cursor, R rectangle with 2 clicks, S + click volume profile. On/off: E sessions, Y psy levels, O Order Blocks, F FVG, T structure, H drops, V volume profile, K CRT levels. Esc cancels.";
+  const META_EN = {"title": "Legion SuperPanel for MetaTrader 4 | All your analysis in one panel", "desc": "Legion SuperPanel brings 17 analysis modules for MT4 (RSI, ADX, FlowPulse, sessions, Order Blocks, FVG, CRT and more) into one sidebar that folds away with one key. It only reads the market: it never opens or closes trades."};
+  const WA = "https://wa.me/525645674407?text=";
+  const WA_MSG = { es: "Hola, quiero el Legion SuperPanel para MT4.", en: "Hi, I'm interested in Legion SuperPanel for MT4." };
+  const ES = {}, ES_ARIA = {}, ES_PANEL = new Map();
+  const meta = document.querySelector('meta[name="description"]');
+  const ES_META = { title: document.title, desc: meta.content };
+  const foot = panel.querySelector(".p-foot");
+  const ES_FOOT_TITLE = foot.title;
+  document.querySelectorAll("[data-i18n]").forEach(el => { ES[el.dataset.i18n] = el.innerHTML; });
+  document.querySelectorAll("[data-i18n-aria]").forEach(el => { ES_ARIA[el.dataset.i18nAria] = el.getAttribute("aria-label"); });
+  const walker = document.createTreeWalker(win, NodeFilter.SHOW_TEXT);
+  const panelNodes = [];
+  for (let n = walker.nextNode(); n; n = walker.nextNode()) {
+    const key = n.nodeValue.trim();
+    if (key && EN_PANEL[key] !== undefined) { panelNodes.push(n); ES_PANEL.set(n, n.nodeValue); }
+  }
+  let current = "es";
+  function applyLang(lang) {
+    current = lang;
+    const en = lang === "en";
+    document.documentElement.lang = lang;
+    document.querySelectorAll("[data-i18n]").forEach(el => { const k = el.dataset.i18n; el.innerHTML = en && EN[k] ? EN[k] : ES[k]; });
+    document.querySelectorAll("[data-i18n-aria]").forEach(el => { const k = el.dataset.i18nAria; el.setAttribute("aria-label", en && EN_ARIA[k] ? EN_ARIA[k] : ES_ARIA[k]); });
+    panelNodes.forEach(n => { const es = ES_PANEL.get(n), k = es.trim(); n.nodeValue = en ? es.replace(k, EN_PANEL[k]) : es; });
+    foot.title = en ? EN_FOOT_TITLE : ES_FOOT_TITLE;
+    document.title = en ? META_EN.title : ES_META.title;
+    meta.content = en ? META_EN.desc : ES_META.desc;
+    document.getElementById("cta-link").href = WA + encodeURIComponent(WA_MSG[lang]);
+    const btn = document.getElementById("lang");
+    btn.textContent = en ? "ES" : "EN";
+    btn.lang = en ? "es" : "en";
+    btn.setAttribute("aria-label", en ? "Cambiar a español" : "Switch to English");
+    document.getElementById("year").textContent = new Date().getFullYear();
+  }
+
+  /* paises de habla hispana (codigo ISO) y sus zonas horarias */
+  const ES_CC = new Set("AR BO CL CO CR CU DO EC ES GQ GT HN MX NI PA PE PR PY SV UY VE".split(" "));
+  const ES_TZ = /^(America\/(Argentina\/.+|Buenos_Aires|Cordoba|Catamarca|Jujuy|Mendoza|La_Paz|Santiago|Punta_Arenas|Bogota|Costa_Rica|Havana|Santo_Domingo|Guayaquil|El_Salvador|Guatemala|Tegucigalpa|Mexico_City|Cancun|Merida|Monterrey|Matamoros|Chihuahua|Ciudad_Juarez|Ojinaga|Mazatlan|Bahia_Banderas|Hermosillo|Tijuana|Managua|Panama|Asuncion|Lima|Puerto_Rico|Montevideo|Caracas)|Europe\/Madrid|Atlantic\/Canary|Africa\/(Ceuta|Malabo)|Pacific\/(Galapagos|Easter))$/;
+  const browserEs = () => (navigator.languages || [navigator.language || ""]).some(l => /^es(-|$)/i.test(l));
+  const saved = () => { try { const v = localStorage.getItem("lp-lang"); return v === "es" || v === "en" ? v : null; } catch (e) { return null; } };
+  function guessLocal() {
+    let tz = "";
+    try { tz = Intl.DateTimeFormat().resolvedOptions().timeZone || ""; } catch (e) {}
+    return (ES_TZ.test(tz) || browserEs()) ? "es" : "en";
+  }
+  /* 1) idioma elegido antes con el boton  2) zona horaria del equipo, al instante
+     3) pais por IP que da Cloudflare en /cdn-cgi/trace (solo si el dominio pasa por Cloudflare) */
+  const chosen = saved();
+  applyLang(chosen || guessLocal());
+  if (!chosen && location.protocol.startsWith("http")) {
+    let touched = false;
+    addEventListener("pointerdown", () => { touched = true; }, { once: true });
+    const ctl = new AbortController();
+    const stop = setTimeout(() => ctl.abort(), 1500);
+    fetch("/cdn-cgi/trace", { signal: ctl.signal, cache: "no-store" })
+      .then(r => (r.ok ? r.text() : ""))
+      .then(t => {
+        clearTimeout(stop);
+        const m = t.match(/^loc=([A-Z]{2})$/m);
+        if (!m || touched) return;
+        const byIp = (ES_CC.has(m[1]) || browserEs()) ? "es" : "en";
+        if (byIp !== current) applyLang(byIp);
+      })
+      .catch(() => {});
+  }
+  document.getElementById("lang").addEventListener("click", () => {
+    const next = current === "es" ? "en" : "es";
+    applyLang(next);
+    try { localStorage.setItem("lp-lang", next); } catch (e) {}
+  });
+
+  /* ---------- apariciones al bajar ---------- */
+  const groups = [
+    [".hero-copy > *"], [".win"],
+    [".sec-head"], [".tabs-list > li"], [".extras > div"], [".keys > div"],
+    [".steps > li"], [".reqs > *"], [".faq > details"], [".cta"],
+    [".filters"], [".mods-list > .mod"], [".weights .w"], [".ladder dl > div"], [".strat"], [".vlt"], [".alert-table"]
+  ];
+  const io = new IntersectionObserver(es => {
+    es.forEach(e => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } });
+  }, { rootMargin: "0px 0px -8% 0px", threshold: 0.12 });
+  groups.forEach(([sel]) => {
+    document.querySelectorAll(sel).forEach((el, i) => {
+      el.dataset.reveal = "";
+      el.style.setProperty("--i", sel === ".win" ? 2 : i);
+      io.observe(el);
+    });
+  });
+
+  /* filtros de la guia por pestana */
+  const chips = [...document.querySelectorAll(".chip[data-filter]")];
+  chips.forEach(c => c.addEventListener("click", () => {
+    const f = c.dataset.filter;
+    chips.forEach(x => x.setAttribute("aria-pressed", String(x === c)));
+    document.querySelectorAll(".mods-list > .mod, .mod-index li").forEach(el => {
+      el.hidden = !(f === "all" || el.dataset.tab === f);
+      if (!el.hidden && el.matches(".mod")) el.classList.add("in");
+    });
+  }));
+
+  /* indice: marca el modulo que estas leyendo */
+  const links = new Map([...document.querySelectorAll(".mod-index a")].map(a => [a.getAttribute("href").slice(1), a]));
+  const idx = new IntersectionObserver(es => {
+    es.forEach(e => {
+      if (!e.isIntersecting) return;
+      links.forEach(l => l.removeAttribute("aria-current"));
+      const l = links.get(e.target.id);
+      if (l) l.setAttribute("aria-current", "true");
+    });
+  }, { rootMargin: "-30% 0px -60% 0px" });
+  document.querySelectorAll(".mods-list > .mod").forEach(m => idx.observe(m));
+
+  /* cabecera con sombra en cuanto la portada deja de estar arriba */
+  const top = document.querySelector(".top");
+  const onScroll = () => top.classList.toggle("is-scrolled", scrollY > 8);
+  addEventListener("scroll", onScroll, { passive: true });
+  onScroll();
+  render();
+  run();
+})();
+</script>
+</body>
+</html>

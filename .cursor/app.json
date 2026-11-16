@@ -1,7 +1,7 @@
 {
   "app_id": "legion-ai",
   "name": "Legion AI",
-  "description": "Landing comercial de Legion AI, panel inteligente de análisis de mercados para MetaTrader 4 (Oro, Bitcoin, índices y forex).",
+  "description": "Legion SuperPanel MT4: landing, Google OAuth, Stripe $350, descarga segura y dashboard admin.",
   "domain": "legionai.iareal.net",
   "port": 3043,
   "coolify_app_uuid": "xlpom9jg332j5jbnzutants7",

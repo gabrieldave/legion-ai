@@ -1,0 +1,112 @@
+:root {
+  --paper: #e8ecf0;
+  --ink: #101a2b;
+  --slate: #4f5e70;
+  --rule: #c2ccd7;
+  --amber: #e9a23b;
+  --buy: #1fa971;
+  --sell: #e0464c;
+  --font: "Archivo", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font);
+  line-height: 1.5;
+}
+
+a {
+  color: inherit;
+}
+
+.shell {
+  width: min(920px, calc(100% - 2.5rem));
+  margin: 0 auto;
+  padding: 2.5rem 0 4rem;
+}
+
+.card {
+  background: #fff;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  padding: 1.5rem;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font: inherit;
+  font-weight: 650;
+  padding: 0.8rem 1.2rem;
+  border-radius: 8px;
+  border: 1.5px solid var(--ink);
+  text-decoration: none;
+  cursor: pointer;
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.btn.secondary {
+  background: transparent;
+  color: var(--ink);
+}
+
+.btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.muted {
+  color: var(--slate);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.92rem;
+}
+
+.table th,
+.table td {
+  border-bottom: 1px solid var(--rule);
+  text-align: left;
+  padding: 0.65rem 0.4rem;
+  vertical-align: top;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0.75rem;
+  margin: 1.25rem 0;
+}
+
+.stat {
+  background: #fff;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  padding: 1rem;
+}
+
+.stat b {
+  display: block;
+  font-size: 1.4rem;
+}
+
+.ok {
+  color: var(--buy);
+  font-weight: 700;
+}
+
+.bad {
+  color: var(--sell);
+  font-weight: 700;
+}
